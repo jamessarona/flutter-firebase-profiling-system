@@ -1,11 +1,15 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:tanod_apprehension/screens/loginScreen.dart';
+import 'package:tanod_apprehension/net/authenticationService.dart';
+import 'package:tanod_apprehension/root_page.dart';
 
-void main() {
-  runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(TanodMain());
 }
 
-class MyApp extends StatelessWidget {
+class TanodMain extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -14,7 +18,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LoginScreen(),
+      home: Root(
+        auth: new FireBaseAuth(),
+      ),
     );
   }
 }

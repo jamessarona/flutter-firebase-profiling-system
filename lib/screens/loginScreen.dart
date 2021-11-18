@@ -1,8 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tanod_apprehension/net/authenticationService.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  final VoidCallback onSignIn;
+  final BaseAuth auth;
+  const LoginScreen({required this.auth, required this.onSignIn});
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -16,6 +20,42 @@ final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
 class _LoginScreenState extends State<LoginScreen> {
   late Size screenSize;
+
+  void validation() async {
+    String userId;
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        //   _isLoading = true;
+      });
+      try {
+        setState(() {
+          //   authIsNotValid = false;
+        });
+        userId = await widget.auth.signInWithEmailAndPassword(email, password);
+        // ignore: unnecessary_null_comparison
+        if (userId != null) {
+          widget.onSignIn();
+        }
+        //widget.onSignIn();
+      } on FirebaseAuthException catch (e) {
+        print(e.code);
+        if (e.code == 'wrong-password') {
+          setState(() {
+            //   errorOnLogIn = 'Password is incorrect!';
+            //   authIsNotValid = true;
+          });
+        } else {
+          setState(() {
+            //   errorOnLogIn = 'Email does not exist!';
+            //   authIsNotValid = true;
+          });
+        }
+      }
+      setState(() {
+        //  _isLoading = false;
+      });
+    }
+  }
 
   Widget _buildLogo() {
     return Row(
@@ -49,13 +89,13 @@ class _LoginScreenState extends State<LoginScreen> {
             decoration: BoxDecoration(
               color: Colors.white,
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Form(
-                  key: _formKey,
-                  child: Row(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
@@ -64,12 +104,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ],
                   ),
-                ),
-                _buildEmailRow(),
-                _buildPasswordRow(),
-                _buildForgetPasswordButton(),
-                _buildLoginButton()
-              ],
+                  _buildEmailRow(),
+                  _buildPasswordRow(),
+                  _buildForgetPasswordButton(),
+                  _buildLoginButton()
+                ],
+              ),
             ),
           ),
         ),
@@ -83,11 +123,10 @@ class _LoginScreenState extends State<LoginScreen> {
       child: TextFormField(
         keyboardType: TextInputType.emailAddress,
         validator: (value) {
-          if (value == '') {
+          if (value == '')
             return 'Please Fill Email';
-          } else if (!RegExp(regEx).hasMatch(value!)) {
-            return 'Invalid Email';
-          }
+          else if (!RegExp(regEx).hasMatch(value!)) return 'Invalid Email';
+
           return null;
         },
         onChanged: (value) {
@@ -98,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
         decoration: InputDecoration(
           prefixIcon: Icon(
             Icons.email_outlined,
-            color: mainColor,
+            color: customColor,
           ),
           labelText: "E-mail",
         ),
@@ -112,6 +151,11 @@ class _LoginScreenState extends State<LoginScreen> {
       child: TextFormField(
         keyboardType: TextInputType.text,
         obscureText: isobscureText,
+        validator: (value) {
+          if (value == "") return "Please fill the password";
+
+          return null;
+        },
         onChanged: (value) {
           setState(() {
             password = value;
@@ -126,7 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
             },
             child: Icon(
               isobscureText == true ? Icons.lock_outline : Icons.lock_open,
-              color: mainColor,
+              color: customColor,
             ),
           ),
           labelText: "Password",
@@ -158,12 +202,11 @@ class _LoginScreenState extends State<LoginScreen> {
           margin: EdgeInsets.only(bottom: 20),
           child: RaisedButton(
             elevation: 5.0,
-            color: mainColor,
+            color: customColor,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30.0)),
             onPressed: () {
-              print(email);
-              print(password);
+              validation();
             },
             child: Text(
               "Login",
@@ -201,7 +244,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   TextSpan(
                     text: "Sign up",
                     style: TextStyle(
-                      color: mainColor,
+                      color: customColor,
                       fontSize: screenSize.height / 40,
                       fontWeight: FontWeight.w400,
                     ),
@@ -229,7 +272,7 @@ class _LoginScreenState extends State<LoginScreen> {
             width: screenSize.width,
             child: Container(
               decoration: BoxDecoration(
-                color: mainColor,
+                color: customColor,
                 borderRadius: BorderRadius.only(
                   bottomLeft: const Radius.circular(70),
                   bottomRight: const Radius.circular(70),

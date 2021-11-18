@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "881581720017",
+    "firebase_url": "https://db-apprehension-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "db-apprehension",
+    "storage_bucket": "db-apprehension.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:881581720017:android:ea522a436bea30634b60f0",
+        "android_client_info": {
+          "package_name": "com.example.tanod_apprehension"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "881581720017-gmlqntjb1e1mrqgn00df9r5n5iildcfs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAg39hDNQi7W22hwICYC7CR2dIP3waZudY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "881581720017-gmlqntjb1e1mrqgn00df9r5n5iildcfs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
