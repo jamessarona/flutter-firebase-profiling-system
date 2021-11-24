@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tanod_apprehension/net/authenticationService.dart';
-import 'package:tanod_apprehension/screens/statisticsScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
-import 'package:tanod_apprehension/shared/drawer.dart';
+import 'package:tanod_apprehension/shared/myDrawers.dart';
 
 class MainScreen extends StatefulWidget {
   final BaseAuth auth;

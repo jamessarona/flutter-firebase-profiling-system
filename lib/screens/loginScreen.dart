@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tanod_apprehension/net/authenticationService.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
+import 'package:tanod_apprehension/shared/myButtons.dart';
+import 'package:tanod_apprehension/shared/myTextFormFields.dart';
 
 class LoginScreen extends StatefulWidget {
   final VoidCallback onSignIn;
@@ -12,47 +14,49 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
+late Size screenSize;
 String email = "", password = "";
-bool isobscureText = true;
+bool isobscureText = true, _isLoading = false, _authIsNotValid = false;
+String authMessage = '';
 String regEx =
     r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
+
 final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
 class _LoginScreenState extends State<LoginScreen> {
-  late Size screenSize;
-
   void validation() async {
     String userId;
     if (_formKey.currentState!.validate()) {
       setState(() {
-        //   _isLoading = true;
+        _isLoading = true;
       });
       try {
         setState(() {
-          //   authIsNotValid = false;
+          _authIsNotValid = false;
         });
+
         userId = await widget.auth.signInWithEmailAndPassword(email, password);
         // ignore: unnecessary_null_comparison
         if (userId != null) {
           widget.onSignIn();
         }
-        //widget.onSignIn();
       } on FirebaseAuthException catch (e) {
         print(e.code);
         if (e.code == 'wrong-password') {
           setState(() {
-            //   errorOnLogIn = 'Password is incorrect!';
-            //   authIsNotValid = true;
+            _authIsNotValid = true;
+            authMessage = 'Password is incorrect!';
           });
         } else {
           setState(() {
-            //   errorOnLogIn = 'Email does not exist!';
-            //   authIsNotValid = true;
+            _authIsNotValid = true;
+            authMessage = 'Email does not exist!';
           });
         }
       }
       setState(() {
-        //  _isLoading = false;
+        _isLoading = false;
       });
     }
   }
@@ -62,13 +66,15 @@ class _LoginScreenState extends State<LoginScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 70),
+          padding: EdgeInsets.symmetric(vertical: screenSize.height / 30),
           child: Text(
-            "Give me Logo sir",
-            style: TextStyle(
-                fontSize: screenSize.height / 25,
-                fontWeight: FontWeight.bold,
-                color: Colors.white),
+            "Facemask Apprehension",
+            style: secandaryText.copyWith(
+              fontSize: screenSize.height / 35,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1,
+              color: Colors.white,
+            ),
           ),
         ),
       ],
@@ -100,12 +106,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       Text(
                         "Login",
-                        style: TextStyle(fontSize: screenSize.height / 30),
+                        style: secandaryText.copyWith(
+                            fontSize: screenSize.height / 30),
                       ),
                     ],
                   ),
                   _buildEmailRow(),
                   _buildPasswordRow(),
+                  _buildAuthenticationMessage(),
                   _buildForgetPasswordButton(),
                   _buildLoginButton()
                 ],
@@ -119,63 +127,85 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildEmailRow() {
     return Padding(
-      padding: EdgeInsets.all(8),
-      child: TextFormField(
-        keyboardType: TextInputType.emailAddress,
-        validator: (value) {
+      padding: EdgeInsets.all(screenSize.height / 80),
+      child: MyTextFormField(
+        inputType: TextInputType.emailAddress,
+        isObscureText: false,
+        validation: (value) {
           if (value == '')
-            return 'Please Fill Email';
-          else if (!RegExp(regEx).hasMatch(value!)) return 'Invalid Email';
+            return 'Please enter your email';
+          else if (!RegExp(regEx).hasMatch(value!))
+            return 'Invalid email format';
 
           return null;
         },
         onChanged: (value) {
           setState(() {
-            email = value;
+            email = value!;
           });
         },
-        decoration: InputDecoration(
-          prefixIcon: Icon(
+        prefixIcon: GestureDetector(
+          onTap: () {},
+          child: Icon(
             Icons.email_outlined,
             color: customColor,
           ),
-          labelText: "E-mail",
         ),
+        labelText: "E-mail",
+        hintText: "vince@email.com",
       ),
     );
   }
 
   Widget _buildPasswordRow() {
     return Padding(
-      padding: EdgeInsets.all(8),
-      child: TextFormField(
-        keyboardType: TextInputType.text,
-        obscureText: isobscureText,
-        validator: (value) {
-          if (value == "") return "Please fill the password";
+      padding: EdgeInsets.all(screenSize.height / 80),
+      child: MyTextFormField(
+        inputType: TextInputType.text,
+        isObscureText: isobscureText,
+        validation: (value) {
+          if (value == "") return "Please enter your password";
 
           return null;
         },
         onChanged: (value) {
           setState(() {
-            password = value;
+            password = value!;
           });
         },
-        decoration: InputDecoration(
-          prefixIcon: GestureDetector(
-            onTap: () {
-              setState(() {
-                isobscureText = !isobscureText;
-              });
-            },
-            child: Icon(
-              isobscureText == true ? Icons.lock_outline : Icons.lock_open,
-              color: customColor,
-            ),
+        prefixIcon: GestureDetector(
+          onTap: () {
+            setState(() {
+              isobscureText = !isobscureText;
+            });
+          },
+          child: Icon(
+            isobscureText == true ? Icons.lock_outline : Icons.lock_open,
+            color: customColor,
           ),
-          labelText: "Password",
         ),
+        labelText: "Password",
       ),
+    );
+  }
+
+  Widget _buildAuthenticationMessage() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          height: screenSize.height * 0.03,
+          child: _authIsNotValid == true
+              ? Text(
+                  authMessage,
+                  style: tertiaryText.copyWith(
+                    fontSize: screenSize.height / 60,
+                    color: Colors.red,
+                  ),
+                )
+              : null,
+        ),
+      ],
     );
   }
 
@@ -184,8 +214,19 @@ class _LoginScreenState extends State<LoginScreen> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // ignore: deprecated_member_use
         FlatButton(
-          onPressed: () {},
+          onPressed: () {
+            // ignore: deprecated_member_use
+            _scaffoldKey.currentState!.showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Contact Administrator: abc@gmail.com',
+                ),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          },
           child: Text("Forgot Password"),
         ),
       ],
@@ -200,20 +241,23 @@ class _LoginScreenState extends State<LoginScreen> {
           height: 1.4 * (screenSize.height / 20),
           width: 5 * (screenSize.width / 10),
           margin: EdgeInsets.only(bottom: 20),
-          child: RaisedButton(
-            elevation: 5.0,
-            color: customColor,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30.0)),
-            onPressed: () {
-              validation();
-            },
-            child: Text(
-              "Login",
-              style: TextStyle(
-                color: Colors.white,
-                letterSpacing: 1.5,
-                fontSize: screenSize.height / 40,
+          child: IgnorePointer(
+            ignoring: _isLoading,
+            child: MyRaisedButton(
+              elavation: 5.0,
+              color: customColor,
+              radius: 30.0,
+              onPressed: () {
+                validation();
+              },
+              isLoading: _isLoading,
+              text: Text(
+                "Login",
+                style: TextStyle(
+                  color: Colors.white,
+                  letterSpacing: 1.5,
+                  fontSize: screenSize.height / 40,
+                ),
               ),
             ),
           ),
@@ -228,8 +272,19 @@ class _LoginScreenState extends State<LoginScreen> {
       children: [
         Padding(
           padding: EdgeInsets.only(top: 40),
+          // ignore: deprecated_member_use
           child: FlatButton(
-            onPressed: () {},
+            onPressed: () {
+              // ignore: deprecated_member_use
+              _scaffoldKey.currentState!.showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Contact Administrator: abc@gmail.com',
+                  ),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            },
             child: RichText(
               text: TextSpan(
                 children: [
@@ -263,32 +318,35 @@ class _LoginScreenState extends State<LoginScreen> {
     screenSize = MediaQuery.of(context).size;
     return SafeArea(
         child: Scaffold(
+      key: _scaffoldKey,
       resizeToAvoidBottomInset: false,
       backgroundColor: Color(0xfff2f3f7),
-      body: Stack(
-        children: [
-          Container(
-            height: screenSize.height * .7,
-            width: screenSize.width,
-            child: Container(
-              decoration: BoxDecoration(
-                color: customColor,
-                borderRadius: BorderRadius.only(
-                  bottomLeft: const Radius.circular(70),
-                  bottomRight: const Radius.circular(70),
+      body: SingleChildScrollView(
+        child: Stack(
+          children: [
+            Container(
+              height: screenSize.height * .7,
+              width: screenSize.width,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: customColor,
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: const Radius.circular(70),
+                    bottomRight: const Radius.circular(70),
+                  ),
                 ),
               ),
             ),
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildLogo(),
-              _buildContainer(),
-              _buildSignUpButton(),
-            ],
-          )
-        ],
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildLogo(),
+                _buildContainer(),
+                _buildSignUpButton(),
+              ],
+            )
+          ],
+        ),
       ),
     ));
   }
