@@ -6,9 +6,9 @@ import 'package:tanod_apprehension/shared/myButtons.dart';
 import 'package:tanod_apprehension/shared/myTextFormFields.dart';
 
 class LoginScreen extends StatefulWidget {
-  final VoidCallback onSignIn;
+  final VoidCallback? onSignIn;
   final BaseAuth auth;
-  const LoginScreen({required this.auth, required this.onSignIn});
+  const LoginScreen({required this.auth, this.onSignIn});
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -39,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
         userId = await widget.auth.signInWithEmailAndPassword(email, password);
         // ignore: unnecessary_null_comparison
         if (userId != null) {
-          widget.onSignIn();
+          widget.onSignIn!();
         }
       } on FirebaseAuthException catch (e) {
         print(e.code);
@@ -316,38 +316,35 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     screenSize = MediaQuery.of(context).size;
-    return SafeArea(
-        child: Scaffold(
+    return Scaffold(
       key: _scaffoldKey,
       resizeToAvoidBottomInset: false,
       backgroundColor: Color(0xfff2f3f7),
-      body: SingleChildScrollView(
-        child: Stack(
-          children: [
-            Container(
-              height: screenSize.height * .7,
-              width: screenSize.width,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: customColor,
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: const Radius.circular(70),
-                    bottomRight: const Radius.circular(70),
-                  ),
+      body: Stack(
+        children: [
+          Container(
+            height: screenSize.height * .7,
+            width: screenSize.width,
+            child: Container(
+              decoration: BoxDecoration(
+                color: customColor,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: const Radius.circular(70),
+                  bottomRight: const Radius.circular(70),
                 ),
               ),
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildLogo(),
-                _buildContainer(),
-                _buildSignUpButton(),
-              ],
-            )
-          ],
-        ),
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildLogo(),
+              _buildContainer(),
+              _buildSignUpButton(),
+            ],
+          )
+        ],
       ),
-    ));
+    );
   }
 }
