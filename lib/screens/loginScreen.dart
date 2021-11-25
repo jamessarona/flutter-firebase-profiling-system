@@ -261,8 +261,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     screenSize = MediaQuery.of(context).size;
-    return SafeArea(
-        child: Scaffold(
+    return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Color(0xfff2f3f7),
       body: Stack(
@@ -290,6 +289,6 @@ class _LoginScreenState extends State<LoginScreen> {
           )
         ],
       ),
-    ));
+    );
   }
 }
