@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tanod_apprehension/net/authenticationService.dart';
+import 'package:tanod_apprehension/screens/reportScreens/activeScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/myDrawers.dart';
+
+import 'reportScreens/droppedScreen.dart';
+import 'reportScreens/taggedScreen.dart';
 
 class ReportsScreen extends StatefulWidget {
   final BaseAuth auth;
@@ -16,6 +20,11 @@ class ReportsScreen extends StatefulWidget {
 late Size screenSize;
 GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 int currentIndext = 0;
+final screens = [
+  ActiveScreen(),
+  DroppedScreen(),
+  TaggedScreen(),
+];
 
 class _ReportsScreenState extends State<ReportsScreen> {
   @override
@@ -41,11 +50,15 @@ class _ReportsScreenState extends State<ReportsScreen> {
       body: Container(
         //color: Colors.red,
         height: screenSize.height,
-        width: screenSize.width,
-        child: Container(),
+        width: screenSize.width, child: screens[currentIndext],
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndext,
+        onTap: (index) {
+          setState(() {
+            currentIndext = index;
+          });
+        },
         type: BottomNavigationBarType.shifting,
         selectedItemColor: customColor,
         selectedLabelStyle: tertiaryText.copyWith(fontSize: 12),
@@ -68,11 +81,6 @@ class _ReportsScreenState extends State<ReportsScreen> {
             tooltip: "Apprehended Violator",
           ),
         ],
-        onTap: (index) {
-          setState(() {
-            currentIndext = index;
-          });
-        },
       ),
     );
   }
