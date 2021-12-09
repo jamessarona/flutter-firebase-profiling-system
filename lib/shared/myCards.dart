@@ -2,31 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 
 class MyReportCard extends StatelessWidget {
-  const MyReportCard({Key? key}) : super(key: key);
+  final String id;
+  final String image;
+  final String location;
+  final String date;
+  final String status;
+  const MyReportCard(
+      {required this.id,
+      required this.image,
+      required this.location,
+      required this.date,
+      required this.status});
 
   @override
   Widget build(BuildContext context) {
-    String url =
-        "https://scontent.fceb1-2.fna.fbcdn.net/v/t1.15752-9/262501487_600481991261895_6657576791388492822_n.jpg?_nc_cat=108&ccb=1-5&_nc_sid=ae9488&_nc_eui2=AeGLfAgYOwjWSU7I7PdN6aLRUlGyQAFmrtBSUbJAAWau0AwTNgCcxivLG0-lO7U4kysSpa9XX2-gzrcBI3vLfTmx&_nc_ohc=KhiTtW4aTRwAX9HqEcL&_nc_ht=scontent.fceb1-2.fna&oh=08b9589cb4d89e045c8ec7e926d7ed32&oe=61CD9F94";
-
     Size screenSize = MediaQuery.of(context).size;
     return Card(
       child: Container(
-        padding: EdgeInsets.only(
-          top: 7,
-        ),
+        padding: EdgeInsets.all(7),
         width: screenSize.width < 450 ? screenSize.width * .47 : 180,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Container(
-              height: 145,
-              width: 170,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  fit: BoxFit.fill,
-                  image: NetworkImage(
-                    url,
+            Hero(
+              tag: 'report_$id',
+              child: Container(
+                height: 145,
+                width: 170,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.fill,
+                    image: NetworkImage(
+                      image,
+                    ),
                   ),
                 ),
               ),
@@ -46,7 +54,7 @@ class MyReportCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text(
-                          "15min ago",
+                          calculateTimeOfOccurence(date),
                           style: tertiaryText.copyWith(fontSize: 14),
                         ),
                         Container(
@@ -62,7 +70,7 @@ class MyReportCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "Silver Street San Rafael Davao City asd as dsad asd sa asd asd sad as",
+                    location,
                     style: tertiaryText.copyWith(fontSize: 13),
                     textAlign: TextAlign.left,
                     maxLines: 2,
@@ -100,6 +108,77 @@ class MyReportCard extends StatelessWidget {
                 ],
               ),
             )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class MySummaryCard extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final int number;
+
+  const MySummaryCard(
+      {required this.icon, required this.label, required this.number});
+
+  @override
+  Widget build(BuildContext context) {
+    Size screenSize = MediaQuery.of(context).size;
+    return ClipRRect(
+      borderRadius: BorderRadius.all(
+        Radius.circular(29),
+      ),
+      child: Container(
+        height: screenSize.height * .23,
+        width: screenSize.width * .28,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+              colors: [
+                const Color(0xFF7e9af6),
+                const Color(0xFFe5d5ec),
+              ],
+              begin: const FractionalOffset(0.0, 1.0),
+              end: const FractionalOffset(1.0, 0.0),
+              stops: [0.0, 1.0],
+              tileMode: TileMode.clamp),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Container(
+              height: screenSize.height * .08,
+              width: screenSize.width * .15,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(40),
+                ),
+                border: Border.all(
+                  width: 1,
+                  color: Colors.white,
+                  style: BorderStyle.solid,
+                ),
+              ),
+              child: Icon(
+                icon,
+                color: Colors.black,
+                size: 30,
+              ),
+            ),
+            RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                text: label,
+                style: secandaryText.copyWith(fontSize: 13),
+                children: <TextSpan>[
+                  TextSpan(
+                    text: '\n$number',
+                    style: TextStyle(fontSize: 40),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

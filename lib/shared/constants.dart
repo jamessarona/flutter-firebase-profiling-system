@@ -25,4 +25,77 @@ TextStyle tertiaryText = GoogleFonts.lato(
 const MaterialColor customColor = MaterialColor(0xff2470c7, <int, Color>{
   10: Color(0xfffed23e), //custom Orange
   20: Color(0xffeff0f5), //custom Grey for background
+  30: Color(0xfff9f9f9), //grey card background
 });
+
+String titleCase(String text) {
+  if (text.length <= 1) return text.toUpperCase();
+  var words = text.split(' ');
+  var capitalized = words.map((word) {
+    var first = word.substring(0, 1).toUpperCase();
+    var rest = word.substring(1);
+    return '$first$rest';
+  });
+  return capitalized.join(' ');
+}
+
+extension CapExtension on String {
+  String get inCaps => '${this[0].toUpperCase()}${this.substring(1)}';
+  String get allInCaps => this.toUpperCase();
+  String get capitalizeFirstofEach =>
+      this.split(" ").map((str) => str.inCaps).join(" ");
+}
+
+String calculateTimeOfOccurence(String date) {
+  List<String> months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ];
+
+  DateTime now = new DateTime.now();
+  DateTime dateDetected = DateTime.parse(date);
+  print(now);
+  String time = "";
+  if (now.year.compareTo(dateDetected.year) == 0) {
+    print("Same Year");
+    if (now.month.compareTo(dateDetected.month) == 0) {
+      print("Same Month");
+      if (now.day.compareTo(dateDetected.day) == 0) {
+        print("Same Day");
+        if (now.hour.compareTo(dateDetected.hour) == 0) {
+          print("Same Hour");
+          if (now.minute.compareTo(dateDetected.minute) == 0) {
+            time = "1m ago";
+          } else {
+            time = "${(now.minute - dateDetected.minute).toString()}m";
+          }
+        } else {
+          time = "${(now.hour - dateDetected.hour).toString()}h";
+        }
+      } else {
+        time = "${(now.day - dateDetected.day).toString()}d";
+      }
+    } else {
+      String monthName = months[dateDetected.month - 1][0] +
+          months[dateDetected.month - 1][1] +
+          months[dateDetected.month - 1][2];
+      time = "$monthName ${dateDetected.day}";
+    }
+  } else {
+    String monthName = months[dateDetected.month - 1][0] +
+        months[dateDetected.month - 1][1] +
+        months[dateDetected.month - 1][2];
+    time = "$monthName ${dateDetected.day}, ${dateDetected.year}";
+  }
+  return time;
+}

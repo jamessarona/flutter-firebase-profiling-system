@@ -47,10 +47,33 @@ class _ReportsScreenState extends State<ReportsScreen> {
         automaticallyImplyLeading: false,
         title: Text("Reports"),
       ),
-      body: Container(
-        //color: Colors.red,
-        height: screenSize.height,
-        width: screenSize.width, child: screens[currentIndext],
+      body: Column(
+        children: [
+          Container(
+            height: screenSize.height * .05,
+            width: screenSize.width,
+            child: Row(
+              children: [
+                DropdownButton<String>(
+                  items: <String>['Maa', 'San Rafael', 'Roxas', 'Matina']
+                      .map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (_) {},
+                )
+              ],
+            ),
+          ),
+          Container(
+            color: Colors.grey[100],
+            height: screenSize.height * .72,
+            width: screenSize.width,
+            child: screens[currentIndext],
+          ),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndext,
