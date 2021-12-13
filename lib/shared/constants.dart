@@ -26,6 +26,13 @@ const MaterialColor customColor = MaterialColor(0xff2470c7, <int, Color>{
   10: Color(0xfffed23e), //custom Orange
   20: Color(0xffeff0f5), //custom Grey for background
   30: Color(0xfff9f9f9), //grey card background
+  40: Color(0xffe3d2f5), // custom light violet color
+  50: Color(0xff5333a4), //custom dark violet color
+  60: Color(0xff4243e6), //constant bluee color
+  70: Color(0xff9030f4), //constant violet color
+  80: Color(0xfff09a1c), //custom yellow/orange color
+  90: Color(0xffeb001b), //custom red color
+  100: Color(0xff5633a7), //custom color dark violet
 });
 
 String titleCase(String text) {
