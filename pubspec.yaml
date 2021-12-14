@@ -24,8 +24,7 @@ dependencies:
   google_fonts: ^2.1.0
   fl_chart: ^0.40.2
   flutter_app_restart: ^1.0.0
-  badges: ^2.0.2
-
+  badges: ^2.0.2 
   
 dev_dependencies:
   flutter_test:

@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tanod_apprehension/net/authenticationService.dart';
 import 'package:tanod_apprehension/screens/mainScreen.dart';
 import 'package:tanod_apprehension/screens/reportsScreen.dart';
+import 'package:tanod_apprehension/screens/statisticsScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 
 class BuildDrawer extends StatelessWidget {
@@ -14,6 +15,7 @@ class BuildDrawer extends StatelessWidget {
   final String email;
   final String profileImage;
   final String backgroundImage;
+  final String selectedArea;
   const BuildDrawer(
       {required this.leading,
       required this.auth,
@@ -21,7 +23,8 @@ class BuildDrawer extends StatelessWidget {
       required this.name,
       required this.email,
       required this.profileImage,
-      required this.backgroundImage});
+      required this.backgroundImage,
+      required this.selectedArea});
 
   showAlertDialog(BuildContext context) {
     // set up the buttons
@@ -75,8 +78,8 @@ class BuildDrawer extends StatelessWidget {
               ),
               BuildDrawerMenuItem(
                 leading: leading,
-                text: "Statistics",
-                icon: FontAwesomeIcons.chartBar,
+                text: "Home",
+                icon: FontAwesomeIcons.houseUser,
                 onTap: () {
                   Navigator.of(context).pop();
                   Navigator.of(context).pushReplacement(
@@ -89,46 +92,47 @@ class BuildDrawer extends StatelessWidget {
               ),
               BuildDrawerMenuItem(
                 leading: leading,
-                text: "Reports",
-                icon: FontAwesomeIcons.userClock,
+                text: "Statistics",
+                icon: FontAwesomeIcons.chartBar,
                 onTap: () {
                   Navigator.of(context).pop();
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
-                      builder: (ctx) =>
-                          ReportsScreen(auth: auth, onSignOut: onSignOut),
+                      builder: (ctx) => StatisticsScreen(
+                          auth: auth,
+                          onSignOut: onSignOut,
+                          email: email,
+                          name: name,
+                          profileImage: profileImage,
+                          selectedArea: selectedArea),
                     ),
                   );
                 },
               ),
               BuildDrawerMenuItem(
                 leading: leading,
-                text: "Notification",
-                icon: FontAwesomeIcons.bell,
-                onTap: () {},
-              ),
-              BuildDrawerMenuItem(
-                leading: leading,
-                text: "Preferences",
-                icon: FontAwesomeIcons.streetView,
-                onTap: () {},
-              ),
-              BuildDrawerMenuItem(
-                leading: leading,
-                text: "Violators Information",
-                icon: FontAwesomeIcons.users,
-                onTap: () {},
+                text: "Reports",
+                icon: FontAwesomeIcons.userClock,
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (ctx) => ReportsScreen(
+                        auth: auth,
+                        onSignOut: onSignOut,
+                        email: email,
+                        name: name,
+                        profileImage: profileImage,
+                        selectedArea: selectedArea,
+                      ),
+                    ),
+                  );
+                },
               ),
               Divider(
                 endIndent: screenSize.height / 70,
                 indent: screenSize.height / 70,
                 color: Colors.black,
-              ),
-              BuildDrawerMenuItem(
-                leading: leading,
-                text: "Settings",
-                icon: FontAwesomeIcons.cog,
-                onTap: () {},
               ),
               BuildDrawerMenuItem(
                 leading: leading,
@@ -204,11 +208,11 @@ class BuildDrawerMenuItem extends StatelessWidget {
     return ListTile(
       leading: Icon(
         icon,
-        color: leading == text ? customColor : color,
+        color: leading == text ? customColor[130] : color,
       ),
       title: Text(
         text,
-        style: TextStyle(color: leading == text ? customColor : color),
+        style: TextStyle(color: leading == text ? customColor[130] : color),
       ),
       hoverColor: hoverColor,
       onTap: onTap,

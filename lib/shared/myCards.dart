@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tanod_apprehension/net/authenticationService.dart';
+import 'package:tanod_apprehension/screens/reportsScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 
 class MyReportCard extends StatelessWidget {
@@ -181,6 +185,182 @@ class MySummaryCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class MyInformationCard extends StatelessWidget {
+  final Icon icon;
+  final String text;
+  final VoidCallback onTap;
+  const MyInformationCard(
+      {required this.icon, required this.text, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+        color: customColor[110],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        elevation: 4,
+        child: ListTile(
+          leading: icon,
+          title: Text(
+            text,
+            style: tertiaryText.copyWith(fontSize: 16),
+          ),
+          trailing: Icon(
+            FontAwesomeIcons.chevronRight,
+          ),
+          onTap: onTap,
+        ));
+  }
+}
+
+class MyStatusCard extends StatelessWidget {
+  final BaseAuth auth;
+  final VoidCallback onSignOut;
+  final String name;
+  final String image;
+  final String status;
+  final String email;
+  final String selectedArea;
+  const MyStatusCard(
+      {required this.name,
+      required this.image,
+      required this.status,
+      required this.email,
+      required this.auth,
+      required this.onSignOut,
+      required this.selectedArea});
+
+  @override
+  Widget build(BuildContext context) {
+    Size screenSize = MediaQuery.of(context).size;
+    return Container(
+      margin: EdgeInsets.only(
+        top: 18,
+        left: 20,
+        right: 20,
+      ),
+      padding: EdgeInsets.only(
+        top: 28,
+        bottom: 25,
+        left: 23,
+        right: 23,
+      ),
+      height: 180,
+      width: screenSize.width * .9,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(25)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 5,
+            blurRadius: 7,
+            offset: Offset(0, 3), // changes position of shadow
+          ),
+        ],
+        color: customColor[130],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Your Status,',
+                      style: tertiaryText.copyWith(
+                          fontSize: 15, color: Colors.white70),
+                    ),
+                    Container(
+                      height: screenSize.height / 80,
+                    ),
+                    Text.rich(
+                      TextSpan(
+                        style: tertiaryText.copyWith(
+                            fontSize: 19, color: Colors.white),
+                        children: [
+                          TextSpan(text: status),
+                          status != "Standby"
+                              ? TextSpan(
+                                  text: ' to\nSilver Street, D.C.',
+                                )
+                              : TextSpan()
+                        ],
+                      ),
+                    ),
+                    Text(
+                      status != "Standby"
+                          ? "${calculateTimeOfOccurence("2021-12-13 21:49:12")}"
+                          : "",
+                      style: tertiaryText.copyWith(
+                          fontSize: 12, color: Colors.white70),
+                    ),
+                  ],
+                ),
+              ),
+              Text(
+                status != "Standby"
+                    ? 'Respond as quickly as possible'
+                    : "You can assign report",
+                style:
+                    tertiaryText.copyWith(fontSize: 11, color: Colors.white70),
+              ),
+            ],
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              status != "Standby"
+                  ? SpinKitPouringHourGlassRefined(
+                      color: Color(0xffdd901c),
+                      size: 50,
+                      strokeWidth: 1,
+                    )
+                  : Icon(
+                      FontAwesomeIcons.crosshairs,
+                      size: 30,
+                      color: customColor[80],
+                    ),
+              GestureDetector(
+                child: Icon(
+                  FontAwesomeIcons.angleDoubleRight,
+                  size: 25,
+                  color: Colors.white70,
+                ),
+                onTap: () {
+                  if (status != "Standby") {
+                    print("Load Specific Report");
+                  } else {
+                    print("Load Reports");
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (ctx) => ReportsScreen(
+                          auth: auth,
+                          onSignOut: onSignOut,
+                          email: email,
+                          name: name,
+                          profileImage: image,
+                          selectedArea: selectedArea,
+                        ),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ],
+          )
+        ],
       ),
     );
   }

@@ -33,6 +33,13 @@ const MaterialColor customColor = MaterialColor(0xff2470c7, <int, Color>{
   80: Color(0xfff09a1c), //custom yellow/orange color
   90: Color(0xffeb001b), //custom red color
   100: Color(0xff5633a7), //custom color dark violet
+  110: Color(0xfffafcff), //white background
+  120: Color(0xffe4e8f2), //grey theme
+  130: Color(0xff1c52dd), //blue theme
+  140: Color(0xff1640ac), //dark blue theme
+  150: Color(0xff6400e3), //violet theme
+  160: Color(0xff1cdd69), //green theme
+  170: Color(0xffdd901c), //orange theme
 });
 
 String titleCase(String text) {
@@ -71,16 +78,11 @@ String calculateTimeOfOccurence(String date) {
 
   DateTime now = new DateTime.now();
   DateTime dateDetected = DateTime.parse(date);
-  print(now);
   String time = "";
   if (now.year.compareTo(dateDetected.year) == 0) {
-    print("Same Year");
     if (now.month.compareTo(dateDetected.month) == 0) {
-      print("Same Month");
       if (now.day.compareTo(dateDetected.day) == 0) {
-        print("Same Day");
         if (now.hour.compareTo(dateDetected.hour) == 0) {
-          print("Same Hour");
           if (now.minute.compareTo(dateDetected.minute) == 0) {
             time = "1m ago";
           } else {
@@ -105,4 +107,14 @@ String calculateTimeOfOccurence(String date) {
     time = "$monthName ${dateDetected.day}, ${dateDetected.year}";
   }
   return time;
+}
+
+int countReportsByLocation(List list, String selectedArea) {
+  int count = 0;
+  for (int i = 0; i < list.length; i++) {
+    if (selectedArea == list[i]['Location'] && list[i]['Status'] == "Active") {
+      count++;
+    }
+  }
+  return count;
 }
