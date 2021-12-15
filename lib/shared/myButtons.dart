@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/mySpinKits.dart';
 
 class MyRaisedButton extends StatelessWidget {
@@ -59,6 +60,50 @@ class MyOutlineButton extends StatelessWidget {
       ),
       onPressed: onPressed,
       child: !isLoading ? text : MySpinKitCircle(),
+    );
+  }
+}
+
+class MyCategoryButton extends StatelessWidget {
+  final String text;
+  final Color color;
+  final VoidCallback onTap;
+  final double padding;
+  final double height;
+  final double width;
+  const MyCategoryButton({
+    required this.text,
+    required this.color,
+    required this.onTap,
+    required this.padding,
+    required this.height,
+    required this.width,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.only(top: padding),
+        height: height,
+        width: width,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          color: customColor[110],
+          border: Border.all(
+            color: color,
+          ),
+        ),
+        child: Text(
+          text,
+          style: tertiaryText.copyWith(
+            fontSize: 15,
+            color: color,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
     );
   }
 }

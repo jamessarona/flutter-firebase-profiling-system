@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tanod_apprehension/net/authenticationService.dart';
 import 'package:tanod_apprehension/screens/reportsScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
+import 'package:tanod_apprehension/shared/myContainers.dart';
 
 class MyReportCard extends StatelessWidget {
   final String id;
@@ -64,12 +65,11 @@ class MyReportCard extends StatelessWidget {
                         Container(
                           width: 10,
                         ),
-                        Container(
+                        MyReportStatusIndicator(
                           height: 10,
                           width: 10,
-                          decoration: BoxDecoration(
-                              color: Colors.green, shape: BoxShape.circle),
-                        )
+                          color: Colors.green,
+                        ),
                       ],
                     ),
                   ),
@@ -226,15 +226,14 @@ class MyStatusCard extends StatelessWidget {
   final String image;
   final String status;
   final String email;
-  final String selectedArea;
-  const MyStatusCard(
-      {required this.name,
-      required this.image,
-      required this.status,
-      required this.email,
-      required this.auth,
-      required this.onSignOut,
-      required this.selectedArea});
+  const MyStatusCard({
+    required this.name,
+    required this.image,
+    required this.status,
+    required this.email,
+    required this.auth,
+    required this.onSignOut,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -351,7 +350,6 @@ class MyStatusCard extends StatelessWidget {
                           email: email,
                           name: name,
                           profileImage: image,
-                          selectedArea: selectedArea,
                         ),
                       ),
                     );

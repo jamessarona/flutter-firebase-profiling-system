@@ -2,17 +2,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
+import 'package:tanod_apprehension/shared/globals.dart';
 
 class MyUserDetail extends StatelessWidget {
   final String image;
   final String firstname;
   final VoidCallback onTap;
-  final String selectedArea;
-  const MyUserDetail(
-      {required this.image,
-      required this.firstname,
-      required this.onTap,
-      required this.selectedArea});
+  const MyUserDetail({
+    required this.image,
+    required this.firstname,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +39,7 @@ class MyUserDetail extends StatelessWidget {
                 width: 100,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: customColor[50],
+                  color: customColor[130],
                   image: new DecorationImage(
                     fit: BoxFit.cover,
                     image: NetworkImage(
@@ -140,6 +140,26 @@ class MyUserDetail extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class MyReportStatusIndicator extends StatelessWidget {
+  final double height;
+  final double width;
+  final Color color;
+  const MyReportStatusIndicator(
+      {required this.height, required this.width, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: height,
+      width: width,
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+      ),
     );
   }
 }

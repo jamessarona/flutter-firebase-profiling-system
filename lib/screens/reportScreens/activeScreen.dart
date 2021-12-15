@@ -6,7 +6,7 @@ import 'package:tanod_apprehension/shared/myCards.dart';
 import 'package:tanod_apprehension/shared/mySpinKits.dart';
 
 class ActiveScreen extends StatefulWidget {
-  const ActiveScreen({Key? key}) : super(key: key);
+  const ActiveScreen();
 
   @override
   _ActiveScreenState createState() => _ActiveScreenState();
@@ -14,22 +14,21 @@ class ActiveScreen extends StatefulWidget {
 
 class _ActiveScreenState extends State<ActiveScreen> {
   late Size screenSize;
-  final dbRef = FirebaseDatabase.instance.reference().child("Reports");
-  final list = <ListTile>[];
+  final dbRef = FirebaseDatabase.instance.reference();
   var reports;
   @override
   Widget build(BuildContext context) {
     screenSize = MediaQuery.of(context).size;
 
     return StreamBuilder(
-        stream: dbRef.onValue,
-        builder: (context, productsSnapshot) {
-          if (productsSnapshot.hasData &&
-              !productsSnapshot.hasError &&
-              (productsSnapshot.data! as Event).snapshot.value != null) {
-            reports = (productsSnapshot.data! as Event).snapshot.value;
+        stream: dbRef.child('Reports').onValue,
+        builder: (context, reportsSnapshot) {
+          if (reportsSnapshot.hasData &&
+              !reportsSnapshot.hasError &&
+              (reportsSnapshot.data! as Event).snapshot.value != null) {
+            reports = (reportsSnapshot.data! as Event).snapshot.value;
           } else {
-            return MySpinKitFadingCube();
+            return MySpinKitLoadingScreen();
           }
           return ListView(
               shrinkWrap: true,

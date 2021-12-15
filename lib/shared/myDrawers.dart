@@ -15,16 +15,15 @@ class BuildDrawer extends StatelessWidget {
   final String email;
   final String profileImage;
   final String backgroundImage;
-  final String selectedArea;
-  const BuildDrawer(
-      {required this.leading,
-      required this.auth,
-      required this.onSignOut,
-      required this.name,
-      required this.email,
-      required this.profileImage,
-      required this.backgroundImage,
-      required this.selectedArea});
+  const BuildDrawer({
+    required this.leading,
+    required this.auth,
+    required this.onSignOut,
+    required this.name,
+    required this.email,
+    required this.profileImage,
+    required this.backgroundImage,
+  });
 
   showAlertDialog(BuildContext context) {
     // set up the buttons
@@ -99,12 +98,12 @@ class BuildDrawer extends StatelessWidget {
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
                       builder: (ctx) => StatisticsScreen(
-                          auth: auth,
-                          onSignOut: onSignOut,
-                          email: email,
-                          name: name,
-                          profileImage: profileImage,
-                          selectedArea: selectedArea),
+                        auth: auth,
+                        onSignOut: onSignOut,
+                        email: email,
+                        name: name,
+                        profileImage: profileImage,
+                      ),
                     ),
                   );
                 },
@@ -123,7 +122,6 @@ class BuildDrawer extends StatelessWidget {
                         email: email,
                         name: name,
                         profileImage: profileImage,
-                        selectedArea: selectedArea,
                       ),
                     ),
                   );
@@ -167,6 +165,7 @@ class BuildDrawerMenuHeader extends StatelessWidget {
       accountName: Text(name),
       accountEmail: Text(email),
       currentAccountPicture: CircleAvatar(
+        backgroundColor: customColor[140],
         child: ClipOval(
           child: Image.network(
             profileImage,
@@ -177,7 +176,7 @@ class BuildDrawerMenuHeader extends StatelessWidget {
         ),
       ),
       decoration: BoxDecoration(
-        color: customColor,
+        color: customColor[130],
         image: DecorationImage(
           image: NetworkImage(
             backgroundImage,

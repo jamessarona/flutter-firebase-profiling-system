@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:tanod_apprehension/shared/constants.dart';
 
 class MySpinKitCircle extends StatelessWidget {
   const MySpinKitCircle({Key? key}) : super(key: key);
@@ -32,11 +31,16 @@ class MySpinKitLoadingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: SpinKitSpinningLines(
-        lineWidth: 3,
-        size: 50,
-        color: Color(0xff1c52dd),
+    Size screenSize = MediaQuery.of(context).size;
+    return Container(
+      height: screenSize.height,
+      width: screenSize.width,
+      child: Center(
+        child: SpinKitSpinningLines(
+          lineWidth: 3,
+          size: 50,
+          color: Color(0xff1c52dd),
+        ),
       ),
     );
   }

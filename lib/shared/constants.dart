@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tanod_apprehension/shared/globals.dart';
 
 TextStyle primaryText = GoogleFonts.lato(
   fontSize: 15,
@@ -109,7 +110,7 @@ String calculateTimeOfOccurence(String date) {
   return time;
 }
 
-int countReportsByLocation(List list, String selectedArea) {
+int countReportsByLocation(List<dynamic> list) {
   int count = 0;
   for (int i = 0; i < list.length; i++) {
     if (selectedArea == list[i]['Location'] && list[i]['Status'] == "Active") {
@@ -117,4 +118,50 @@ int countReportsByLocation(List list, String selectedArea) {
     }
   }
   return count;
+}
+
+String convertMonth(int month) {
+  List<String> months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ];
+  String monthName =
+      months[month - 1][0] + months[month - 1][1] + months[month - 1][2];
+  return monthName;
+}
+
+String convertHour(int hour, int method) {
+  //method
+  // 0 = get hour
+  // 1 = get AM/PM
+  if (hour > 12) {
+    hour -= 12;
+    if (method == 0) {
+      return (hour < 10 ? '0' : '') + hour.toString();
+    } else {
+      return "PM";
+    }
+  } else if (hour == 12) {
+    if (method == 0) {
+      return hour.toString();
+    } else {
+      return "PM";
+    }
+  } else {
+    if (method == 0) {
+      return (hour < 10 ? '0' : '') + hour.toString();
+    } else {
+      return "AM";
+    }
+  }
 }

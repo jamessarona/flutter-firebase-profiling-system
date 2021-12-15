@@ -2,10 +2,13 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 import 'package:tanod_apprehension/net/authenticationService.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/myAppbar.dart';
+import 'package:tanod_apprehension/shared/myBottomSheet.dart';
 import 'package:tanod_apprehension/shared/myDrawers.dart';
+import 'package:tanod_apprehension/shared/myListTile.dart';
 import 'package:tanod_apprehension/shared/mySpinKits.dart';
 import 'package:tanod_apprehension/shared/myText.dart';
 
@@ -16,14 +19,12 @@ class StatisticsScreen extends StatefulWidget {
   final String name;
   final String email;
   final String profileImage;
-  final String selectedArea;
   const StatisticsScreen({
     required this.auth,
     required this.onSignOut,
     required this.name,
     required this.email,
     required this.profileImage,
-    required this.selectedArea,
   });
 
   @override
@@ -34,8 +35,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   GlobalKey<ScaffoldState> _scaffoldKeyStatistics = GlobalKey<ScaffoldState>();
   late Size screenSize;
   var reports;
+  int notifCount = 0;
   final dbRef = FirebaseDatabase.instance.reference();
-  String selectedStreet = "Select a street";
+  String selectedStreet = "Filter Result";
   String selectedLabel = 'Month';
   List<Color> gradientColor = [
     Color(0xffadb1ea),
@@ -55,7 +57,32 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           email: widget.email,
           profileImage: widget.profileImage,
           backgroundImage: "https://wallpaperaccess.com/full/1397098.jpg",
-          selectedArea: widget.selectedArea,
+        ),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          leading: MyAppBarLeading(
+            onPressendDrawer: () {
+              _scaffoldKeyStatistics.currentState!.openDrawer();
+            },
+          ),
+          centerTitle: true,
+          title: Text(
+            'Statistics',
+            style: primaryText.copyWith(
+              fontSize: 18,
+              letterSpacing: 1,
+            ),
+          ),
+          actions: [
+            MyAppBarAction(
+              notifCount: notifCount,
+              color: Colors.black,
+              onPressed: () {
+                Reset.filter();
+              },
+            ),
+          ],
         ),
         body: StreamBuilder(
           stream: dbRef.child('Reports').onValue,
@@ -71,23 +98,16 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 ),
               );
             }
-            int notifCount =
-                countReportsByLocation(reports, widget.selectedArea);
+            notifCount = countReportsByLocation(reports);
             return Container(
               height: screenSize.height,
               width: screenSize.width,
               color: customColor[110],
               child: ListView(
                 children: [
-                  MyMainAppBar(
-                    onPressendDrawer: () {
-                      _scaffoldKeyStatistics.currentState!.openDrawer();
-                    },
-                    notifCount: notifCount,
-                  ),
                   Container(
                     margin: EdgeInsets.only(
-                        top: 15,
+                        top: 10,
                         left: screenSize.width * .13,
                         right: screenSize.width * .13),
                     height: 50,
@@ -105,7 +125,16 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     ),
                     child: GestureDetector(
                       onTap: () {
-                        print('Select a street');
+                        showModalBottomSheet(
+                          context: context,
+                          backgroundColor: customColor[110],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(50),
+                            ),
+                          ),
+                          builder: (context) => BuildBottomSheet(),
+                        );
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -319,9 +348,126 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                       left: screenSize.width * 0.05,
                       right: screenSize.width * 0.05,
                     ),
-                    height: 60,
+                    child: Text(
+                      'Available Reports',
+                      style: tertiaryText.copyWith(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(
+                        top: 15,
+                        left: screenSize.width * 0.05,
+                        right: screenSize.width * 0.05,
+                        bottom: 50),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: screenSize.width * .05,
+                      vertical: 10,
+                    ),
+                    height: 160,
                     width: screenSize.width,
-                    color: Colors.red,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      color: customColor[110],
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.3),
+                          spreadRadius: 3,
+                          blurRadius: 8,
+                          offset: Offset(0, 0), // changes position of shadow
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Container(
+                              height: 55,
+                              width: 55,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                color: customColor[120],
+                              ),
+                            ),
+                            CircularPercentIndicator(
+                              radius: 135,
+                              lineWidth: 6,
+                              percent: 0.4,
+                              center: CircularPercentIndicator(
+                                radius: 110,
+                                lineWidth: 6,
+                                percent: 0.8,
+                                animationDuration: 1200,
+                                center: Container(
+                                  height: 40,
+                                  width: 40,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30),
+                                    color: customColor[120],
+                                  ),
+                                  child: Image.asset(
+                                    'assets/images/no-mask.png',
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                backgroundColor: Color(0xffe4e8f2),
+                                progressColor: customColor[150],
+                              ),
+                              backgroundColor: Color(0xffe4e8f2),
+                              progressColor: customColor[130],
+                            ),
+                          ],
+                        ),
+                        Container(
+                          height: 140,
+                          width: screenSize.width * .4,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  print("Load Reports");
+                                  Reset.filter();
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.only(bottom: 10),
+                                  padding: EdgeInsets.only(left: 2),
+                                  height: 25,
+                                  width: 25,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30),
+                                    color: customColor[120],
+                                  ),
+                                  child: Icon(
+                                    FontAwesomeIcons.chevronRight,
+                                    size: 15,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ),
+                              MyReportAvailabilityTile(
+                                color: Color(0xff1c52dd),
+                                title: 'Latest Detection',
+                                count: 3,
+                              ),
+                              Container(
+                                height: 10,
+                              ),
+                              MyReportAvailabilityTile(
+                                color: Color(0xff6400e3),
+                                title: 'Dropped Reports',
+                                count: 3,
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   )
                 ],
               ),

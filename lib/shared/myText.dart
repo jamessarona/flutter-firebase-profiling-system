@@ -26,3 +26,23 @@ class MyDateLabel extends StatelessWidget {
     );
   }
 }
+
+class MyReportDetails extends StatelessWidget {
+  final EdgeInsets margin;
+  final double width;
+  final Text label;
+  const MyReportDetails({
+    required this.margin,
+    required this.width,
+    required this.label,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: margin,
+      width: width,
+      child: label,
+    );
+  }
+}

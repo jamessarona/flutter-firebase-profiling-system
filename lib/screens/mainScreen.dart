@@ -10,6 +10,7 @@ import 'package:tanod_apprehension/shared/myCards.dart';
 import 'package:tanod_apprehension/shared/myContainers.dart';
 import 'package:tanod_apprehension/shared/myDrawers.dart';
 import 'package:tanod_apprehension/shared/mySpinKits.dart';
+import 'package:tanod_apprehension/shared/globals.dart';
 
 class MainScreen extends StatefulWidget {
   final String? leading;
@@ -30,7 +31,6 @@ class _MainScreenState extends State<MainScreen> {
   var reports;
   var userData;
   String userUID = '';
-  String selectedArea = 'Maharlika NHA Maa';
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Future<String> getCurrentUserUID() async {
@@ -76,36 +76,42 @@ class _MainScreenState extends State<MainScreen> {
                 },
               ),
               actions: [
-                MyOutlineButton(
-                  color: Color(0xff1640ac),
-                  elavation: 5,
-                  isLoading: false,
-                  radius: 10,
-                  text: Text(
-                    'Cancel',
-                    style: tertiaryText.copyWith(
-                        fontSize: 14, color: customColor[140]),
+                Container(
+                  width: 90,
+                  child: MyOutlineButton(
+                    color: Color(0xff1640ac),
+                    elavation: 5,
+                    isLoading: false,
+                    radius: 10,
+                    text: Text(
+                      'Cancel',
+                      style: tertiaryText.copyWith(
+                          fontSize: 14, color: customColor[140]),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
                   ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
                 ),
-                MyRaisedButton(
-                  color: Color(0xff1640ac),
-                  elavation: 5,
-                  isLoading: false,
-                  radius: 10,
-                  text: Text(
-                    'Save',
-                    style: tertiaryText.copyWith(
-                        fontSize: 14, color: Colors.white),
+                Container(
+                  width: 90,
+                  child: MyRaisedButton(
+                    color: Color(0xff1640ac),
+                    elavation: 5,
+                    isLoading: false,
+                    radius: 10,
+                    text: Text(
+                      'Save',
+                      style: tertiaryText.copyWith(
+                          fontSize: 14, color: Colors.white),
+                    ),
+                    onPressed: () {
+                      selectedArea = tempSelectedArea;
+                      saveSelectedArea();
+                      Navigator.pop(context);
+                    },
                   ),
-                  onPressed: () {
-                    selectedArea = tempSelectedArea;
-                    saveSelectedArea();
-                    Navigator.pop(context);
-                  },
-                )
+                ),
               ],
             );
           });
@@ -164,8 +170,7 @@ class _MainScreenState extends State<MainScreen> {
                           ),
                         );
                       }
-                      int notifCount =
-                          countReportsByLocation(reports, selectedArea);
+                      int notifCount = countReportsByLocation(reports);
                       return Scaffold(
                         key: _scaffoldKey,
                         extendBodyBehindAppBar: true,
@@ -180,7 +185,22 @@ class _MainScreenState extends State<MainScreen> {
                           profileImage: userData['Image'],
                           backgroundImage:
                               "https://wallpaperaccess.com/full/1397098.jpg",
-                          selectedArea: selectedArea,
+                        ),
+                        appBar: AppBar(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          leading: MyAppBarLeading(
+                            onPressendDrawer: () {
+                              _scaffoldKey.currentState!.openDrawer();
+                            },
+                          ),
+                          actions: [
+                            MyAppBarAction(
+                              notifCount: notifCount,
+                              color: Colors.black,
+                              onPressed: () {},
+                            )
+                          ],
                         ),
                         body: Container(
                           height: screenSize.height,
@@ -188,16 +208,9 @@ class _MainScreenState extends State<MainScreen> {
                           color: customColor[110],
                           child: ListView(
                             children: [
-                              MyMainAppBar(
-                                onPressendDrawer: () {
-                                  _scaffoldKey.currentState!.openDrawer();
-                                },
-                                notifCount: notifCount,
-                              ),
                               MyUserDetail(
                                   image: userData['Image'],
                                   firstname: userData['Firstname'],
-                                  selectedArea: selectedArea,
                                   onTap: () {
                                     _buildCreateOrderModal(context);
                                   }),
@@ -209,7 +222,6 @@ class _MainScreenState extends State<MainScreen> {
                                 email: userData['Email'],
                                 auth: widget.auth,
                                 onSignOut: widget.onSignOut,
-                                selectedArea: selectedArea,
                               ),
                               Container(
                                 margin: EdgeInsets.only(

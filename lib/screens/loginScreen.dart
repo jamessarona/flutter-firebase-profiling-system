@@ -98,9 +98,12 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Form(
               key: _formKey,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  Container(
+                    height: 40,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -110,6 +113,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             fontSize: screenSize.height / 30),
                       ),
                     ],
+                  ),
+                  Container(
+                    height: 20,
                   ),
                   _buildEmailRow(),
                   _buildPasswordRow(),
@@ -148,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
           onTap: () {},
           child: Icon(
             Icons.email_outlined,
-            color: customColor,
+            color: customColor[130],
           ),
         ),
         labelText: "E-mail",
@@ -181,7 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
           },
           child: Icon(
             isobscureText == true ? Icons.lock_outline : Icons.lock_open,
-            color: customColor,
+            color: customColor[130],
           ),
         ),
         labelText: "Password",
@@ -245,7 +251,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ignoring: _isLoading,
             child: MyRaisedButton(
               elavation: 5.0,
-              color: customColor,
+              color: Color(0xff1c52dd),
               radius: 30.0,
               onPressed: () {
                 validation();
@@ -299,7 +305,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   TextSpan(
                     text: "Sign up",
                     style: TextStyle(
-                      color: customColor,
+                      color: customColor[130],
                       fontSize: screenSize.height / 40,
                       fontWeight: FontWeight.w400,
                     ),
@@ -316,34 +322,36 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     screenSize = MediaQuery.of(context).size;
-    return Scaffold(
-      key: _scaffoldKey,
-      resizeToAvoidBottomInset: false,
-      backgroundColor: Color(0xfff2f3f7),
-      body: Stack(
-        children: [
-          Container(
-            height: screenSize.height * .7,
-            width: screenSize.width,
-            child: Container(
-              decoration: BoxDecoration(
-                color: customColor,
-                borderRadius: BorderRadius.only(
-                  bottomLeft: const Radius.circular(70),
-                  bottomRight: const Radius.circular(70),
+    return SafeArea(
+      child: Scaffold(
+        key: _scaffoldKey,
+        resizeToAvoidBottomInset: false,
+        backgroundColor: Color(0xfff2f3f7),
+        body: Stack(
+          children: [
+            Container(
+              height: screenSize.height * .7,
+              width: screenSize.width,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: customColor[130],
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: const Radius.circular(70),
+                    bottomRight: const Radius.circular(70),
+                  ),
                 ),
               ),
             ),
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildLogo(),
-              _buildContainer(),
-              _buildSignUpButton(),
-            ],
-          )
-        ],
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildLogo(),
+                _buildContainer(),
+                _buildSignUpButton(),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
