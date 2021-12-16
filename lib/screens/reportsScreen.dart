@@ -5,6 +5,7 @@ import 'package:tanod_apprehension/net/authenticationService.dart';
 import 'package:tanod_apprehension/screens/reportScreens/activeScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/myAppbar.dart';
+import 'package:tanod_apprehension/shared/myBottomSheet.dart';
 import 'package:tanod_apprehension/shared/myDrawers.dart';
 import 'package:tanod_apprehension/shared/mySpinKits.dart';
 import 'reportScreens/droppedScreen.dart';
@@ -75,37 +76,65 @@ class _ReportsScreenState extends State<ReportsScreen> {
               appBar: PreferredSize(
                 preferredSize: Size.fromHeight(80),
                 child: AppBar(
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
-                    leading: MyAppBarLeading(
-                      onPressendDrawer: () {
-                        _scaffoldKeyReports.currentState!.openDrawer();
-                      },
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  leading: MyAppBarLeading(
+                    onPressendDrawer: () {
+                      _scaffoldKeyReports.currentState!.openDrawer();
+                    },
+                  ),
+                  centerTitle: true,
+                  title: Text(
+                    'Reports',
+                    style: primaryText.copyWith(fontSize: 18, letterSpacing: 1),
+                  ),
+                  actions: [
+                    MyAppBarAction(
+                      notifCount: notifCount,
+                      color: Colors.black,
+                      onPressed: () {},
+                    )
+                  ],
+                  flexibleSpace: Container(
+                    margin: EdgeInsets.only(
+                      top: 45,
                     ),
-                    centerTitle: true,
-                    title: Text(
-                      'Reports',
-                      style:
-                          primaryText.copyWith(fontSize: 18, letterSpacing: 1),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: screenSize.width / 30),
+                    width: screenSize.width,
+                    height: 80,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          height: 30,
+                          width: screenSize.width * .8,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              backgroundColor: customColor[110],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(50),
+                                ),
+                              ),
+                              builder: (context) => BuildBottomSheet(),
+                            );
+                          },
+                          child: Image.asset(
+                            'assets/images/filter-data.png',
+                            width: 20,
+                            height: 20,
+                            fit: BoxFit.cover,
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                      ],
                     ),
-                    actions: [
-                      MyAppBarAction(
-                        notifCount: notifCount,
-                        color: Colors.black,
-                        onPressed: () {},
-                      )
-                    ],
-                    flexibleSpace: Container(
-                      margin: EdgeInsets.only(
-                        top: 45,
-                      ),
-                      width: screenSize.width,
-                      height: 80,
-                      color: Colors.red,
-                      child: Row(
-                        children: [],
-                      ),
-                    )),
+                  ),
+                ),
               ),
               body: ListView(
                 children: [
@@ -124,23 +153,50 @@ class _ReportsScreenState extends State<ReportsScreen> {
                   });
                 },
                 type: BottomNavigationBarType.shifting,
-                selectedItemColor: customColor,
+                selectedItemColor: customColor[130],
                 selectedLabelStyle: tertiaryText.copyWith(fontSize: 12),
                 unselectedItemColor: Colors.black38,
                 showUnselectedLabels: false,
                 items: [
                   BottomNavigationBarItem(
-                    icon: Icon(FontAwesomeIcons.fire),
-                    label: "Active",
+                    icon: Image.asset(
+                      'assets/images/hot-sale.png',
+                      width: 25,
+                      height: 25,
+                      fit: BoxFit.cover,
+                      color: currentIndext == 0
+                          ? customColor[130]
+                          : Colors.black38,
+                    ),
+                    //Icon(FontAwesomeIcons.fire),
+                    label: "Latest",
                     tooltip: "New Violator",
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(FontAwesomeIcons.archive),
+                    icon: Image.asset(
+                      'assets/images/rejected.png',
+                      width: 30,
+                      height: 30,
+                      fit: BoxFit.cover,
+                      color: currentIndext == 1
+                          ? customColor[130]
+                          : Colors.black38,
+                    ),
+                    //Icon(FontAwesomeIcons.archive),
                     label: "Dropped",
                     tooltip: "Missed Violator",
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(FontAwesomeIcons.userTag),
+                    icon: Image.asset(
+                      'assets/images/mace.png',
+                      width: 28,
+                      height: 28,
+                      fit: BoxFit.cover,
+                      color: currentIndext == 2
+                          ? customColor[130]
+                          : Colors.black38,
+                    ),
+                    //Icon(FontAwesomeIcons.userTag),
                     label: "Tagged",
                     tooltip: "Apprehended Violator",
                   ),

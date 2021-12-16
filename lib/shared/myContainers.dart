@@ -117,8 +117,15 @@ class MyUserDetail extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Icon(
-                        FontAwesomeIcons.streetView,
+                      // Icon(
+                      //   FontAwesomeIcons.streetView,
+                      //   color: customColor[170],
+                      // ),
+                      Image.asset(
+                        'assets/images/map-location.png',
+                        width: 25,
+                        height: 25,
+                        fit: BoxFit.cover,
                         color: customColor[170],
                       ),
                       Container(
@@ -159,6 +166,32 @@ class MyReportStatusIndicator extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         shape: BoxShape.circle,
+      ),
+    );
+  }
+}
+
+class PageResultMessage extends StatelessWidget {
+  final double height;
+  final double width;
+  final String message;
+  const PageResultMessage(
+      {required this.height, required this.width, required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: height,
+      width: width,
+      alignment: Alignment.bottomCenter,
+      child: Text(
+        message,
+        style: secandaryText.copyWith(
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1,
+            color: Colors.grey),
+        textAlign: TextAlign.center,
       ),
     );
   }

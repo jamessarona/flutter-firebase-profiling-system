@@ -113,7 +113,8 @@ String calculateTimeOfOccurence(String date) {
 int countReportsByLocation(List<dynamic> list) {
   int count = 0;
   for (int i = 0; i < list.length; i++) {
-    if (selectedArea == list[i]['Location'] && list[i]['Status'] == "Active") {
+    if (selectedArea == list[i]['Location'] &&
+        list[i]['Category'] == "Latest") {
       count++;
     }
   }
@@ -164,4 +165,23 @@ String convertHour(int hour, int method) {
       return "AM";
     }
   }
+}
+
+List filterReport(String category, List reports) {
+  int len = 0;
+  for (int i = 0; i < reports.length; i++) {
+    if (reports[i]['Category'] == category) {
+      len++;
+      //   reports.remove(reports[i]);
+    }
+  }
+  var filterReport = new List.filled(len, []);
+  int x = 0;
+  for (int i = 0; i < reports.length; i++) {
+    if (reports[i]['Category'] == category) {
+      filterReport[x++].add(reports[i]);
+      //   reports.remove(reports[i]);
+    }
+  }
+  return filterReport;
 }

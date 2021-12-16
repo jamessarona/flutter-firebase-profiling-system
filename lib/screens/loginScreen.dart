@@ -158,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         labelText: "E-mail",
-        hintText: "vince@email.com",
+        hintText: "something@email.com",
       ),
     );
   }

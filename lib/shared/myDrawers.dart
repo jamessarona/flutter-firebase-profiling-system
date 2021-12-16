@@ -63,7 +63,7 @@ class BuildDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     return Container(
-      width: screenSize.width * .65,
+      width: screenSize.width * .55,
       child: Drawer(
         child: Material(
           child: ListView(
@@ -78,53 +78,60 @@ class BuildDrawer extends StatelessWidget {
               BuildDrawerMenuItem(
                 leading: leading,
                 text: "Home",
-                icon: FontAwesomeIcons.houseUser,
+                icon: 'home.png',
                 onTap: () {
                   Navigator.of(context).pop();
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (ctx) =>
-                          MainScreen(auth: auth, onSignOut: onSignOut),
-                    ),
-                  );
+                  if (leading != "Home") {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (ctx) =>
+                            MainScreen(auth: auth, onSignOut: onSignOut),
+                      ),
+                    );
+                  }
                 },
               ),
               BuildDrawerMenuItem(
                 leading: leading,
                 text: "Statistics",
-                icon: FontAwesomeIcons.chartBar,
+                icon: 'bar-chart.png',
                 onTap: () {
                   Navigator.of(context).pop();
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (ctx) => StatisticsScreen(
-                        auth: auth,
-                        onSignOut: onSignOut,
-                        email: email,
-                        name: name,
-                        profileImage: profileImage,
+
+                  if (leading != "Statistics") {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (ctx) => StatisticsScreen(
+                          auth: auth,
+                          onSignOut: onSignOut,
+                          email: email,
+                          name: name,
+                          profileImage: profileImage,
+                        ),
                       ),
-                    ),
-                  );
+                    );
+                  }
                 },
               ),
               BuildDrawerMenuItem(
                 leading: leading,
                 text: "Reports",
-                icon: FontAwesomeIcons.userClock,
+                icon: 'face-id.png',
                 onTap: () {
                   Navigator.of(context).pop();
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (ctx) => ReportsScreen(
-                        auth: auth,
-                        onSignOut: onSignOut,
-                        email: email,
-                        name: name,
-                        profileImage: profileImage,
+                  if (leading != "Reports") {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (ctx) => ReportsScreen(
+                          auth: auth,
+                          onSignOut: onSignOut,
+                          email: email,
+                          name: name,
+                          profileImage: profileImage,
+                        ),
                       ),
-                    ),
-                  );
+                    );
+                  }
                 },
               ),
               Divider(
@@ -135,7 +142,7 @@ class BuildDrawer extends StatelessWidget {
               BuildDrawerMenuItem(
                 leading: leading,
                 text: "Logout",
-                icon: FontAwesomeIcons.shareSquare,
+                icon: 'logout.png',
                 onTap: () {
                   showAlertDialog(context);
                 },
@@ -191,7 +198,7 @@ class BuildDrawerMenuHeader extends StatelessWidget {
 class BuildDrawerMenuItem extends StatelessWidget {
   final String leading;
   final String text;
-  final IconData icon;
+  final String icon;
   final VoidCallback onTap;
   const BuildDrawerMenuItem({
     required this.leading,
@@ -205,10 +212,17 @@ class BuildDrawerMenuItem extends StatelessWidget {
     final color = Colors.black54;
     final hoverColor = Colors.white70;
     return ListTile(
-      leading: Icon(
-        icon,
+      leading: Image.asset(
+        'assets/images/$icon',
+        width: 25,
+        height: 25,
+        fit: BoxFit.cover,
         color: leading == text ? customColor[130] : color,
       ),
+      //  Icon(
+      //   icon,
+      //   color: leading == text ? customColor[130] : color,
+      // ),
       title: Text(
         text,
         style: TextStyle(color: leading == text ? customColor[130] : color),

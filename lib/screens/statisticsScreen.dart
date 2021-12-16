@@ -37,7 +37,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   var reports;
   int notifCount = 0;
   final dbRef = FirebaseDatabase.instance.reference();
-  String selectedStreet = "Filter Result";
+  String selectedFilter = "Filter Result";
   String selectedLabel = 'Month';
   List<Color> gradientColor = [
     Color(0xffadb1ea),
@@ -159,7 +159,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                               ),
                             ),
                             child: Text(
-                              selectedStreet,
+                              selectedFilter,
                               style: tertiaryText.copyWith(
                                   fontSize: 15, color: Colors.grey[800]),
                               overflow: TextOverflow.ellipsis,

@@ -11,13 +11,16 @@ class MyReportCard extends StatelessWidget {
   final String image;
   final String location;
   final String date;
-  final String status;
-  const MyReportCard(
-      {required this.id,
-      required this.image,
-      required this.location,
-      required this.date,
-      required this.status});
+  final String category;
+  final Color color;
+  const MyReportCard({
+    required this.id,
+    required this.image,
+    required this.location,
+    required this.date,
+    required this.category,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -65,11 +68,10 @@ class MyReportCard extends StatelessWidget {
                         Container(
                           width: 10,
                         ),
-                        MyReportStatusIndicator(
-                          height: 10,
-                          width: 10,
-                          color: Colors.green,
-                        ),
+                        category != 'Tagged'
+                            ? MyReportStatusIndicator(
+                                height: 10, width: 10, color: color)
+                            : Container(),
                       ],
                     ),
                   ),
@@ -86,32 +88,6 @@ class MyReportCard extends StatelessWidget {
                 ],
               ),
             ),
-            Container(
-              width: 170,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Container(
-                    width: 85,
-                    // child: MyButton(
-                    //   name: 'Buy Now',
-                    //   color: Colors.green,
-                    //   onPressed: onPressedBuy,
-                    // ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(left: screenSize.width * .01),
-                    width: 70,
-                    // child: MyButton(
-                    //   name: 'Cart',
-                    //   color: customColors[30],
-                    //   onPressed: onPressedCart,
-                    // ),
-                  ),
-                ],
-              ),
-            )
           ],
         ),
       ),
@@ -191,7 +167,7 @@ class MySummaryCard extends StatelessWidget {
 }
 
 class MyInformationCard extends StatelessWidget {
-  final Icon icon;
+  final String icon;
   final String text;
   final VoidCallback onTap;
   const MyInformationCard(
@@ -206,7 +182,14 @@ class MyInformationCard extends StatelessWidget {
         ),
         elevation: 4,
         child: ListTile(
-          leading: icon,
+          leading: Image.asset(
+            'assets/images/$icon',
+            width: 25,
+            height: 25,
+            fit: BoxFit.cover,
+            color: customColor[130],
+          ),
+          // icon,
           title: Text(
             text,
             style: tertiaryText.copyWith(fontSize: 16),
@@ -326,16 +309,30 @@ class MyStatusCard extends StatelessWidget {
                       size: 50,
                       strokeWidth: 1,
                     )
-                  : Icon(
-                      FontAwesomeIcons.crosshairs,
-                      size: 30,
-                      color: customColor[80],
+                  : Image.asset(
+                      'assets/images/target.png',
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                      color: customColor[170],
                     ),
+              // : Icon(
+              //     FontAwesomeIcons.crosshairs,
+              //     size: 30,
+              //     color: customColor[80],
+              //   ),
               GestureDetector(
-                child: Icon(
-                  FontAwesomeIcons.angleDoubleRight,
-                  size: 25,
-                  color: Colors.white70,
+                // child: Icon(
+                //   FontAwesomeIcons.angleDoubleRight,
+                //   size: 25,
+                //   color: Colors.white70,
+                // ),
+                child: Image.asset(
+                  'assets/images/two-arrows.png',
+                  width: 25,
+                  height: 25,
+                  fit: BoxFit.cover,
+                  color: Colors.white,
                 ),
                 onTap: () {
                   if (status != "Standby") {

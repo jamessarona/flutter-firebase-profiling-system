@@ -44,7 +44,7 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  _buildCreateOrderModal(BuildContext context) {
+  _buildCreateChooseModal(BuildContext context) {
     String tempSelectedArea = selectedArea;
     return showDialog(
         context: context,
@@ -212,7 +212,7 @@ class _MainScreenState extends State<MainScreen> {
                                   image: userData['Image'],
                                   firstname: userData['Firstname'],
                                   onTap: () {
-                                    _buildCreateOrderModal(context);
+                                    _buildCreateChooseModal(context);
                                   }),
                               MyStatusCard(
                                 name:
@@ -245,26 +245,29 @@ class _MainScreenState extends State<MainScreen> {
                                       ),
                                     ),
                                     MyInformationCard(
-                                      icon: Icon(
-                                        FontAwesomeIcons.folderOpen,
-                                        color: customColor[130],
-                                      ),
+                                      icon: 'folder.png',
+                                      //  Icon(
+                                      //   FontAwesomeIcons.folderOpen,
+                                      //   color: customColor[130],
+                                      // ),
                                       text: "Assignment History",
                                       onTap: () {},
                                     ),
                                     MyInformationCard(
-                                      icon: Icon(
-                                        FontAwesomeIcons.addressBook,
-                                        color: customColor[130],
-                                      ),
+                                      icon: 'suspect.png',
+                                      //  Icon(
+                                      //   FontAwesomeIcons.addressBook,
+                                      //   color: customColor[130],
+                                      // ),
                                       text: "Violators",
                                       onTap: () {},
                                     ),
                                     MyInformationCard(
-                                      icon: Icon(
-                                        FontAwesomeIcons.user,
-                                        color: customColor[130],
-                                      ),
+                                      icon: 'user.png',
+                                      //  Icon(
+                                      //   FontAwesomeIcons.user,
+                                      //   color: customColor[130],
+                                      // ),
                                       text: "My Account",
                                       onTap: () {},
                                     ),

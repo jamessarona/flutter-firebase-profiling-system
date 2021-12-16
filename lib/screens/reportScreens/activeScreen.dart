@@ -2,7 +2,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:tanod_apprehension/screens/detailReportScreen.dart';
+import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/myCards.dart';
+import 'package:tanod_apprehension/shared/myContainers.dart';
 import 'package:tanod_apprehension/shared/mySpinKits.dart';
 
 class ActiveScreen extends StatefulWidget {
@@ -16,6 +18,7 @@ class _ActiveScreenState extends State<ActiveScreen> {
   late Size screenSize;
   final dbRef = FirebaseDatabase.instance.reference();
   var reports;
+
   @override
   Widget build(BuildContext context) {
     screenSize = MediaQuery.of(context).size;
@@ -30,40 +33,50 @@ class _ActiveScreenState extends State<ActiveScreen> {
           } else {
             return MySpinKitLoadingScreen();
           }
-          return ListView(
-              shrinkWrap: true,
-              dragStartBehavior: DragStartBehavior.start,
-              children: [
-                Wrap(
-                  direction: Axis.horizontal,
-                  alignment: WrapAlignment.spaceEvenly,
+          var filteredReports = filterReport("Latest", reports);
+          return filteredReports.isNotEmpty
+              ? ListView(
+                  shrinkWrap: true,
+                  dragStartBehavior: DragStartBehavior.start,
                   children: [
-                    for (var item in reports)
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (ctx) => DetailReportScreen(
+                      Wrap(
+                        direction: Axis.horizontal,
+                        alignment: filteredReports[0].length > 1
+                            ? WrapAlignment.spaceEvenly
+                            : WrapAlignment.start,
+                        children: [
+                          for (var item in filteredReports[0])
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (ctx) => DetailReportScreen(
+                                      id: item['Id'].toString(),
+                                      image: item['Image'],
+                                      location: item['Location'],
+                                      category: item['Category'],
+                                      date: item['Date'],
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: MyReportCard(
                                 id: item['Id'].toString(),
                                 image: item['Image'],
                                 location: item['Location'],
-                                status: item['Status'],
+                                category: item['Category'],
                                 date: item['Date'],
+                                color: Colors.green,
                               ),
                             ),
-                          );
-                        },
-                        child: MyReportCard(
-                          id: item['Id'].toString(),
-                          image: item['Image'],
-                          location: item['Location'],
-                          status: item['Status'],
-                          date: item['Date'],
-                        ),
-                      ),
-                  ],
-                )
-              ]);
+                        ],
+                      )
+                    ])
+              : PageResultMessage(
+                  height: 100,
+                  width: screenSize.width,
+                  message: 'No reports',
+                );
         });
   }
 }

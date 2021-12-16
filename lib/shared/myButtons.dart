@@ -107,3 +107,28 @@ class MyCategoryButton extends StatelessWidget {
     );
   }
 }
+
+class MyFloatingButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  final Text title;
+  final double radius;
+  const MyFloatingButton({
+    required this.onPressed,
+    required this.title,
+    required this.radius,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      backgroundColor: customColor[130],
+      onPressed: onPressed,
+      child: title,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(radius),
+        ),
+      ),
+    );
+  }
+}
