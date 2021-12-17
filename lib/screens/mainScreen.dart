@@ -225,7 +225,7 @@ class _MainScreenState extends State<MainScreen> {
                               ),
                               Container(
                                 margin: EdgeInsets.only(
-                                  top: 25,
+                                  top: 30,
                                   left: 20,
                                   right: 20,
                                 ),
@@ -236,7 +236,7 @@ class _MainScreenState extends State<MainScreen> {
                                     Container(
                                       margin: EdgeInsets.only(
                                         left: 4,
-                                        bottom: 10,
+                                        bottom: 15,
                                       ),
                                       child: Text(
                                         "Information",

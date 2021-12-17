@@ -223,7 +223,7 @@ class MyStatusCard extends StatelessWidget {
     Size screenSize = MediaQuery.of(context).size;
     return Container(
       margin: EdgeInsets.only(
-        top: 18,
+        top: 23,
         left: 20,
         right: 20,
       ),

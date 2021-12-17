@@ -66,7 +66,7 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
               ),
               actions: [
                 Container(
-                  width: 90,
+                  width: 100,
                   child: MyOutlineButton(
                     color: Color(0xff1640ac),
                     elavation: 5,
@@ -83,7 +83,7 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
                   ),
                 ),
                 Container(
-                  width: 90,
+                  width: 100,
                   child: MyRaisedButton(
                     color: Color(0xff1640ac),
                     elavation: 5,
@@ -154,12 +154,12 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
                   ),
                 ),
                 Positioned(
-                  bottom: -10,
-                  right: -5,
+                  bottom: -5,
+                  right: -3,
                   child: IconButton(
                     icon: Icon(FontAwesomeIcons.expand),
                     color: Colors.white,
-                    iconSize: 20,
+                    iconSize: 18,
                     onPressed: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
@@ -201,7 +201,7 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
                   Text(
                     'Details',
                     style: secandaryText.copyWith(
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 0.5,
                     ),
@@ -230,7 +230,7 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
               label: Text(
                 'Area: ${widget.location}',
                 style: tertiaryText.copyWith(
-                  fontSize: 19,
+                  fontSize: 15,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -242,7 +242,7 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
               label: Text(
                 'Date: ${convertMonth(dateTime.month)} ${dateTime.day}, ${dateTime.year}',
                 style: tertiaryText.copyWith(
-                  fontSize: 19,
+                  fontSize: 15,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -254,12 +254,131 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
               label: Text(
                 'Time: ${convertHour(dateTime.hour, 0)}:${dateTime.minute}:${dateTime.second} ${convertHour(dateTime.hour, 1)}',
                 style: tertiaryText.copyWith(
-                  fontSize: 19,
+                  fontSize: 15,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
+            Container(
+              margin: EdgeInsets.only(
+                top: 5,
+              ),
+              child: Divider(
+                thickness: 5,
+                color: Colors.grey[200],
+              ),
+            ),
+            isAssigned
+                ? Container(
+                    margin: EdgeInsets.symmetric(
+                      horizontal: 15,
+                    ),
+                    width: screenSize.width,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Apprehension Summary',
+                          style: tertiaryText.copyWith(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                        MyReportDetails(
+                          margin: EdgeInsets.only(
+                            left: 10,
+                            right: 10,
+                            top: 5,
+                          ),
+                          width: screenSize.width,
+                          label: Text(
+                            'Tanod: James Angelo Sarona',
+                            style: tertiaryText.copyWith(
+                              fontSize: 14,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        MyReportDetails(
+                          margin: EdgeInsets.only(
+                            left: 10,
+                            right: 10,
+                            top: 5,
+                          ),
+                          width: screenSize.width,
+                          label: Text(
+                            'Date: Dec 6, 2021',
+                            style: tertiaryText.copyWith(
+                              fontSize: 14,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        MyReportDetails(
+                          margin: EdgeInsets.only(
+                            left: 10,
+                            right: 10,
+                            top: 5,
+                          ),
+                          width: screenSize.width,
+                          label: Text(
+                            'Time: 12:26:35 PM',
+                            style: tertiaryText.copyWith(
+                              fontSize: 14,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        MyReportDetails(
+                          margin: EdgeInsets.only(
+                            left: 10,
+                            right: 10,
+                            top: 5,
+                          ),
+                          width: screenSize.width,
+                          label: Text(
+                            'Number of Violator: 1',
+                            style: tertiaryText.copyWith(
+                              fontSize: 14,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        MyReportDetails(
+                          margin: EdgeInsets.only(
+                            left: 10,
+                            right: 10,
+                            top: 5,
+                          ),
+                          width: screenSize.width,
+                          label: Text(
+                            'Status: Responding',
+                            style: tertiaryText.copyWith(
+                              fontSize: 14,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : Container(
+                    height: 250,
+                    alignment: Alignment.center,
+                    width: screenSize.width,
+                    child: Text(
+                      'No Apprehension Yet',
+                      style: tertiaryText.copyWith(
+                        fontSize: 20,
+                        color: Colors.grey,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  )
           ],
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -321,14 +440,14 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
                   children: [
                     Container(
                       margin: EdgeInsets.only(
-                        left: screenSize.width / 7.5,
+                        left: screenSize.width / 8.5,
                         bottom: 5,
                       ),
                       child: Text(
                         'Immediately respond to the screne',
                         style: tertiaryText.copyWith(
                           color: Colors.grey[700],
-                          fontSize: 11,
+                          fontSize: 10,
                         ),
                       ),
                       alignment: Alignment.centerLeft,

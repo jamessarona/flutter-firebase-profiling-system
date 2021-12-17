@@ -107,9 +107,10 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 children: [
                   Container(
                     margin: EdgeInsets.only(
-                        top: 10,
-                        left: screenSize.width * .13,
-                        right: screenSize.width * .13),
+                      top: 15,
+                      left: screenSize.width * .13,
+                      right: screenSize.width * .13,
+                    ),
                     height: 50,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -174,7 +175,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 20),
+                    margin: EdgeInsets.only(top: 25),
                     height: 60,
                     width: screenSize.width,
                     child: Column(
@@ -195,7 +196,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   ),
                   Container(
                     margin: EdgeInsets.only(
-                      top: 10,
+                      top: 15,
                       left: screenSize.width * .1,
                       right: screenSize.width * .1,
                     ),
@@ -344,7 +345,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   ),
                   Container(
                     margin: EdgeInsets.only(
-                      top: 20,
+                      top: 30,
                       left: screenSize.width * 0.05,
                       right: screenSize.width * 0.05,
                     ),
@@ -358,10 +359,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   ),
                   Container(
                     margin: EdgeInsets.only(
-                        top: 15,
-                        left: screenSize.width * 0.05,
-                        right: screenSize.width * 0.05,
-                        bottom: 50),
+                      top: 20,
+                      left: screenSize.width * 0.05,
+                      right: screenSize.width * 0.05,
+                      bottom: 50,
+                    ),
                     padding: EdgeInsets.symmetric(
                       horizontal: screenSize.width * .05,
                       vertical: 10,

@@ -30,7 +30,10 @@ class _TaggedScreenState extends State<TaggedScreen> {
               (reportsSnapshot.data! as Event).snapshot.value != null) {
             reports = (reportsSnapshot.data! as Event).snapshot.value;
           } else {
-            return MySpinKitLoadingScreen();
+            return Container(
+                height: 200,
+                width: screenSize.width,
+                child: MySpinKitLoadingScreen());
           }
           var filteredReports = filterReport("Tagged", reports);
           return filteredReports.isNotEmpty

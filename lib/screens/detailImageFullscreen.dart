@@ -50,8 +50,8 @@ class _ImageFullScreenState extends State<ImageFullScreen> {
           ),
         ),
         Positioned(
-          right: 9,
-          bottom: 25,
+          right: 15,
+          bottom: 30,
           child: GestureDetector(
             onTap: () {
               Navigator.pop(context);

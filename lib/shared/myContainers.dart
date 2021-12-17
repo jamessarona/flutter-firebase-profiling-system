@@ -20,6 +20,7 @@ class MyUserDetail extends StatelessWidget {
     return Column(
       children: [
         Container(
+          margin: EdgeInsets.only(top: 10),
           height: 100,
           width: screenSize.width,
           child: Stack(
@@ -53,7 +54,7 @@ class MyUserDetail extends StatelessWidget {
         ),
         Container(
           margin: EdgeInsets.only(
-            top: 9,
+            top: 14,
             left: 20,
             right: 30,
           ),
