@@ -6,6 +6,7 @@ import 'package:tanod_apprehension/screens/mainScreen.dart';
 import 'package:tanod_apprehension/screens/reportsScreen.dart';
 import 'package:tanod_apprehension/screens/statisticsScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
+import 'package:tanod_apprehension/shared/myBottomSheet.dart';
 
 class BuildDrawer extends StatelessWidget {
   final String leading;
@@ -82,6 +83,7 @@ class BuildDrawer extends StatelessWidget {
                 onTap: () {
                   Navigator.of(context).pop();
                   if (leading != "Home") {
+                    Reset.filter();
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
                         builder: (ctx) =>
@@ -97,8 +99,8 @@ class BuildDrawer extends StatelessWidget {
                 icon: 'bar-chart.png',
                 onTap: () {
                   Navigator.of(context).pop();
-
                   if (leading != "Statistics") {
+                    Reset.filter();
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
                         builder: (ctx) => StatisticsScreen(
@@ -120,6 +122,7 @@ class BuildDrawer extends StatelessWidget {
                 onTap: () {
                   Navigator.of(context).pop();
                   if (leading != "Reports") {
+                    Reset.filter();
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
                         builder: (ctx) => ReportsScreen(

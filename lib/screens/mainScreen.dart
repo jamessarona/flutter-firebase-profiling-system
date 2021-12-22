@@ -3,8 +3,10 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tanod_apprehension/net/authenticationService.dart';
+import 'package:tanod_apprehension/screens/notificationScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/myAppbar.dart';
+import 'package:tanod_apprehension/shared/myBottomSheet.dart';
 import 'package:tanod_apprehension/shared/myButtons.dart';
 import 'package:tanod_apprehension/shared/myCards.dart';
 import 'package:tanod_apprehension/shared/myContainers.dart';
@@ -58,11 +60,11 @@ class _MainScreenState extends State<MainScreen> {
                 style: tertiaryText.copyWith(fontSize: 18),
               ),
               content: DropdownButton<String>(
-                value: selectedArea,
+                value: tempSelectedArea,
                 items: <String>[
-                  'Maharlika NHA Maa',
-                  'Silver St. San Rafael',
-                  'Juario Compound'
+                  "Tarape\'s Store",
+                  "ShopStrutt.ph",
+                  "Melchor\'s Store",
                 ].map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -198,7 +200,14 @@ class _MainScreenState extends State<MainScreen> {
                             MyAppBarAction(
                               notifCount: notifCount,
                               color: Colors.black,
-                              onPressed: () {},
+                              onPressed: () {
+                                Reset.filter();
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (ctx) => NotificationScreen(),
+                                  ),
+                                );
+                              },
                             )
                           ],
                         ),

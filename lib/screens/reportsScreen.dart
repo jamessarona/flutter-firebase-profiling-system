@@ -2,8 +2,10 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tanod_apprehension/net/authenticationService.dart';
+import 'package:tanod_apprehension/screens/notificationScreen.dart';
 import 'package:tanod_apprehension/screens/reportScreens/activeScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
+import 'package:tanod_apprehension/shared/globals.dart';
 import 'package:tanod_apprehension/shared/myAppbar.dart';
 import 'package:tanod_apprehension/shared/myBottomSheet.dart';
 import 'package:tanod_apprehension/shared/myDrawers.dart';
@@ -92,7 +94,14 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     MyAppBarAction(
                       notifCount: notifCount,
                       color: Colors.black,
-                      onPressed: () {},
+                      onPressed: () {
+                        Reset.filter();
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (ctx) => NotificationScreen(),
+                          ),
+                        );
+                      },
                     )
                   ],
                   flexibleSpace: Container(
@@ -100,7 +109,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                       top: 45,
                     ),
                     padding:
-                        EdgeInsets.symmetric(horizontal: screenSize.width / 30),
+                        EdgeInsets.symmetric(horizontal: screenSize.width / 25),
                     width: screenSize.width,
                     height: 80,
                     child: Row(
@@ -120,15 +129,23 @@ class _ReportsScreenState extends State<ReportsScreen> {
                                   top: Radius.circular(50),
                                 ),
                               ),
-                              builder: (context) => BuildBottomSheet(),
-                            );
+                              builder: (context) => BuildBottomSheet(
+                                page: 'Reports',
+                              ),
+                            ).then((value) {});
                           },
                           child: Image.asset(
                             'assets/images/filter-data.png',
-                            width: 20,
-                            height: 20,
+                            width: 17,
+                            height: 17,
                             fit: BoxFit.cover,
-                            color: Colors.grey[700],
+                            color: filters['Date']['Start'] ||
+                                    filters['Date']['End'] ||
+                                    filters['Area']['Tarape\'s Store'] ||
+                                    filters['Area']['ShopStrutt.ph'] ||
+                                    filters['Area']['Melchor\'s Store']
+                                ? customColor[170]
+                                : Colors.grey[700],
                           ),
                         ),
                       ],

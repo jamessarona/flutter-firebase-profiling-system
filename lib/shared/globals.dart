@@ -2,7 +2,7 @@ library tanod_apprehenssion.globals;
 
 Map filters = {
   'Category': {
-    'Recent': false,
+    'Latest': false,
     'Dropped': false,
     'Tagged': false,
   },
@@ -11,10 +11,11 @@ Map filters = {
     'End': false,
   },
   'Area': {
-    'Silver St. San Rafael': false,
-    'Juario Compound': false,
-    'Maharlika NHA Maa': false,
+    'Tarape\'s Store': false,
+    'ShopStrutt.ph': false,
+    'Melchor\'s Store': false,
   }
 };
-
-String selectedArea = "Maharlika NHA Maa";
+DateTime? start;
+DateTime? end;
+String selectedArea = "Tarape\'s Store";

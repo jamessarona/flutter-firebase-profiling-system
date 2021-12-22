@@ -28,7 +28,7 @@ class MyReportCard extends StatelessWidget {
     return Card(
       child: Container(
         padding: EdgeInsets.all(7),
-        width: screenSize.width < 450 ? screenSize.width * .47 : 180,
+        width: 180,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [

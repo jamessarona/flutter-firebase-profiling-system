@@ -168,20 +168,92 @@ String convertHour(int hour, int method) {
 }
 
 List filterReport(String category, List reports) {
-  int len = 0;
+  bool isFiltered = false;
+
   for (int i = 0; i < reports.length; i++) {
     if (reports[i]['Category'] == category) {
-      len++;
-      //   reports.remove(reports[i]);
+      if (filters['Date']['Start'] ||
+          filters['Date']['End'] ||
+          filters['Area']['Tarape\'s Store'] ||
+          filters['Area']['ShopStrutt.ph'] ||
+          filters['Area']['Melchor\'s Store']) isFiltered = true;
     }
   }
+
+  int len = 0;
+
+  for (int i = 0; i < reports.length; i++) {
+    if (reports[i]['Category'] == category) {
+      if (isFiltered) {
+        if (filters['Date']['Start'] &&
+            filters['Date']['End'] &&
+            start != null &&
+            end != null &&
+            DateTime.parse(reports[i]['Date']).compareTo(start!) >= 0 &&
+            DateTime.parse(reports[i]['Date']).compareTo(end!) <= 0) {
+          len++;
+        } else if (filters['Date']['Start'] &&
+            end == null &&
+            DateTime.parse(reports[i]['Date']).compareTo(start!) >= 0) {
+          len++;
+        } else if (filters['Date']['End'] &&
+            start == null &&
+            DateTime.parse(reports[i]['Date']).compareTo(end!) <= 0) {
+          len++;
+        } else if (filters['Area']['Tarape\'s Store'] &&
+            reports[i]['Location'] == 'Tarape\'s Store') {
+          len++;
+        } else if (filters['Area']['ShopStrutt.ph'] &&
+            reports[i]['Location'] == 'ShopStrutt.ph') {
+          len++;
+        } else if (filters['Area']['Melchor\'s Store'] &&
+            reports[i]['Location'] == 'Melchor\'s Store') {
+          len++;
+        }
+      } else {
+        len++;
+      }
+    }
+  }
+
   var filterReport = new List.filled(len, []);
   int x = 0;
+
   for (int i = 0; i < reports.length; i++) {
     if (reports[i]['Category'] == category) {
-      filterReport[x++].add(reports[i]);
+      if (isFiltered) {
+        if (filters['Date']['Start'] &&
+            filters['Date']['End'] &&
+            start != null &&
+            end != null &&
+            DateTime.parse(reports[i]['Date']).compareTo(start!) >= 0 &&
+            DateTime.parse(reports[i]['Date']).compareTo(end!) <= 0) {
+          filterReport[x++].add(reports[i]);
+        } else if (filters['Date']['Start'] &&
+            end == null &&
+            DateTime.parse(reports[i]['Date']).compareTo(start!) >= 0) {
+          filterReport[x++].add(reports[i]);
+        } else if (filters['Date']['End'] &&
+            start == null &&
+            DateTime.parse(reports[i]['Date']).compareTo(end!) <= 0) {
+          filterReport[x++].add(reports[i]);
+        } else if (filters['Area']['Tarape\'s Store'] &&
+            reports[i]['Location'] == 'Tarape\'s Store') {
+          filterReport[x++].add(reports[i]);
+        } else if (filters['Area']['ShopStrutt.ph'] &&
+            reports[i]['Location'] == 'ShopStrutt.ph') {
+          filterReport[x++].add(reports[i]);
+        } else if (filters['Area']['Melchor\'s Store'] &&
+            reports[i]['Location'] == 'Melchor\'s Store') {
+          filterReport[x++].add(reports[i]);
+        }
+      } else {
+        filterReport[x++].add(reports[i]);
+      }
+
       //   reports.remove(reports[i]);
     }
   }
+
   return filterReport;
 }

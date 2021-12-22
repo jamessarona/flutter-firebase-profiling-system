@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:tanod_apprehension/net/authenticationService.dart';
+import 'package:tanod_apprehension/screens/notificationScreen.dart';
+import 'package:tanod_apprehension/screens/reportsScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/myAppbar.dart';
 import 'package:tanod_apprehension/shared/myBottomSheet.dart';
@@ -80,6 +82,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               color: Colors.black,
               onPressed: () {
                 Reset.filter();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (ctx) => NotificationScreen(),
+                  ),
+                );
               },
             ),
           ],
@@ -134,7 +141,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                               top: Radius.circular(50),
                             ),
                           ),
-                          builder: (context) => BuildBottomSheet(),
+                          builder: (context) => BuildBottomSheet(
+                            page: 'Statistics',
+                          ),
                         );
                       },
                       child: Row(
@@ -434,6 +443,17 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                               GestureDetector(
                                 onTap: () {
                                   print("Load Reports");
+                                  Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                      builder: (ctx) => ReportsScreen(
+                                        auth: widget.auth,
+                                        onSignOut: widget.onSignOut,
+                                        email: widget.email,
+                                        name: widget.name,
+                                        profileImage: widget.profileImage,
+                                      ),
+                                    ),
+                                  );
                                   Reset.filter();
                                 },
                                 child: Container(

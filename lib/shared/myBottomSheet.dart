@@ -5,11 +5,9 @@ import 'package:tanod_apprehension/shared/myButtons.dart';
 import 'globals.dart' as globals;
 import 'package:intl/intl.dart';
 
-DateTime? start;
-DateTime? end;
-
 class BuildBottomSheet extends StatelessWidget {
-  const BuildBottomSheet({Key? key}) : super(key: key);
+  final String page;
+  const BuildBottomSheet({required this.page});
 
   @override
   Widget build(BuildContext context) {
@@ -34,75 +32,79 @@ class BuildBottomSheet extends StatelessWidget {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                Container(
-                  margin: EdgeInsets.only(bottom: 5),
-                  padding: EdgeInsets.only(top: 15),
-                  height: 40,
-                  width: screenSize.width,
-                  child: Text(
-                    'Category',
-                    style: tertiaryText.copyWith(fontSize: 15),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(left: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      MyCategoryButton(
-                        text: 'Recent',
-                        color: globals.filters['Category']['Recent']
-                            ? Color(0xffdd901c)
-                            : Color(0xff7d7d7d),
-                        onTap: () {
-                          setState(() {
-                            globals.filters['Category']['Recent'] =
-                                !globals.filters['Category']['Recent'];
-                          });
-                        },
-                        padding: 3,
-                        height: 28,
-                        width: screenSize.width * .26,
-                      ),
-                      Container(
-                        width: 8,
-                      ),
-                      MyCategoryButton(
-                        text: 'Dropped',
-                        color: globals.filters['Category']['Dropped']
-                            ? Color(0xffdd901c)
-                            : Color(0xff7d7d7d),
-                        onTap: () {
-                          setState(() {
-                            globals.filters['Category']['Dropped'] =
-                                !globals.filters['Category']['Dropped'];
-                          });
-                        },
-                        padding: 3,
-                        height: 28,
-                        width: screenSize.width * .26,
-                      ),
-                      Container(
-                        width: 8,
-                      ),
-                      MyCategoryButton(
-                        text: 'Tagged',
-                        color: globals.filters['Category']['Tagged']
-                            ? Color(0xffdd901c)
-                            : Color(0xff7d7d7d),
-                        onTap: () {
-                          setState(() {
-                            globals.filters['Category']['Tagged'] =
-                                !globals.filters['Category']['Tagged'];
-                          });
-                        },
-                        padding: 3,
-                        height: 28,
-                        width: screenSize.width * .26,
-                      ),
-                    ],
-                  ),
-                ),
+                page != "Reports"
+                    ? Container(
+                        margin: EdgeInsets.only(bottom: 5),
+                        padding: EdgeInsets.only(top: 15),
+                        height: 40,
+                        width: screenSize.width,
+                        child: Text(
+                          'Category',
+                          style: tertiaryText.copyWith(fontSize: 15),
+                        ),
+                      )
+                    : Container(),
+                page != "Reports"
+                    ? Container(
+                        margin: EdgeInsets.only(left: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            MyCategoryButton(
+                              text: 'Recent',
+                              color: globals.filters['Category']['Latest']
+                                  ? Color(0xffdd901c)
+                                  : Color(0xff7d7d7d),
+                              onTap: () {
+                                setState(() {
+                                  globals.filters['Category']['Latest'] =
+                                      !globals.filters['Category']['Latest'];
+                                });
+                              },
+                              padding: 3,
+                              height: 28,
+                              width: screenSize.width * .26,
+                            ),
+                            Container(
+                              width: 8,
+                            ),
+                            MyCategoryButton(
+                              text: 'Dropped',
+                              color: globals.filters['Category']['Dropped']
+                                  ? Color(0xffdd901c)
+                                  : Color(0xff7d7d7d),
+                              onTap: () {
+                                setState(() {
+                                  globals.filters['Category']['Dropped'] =
+                                      !globals.filters['Category']['Dropped'];
+                                });
+                              },
+                              padding: 3,
+                              height: 28,
+                              width: screenSize.width * .26,
+                            ),
+                            Container(
+                              width: 8,
+                            ),
+                            MyCategoryButton(
+                              text: 'Tagged',
+                              color: globals.filters['Category']['Tagged']
+                                  ? Color(0xffdd901c)
+                                  : Color(0xff7d7d7d),
+                              onTap: () {
+                                setState(() {
+                                  globals.filters['Category']['Tagged'] =
+                                      !globals.filters['Category']['Tagged'];
+                                });
+                              },
+                              padding: 3,
+                              height: 28,
+                              width: screenSize.width * .26,
+                            ),
+                          ],
+                        ),
+                      )
+                    : Container(),
                 Container(
                   margin: EdgeInsets.only(bottom: 5),
                   padding: EdgeInsets.only(top: 15),
@@ -119,9 +121,9 @@ class BuildBottomSheet extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       MyCategoryButton(
-                        text: start == null
+                        text: globals.start == null
                             ? 'Start'
-                            : DateFormat('MM/dd/yyyy').format(start!),
+                            : DateFormat('MM/dd/yyyy').format(globals.start!),
                         color: globals.filters['Date']['Start']
                             ? Color(0xffdd901c)
                             : Color(0xff7d7d7d),
@@ -130,21 +132,23 @@ class BuildBottomSheet extends StatelessWidget {
                             globals.filters['Date']['Start'] = true;
                             showDatePicker(
                               context: context,
-                              initialDate: DateTime.now(),
+                              initialDate: globals.start == null
+                                  ? DateTime.now()
+                                  : globals.start!,
                               firstDate: DateTime(2021, 1, 1, 1, 0, 0),
-                              lastDate: end != null
+                              lastDate: globals.end != null
                                   ? DateTime.fromMicrosecondsSinceEpoch(
-                                      end!.microsecondsSinceEpoch,
+                                      globals.end!.microsecondsSinceEpoch,
                                     )
                                   : DateTime.now(),
                             ).then((dateStart) {
                               setState(() {
                                 if (dateStart != null) {
-                                  start = dateStart;
-                                  print(start);
+                                  globals.start = dateStart;
+                                  print(globals.start);
                                 } else {
                                   globals.filters['Date']['Start'] = false;
-                                  start = null;
+                                  globals.start = null;
                                 }
                               });
                             });
@@ -165,21 +169,23 @@ class BuildBottomSheet extends StatelessWidget {
                         ),
                       ),
                       MyCategoryButton(
-                        text: end == null
+                        text: globals.end == null
                             ? 'End'
-                            : DateFormat('MM/dd/yyyy').format(end!),
+                            : DateFormat('MM/dd/yyyy').format(globals.end!),
                         color: globals.filters['Date']['End']
                             ? Color(0xffdd901c)
                             : Color(0xff7d7d7d),
                         onTap: () {
-                          if (start != null) {
+                          if (globals.start != null) {
                             setState(() {
                               showDatePicker(
                                 context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: start != null
+                                initialDate: globals.end == null
+                                    ? DateTime.now()
+                                    : globals.end!,
+                                firstDate: globals.start != null
                                     ? DateTime.fromMicrosecondsSinceEpoch(
-                                        start!.microsecondsSinceEpoch,
+                                        globals.start!.microsecondsSinceEpoch,
                                       )
                                     : DateTime(2001),
                                 lastDate: DateTime.now(),
@@ -187,11 +193,11 @@ class BuildBottomSheet extends StatelessWidget {
                                 setState(() {
                                   if (dateStart != null) {
                                     globals.filters['Date']['End'] = true;
-                                    end = dateStart;
-                                    print(end);
+                                    globals.end = dateStart;
+                                    print(globals.end);
                                   } else {
                                     globals.filters['Date']['End'] = false;
-                                    end = null;
+                                    globals.end = null;
                                   }
                                 });
                               });
@@ -223,17 +229,14 @@ class BuildBottomSheet extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           MyCategoryButton(
-                            text: 'Silver St. San Rafael',
-                            color: globals.filters['Area']
-                                    ['Silver St. San Rafael']
+                            text: 'Tarape\'s Store',
+                            color: globals.filters['Area']['Tarape\'s Store']
                                 ? Color(0xffdd901c)
                                 : Color(0xff7d7d7d),
                             onTap: () {
                               setState(() {
-                                globals.filters['Area']
-                                        ['Silver St. San Rafael'] =
-                                    !globals.filters['Area']
-                                        ['Silver St. San Rafael'];
+                                globals.filters['Area']['Tarape\'s Store'] =
+                                    !globals.filters['Area']['Tarape\'s Store'];
                               });
                             },
                             padding: 3,
@@ -244,14 +247,14 @@ class BuildBottomSheet extends StatelessWidget {
                             width: 8,
                           ),
                           MyCategoryButton(
-                            text: 'Juario Compound',
-                            color: globals.filters['Area']['Juario Compound']
+                            text: 'ShopStrutt.ph',
+                            color: globals.filters['Area']['ShopStrutt.ph']
                                 ? Color(0xffdd901c)
                                 : Color(0xff7d7d7d),
                             onTap: () {
                               setState(() {
-                                globals.filters['Area']['Juario Compound'] =
-                                    !globals.filters['Area']['Juario Compound'];
+                                globals.filters['Area']['ShopStrutt.ph'] =
+                                    !globals.filters['Area']['ShopStrutt.ph'];
                               });
                             },
                             padding: 3,
@@ -267,15 +270,15 @@ class BuildBottomSheet extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           MyCategoryButton(
-                            text: 'Maharlika NHA Maa',
-                            color: globals.filters['Area']['Maharlika NHA Maa']
+                            text: 'Melchor\'s Store',
+                            color: globals.filters['Area']['Melchor\'s Store']
                                 ? Color(0xffdd901c)
                                 : Color(0xff7d7d7d),
                             onTap: () {
                               setState(() {
-                                globals.filters['Area']['Maharlika NHA Maa'] =
+                                globals.filters['Area']['Melchor\'s Store'] =
                                     !globals.filters['Area']
-                                        ['Maharlika NHA Maa'];
+                                        ['Melchor\'s Store'];
                               });
                             },
                             padding: 3,
@@ -340,7 +343,7 @@ class Reset {
   static void filter() {
     globals.filters = {
       'Category': {
-        'Recent': false,
+        'Latest': false,
         'Dropped': false,
         'Tagged': false,
       },
@@ -349,13 +352,13 @@ class Reset {
         'End': false,
       },
       'Area': {
-        'Silver St. San Rafael': false,
-        'Juario Compound': false,
-        'Maharlika NHA Maa': false,
+        'Tarape\'s Store': false,
+        'ShopStrutt.ph': false,
+        'Melchor\'s Store': false,
       }
     };
 
-    start = null;
-    end = null;
+    globals.start = null;
+    globals.end = null;
   }
 }
