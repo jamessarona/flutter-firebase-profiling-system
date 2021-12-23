@@ -257,3 +257,24 @@ List filterReport(String category, List reports) {
 
   return filterReport;
 }
+
+List filterPreferenceReport(List<dynamic> list) {
+  int len = 0;
+  for (int i = 0; i < list.length; i++) {
+    if (selectedArea == list[i]['Location'] &&
+        list[i]['Category'] == "Latest") {
+      len++;
+    }
+  }
+
+  var filterReport = new List.filled(len, []);
+  int x = 0;
+
+  for (int i = 0; i < list.length; i++) {
+    if (selectedArea == list[i]['Location'] &&
+        list[i]['Category'] == "Latest") {
+      filterReport[x++].add(list[i]);
+    }
+  }
+  return filterReport;
+}

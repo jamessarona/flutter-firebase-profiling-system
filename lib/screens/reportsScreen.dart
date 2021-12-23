@@ -1,6 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tanod_apprehension/net/authenticationService.dart';
 import 'package:tanod_apprehension/screens/notificationScreen.dart';
 import 'package:tanod_apprehension/screens/reportScreens/activeScreen.dart';
@@ -169,7 +168,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     currentIndext = index;
                   });
                 },
-                type: BottomNavigationBarType.shifting,
+                type: BottomNavigationBarType.fixed,
                 selectedItemColor: customColor[130],
                 selectedLabelStyle: tertiaryText.copyWith(fontSize: 12),
                 unselectedItemColor: Colors.black38,

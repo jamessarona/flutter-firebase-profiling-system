@@ -24,7 +24,6 @@ class MyReportCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size screenSize = MediaQuery.of(context).size;
     return Card(
       child: Container(
         padding: EdgeInsets.all(7),
@@ -356,6 +355,98 @@ class MyStatusCard extends StatelessWidget {
             ],
           )
         ],
+      ),
+    );
+  }
+}
+
+class MyNotificationReportCard extends StatelessWidget {
+  final String id;
+  final String image;
+  final String location;
+  final String date;
+  final String category;
+  final Color color;
+  const MyNotificationReportCard({
+    required this.id,
+    required this.image,
+    required this.location,
+    required this.date,
+    required this.category,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    Size screenSize = MediaQuery.of(context).size;
+    return Container(
+      height: 150,
+      width: screenSize.width,
+      child: Card(
+        elevation: 3,
+        child: ListTile(
+          title: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Hero(
+                tag: 'report_$id',
+                child: Container(
+                  height: 123,
+                  width: 160,
+                  margin: EdgeInsets.only(bottom: 8),
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      fit: BoxFit.fill,
+                      image: NetworkImage(
+                        image,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.only(top: 8),
+                margin: EdgeInsets.only(left: 15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      location,
+                      style: tertiaryText.copyWith(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      calculateTimeOfOccurence(date),
+                      style: tertiaryText.copyWith(
+                        fontSize: 13,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      'Pending',
+                      style: tertiaryText.copyWith(
+                        fontSize: 13,
+                        color: Colors.orange,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+          trailing: Icon(
+            FontAwesomeIcons.angleDoubleRight,
+            color: Colors.grey,
+            size: 20,
+          ),
+        ),
       ),
     );
   }

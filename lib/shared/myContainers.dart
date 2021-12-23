@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/globals.dart';
 
@@ -77,12 +76,17 @@ class MyUserDetail extends StatelessWidget {
                         letterSpacing: 1,
                       ),
                     ),
-                    Text(
-                      firstname,
-                      style: secandaryText.copyWith(
-                        fontSize: 19,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1,
+                    Container(
+                      width: screenSize.width * .55,
+                      child: Text(
+                        '$firstname,',
+                        style: secandaryText.copyWith(
+                          fontSize: 19,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.visible,
                       ),
                     ),
                     Text(

@@ -1,10 +1,11 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:tanod_apprehension/screens/loginScreen.dart';
+import 'package:tanod_apprehension/screens/detailReportScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
-import 'package:tanod_apprehension/shared/myAppbar.dart';
 import 'package:tanod_apprehension/shared/myCards.dart';
+import 'package:tanod_apprehension/shared/myContainers.dart';
 import 'package:tanod_apprehension/shared/mySpinKits.dart';
 
 class NotificationScreen extends StatefulWidget {
@@ -59,19 +60,48 @@ class _NotificationScreenState extends State<NotificationScreen> {
             }
 
             var filteredReports = filterReport("Latest", reports);
-            return Container(
-              margin: EdgeInsets.only(top: 3),
-              child: ListView(
-                children: [
-                  for (var item in filteredReports[0])
-                    Card(
-                      child: ListTile(
-                        leading: Container(),
-                      ),
-                    )
-                ],
-              ),
-            );
+            var filterPreferenceReports =
+                filterPreferenceReport(filteredReports[0]);
+            return filterPreferenceReports.isNotEmpty
+                ? Container(
+                    height: screenSize.height,
+                    width: screenSize.width,
+                    child: ListView(
+                      shrinkWrap: true,
+                      dragStartBehavior: DragStartBehavior.start,
+                      children: [
+                        for (var item in filterPreferenceReports[0])
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (ctx) => DetailReportScreen(
+                                    id: item['Id'].toString(),
+                                    image: item['Image'],
+                                    location: item['Location'],
+                                    category: item['Category'],
+                                    date: item['Date'],
+                                  ),
+                                ),
+                              );
+                            },
+                            child: MyNotificationReportCard(
+                              id: item['Id'].toString(),
+                              image: item['Image'],
+                              location: item['Location'],
+                              category: item['Category'],
+                              date: item['Date'],
+                              color: Colors.green,
+                            ),
+                          ),
+                      ],
+                    ),
+                  )
+                : PageResultMessage(
+                    height: 100,
+                    width: screenSize.width,
+                    message: 'No reports',
+                  );
           },
         ),
       ),

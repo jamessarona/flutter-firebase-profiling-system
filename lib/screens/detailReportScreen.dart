@@ -3,12 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tanod_apprehension/screens/detailImageFullscreen.dart';
 import 'package:tanod_apprehension/screens/documentReportScreen.dart';
-import 'package:tanod_apprehension/screens/loginScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
-import 'package:tanod_apprehension/shared/myAppbar.dart';
 import 'package:tanod_apprehension/shared/myButtons.dart';
 import 'package:tanod_apprehension/shared/myContainers.dart';
-import 'package:tanod_apprehension/shared/mySpinKits.dart';
 import 'package:tanod_apprehension/shared/myText.dart';
 
 class DetailReportScreen extends StatefulWidget {
@@ -129,13 +126,6 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
                 Navigator.of(context).pop();
               },
             ),
-            actions: [
-              MyAppBarAction(
-                notifCount: 1,
-                color: Colors.white,
-                onPressed: () {},
-              )
-            ],
             flexibleSpace: Stack(
               children: [
                 ClipRRect(
