@@ -9,7 +9,7 @@ import 'package:tanod_apprehension/shared/myContainers.dart';
 import 'package:tanod_apprehension/shared/mySpinKits.dart';
 
 class NotificationScreen extends StatefulWidget {
-  const NotificationScreen({Key? key}) : super(key: key);
+  const NotificationScreen();
 
   @override
   _NotificationScreenState createState() => _NotificationScreenState();

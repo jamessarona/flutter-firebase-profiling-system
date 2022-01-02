@@ -1,8 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:async';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:tanod_apprehension/net/authenticationService.dart';
+import 'package:tanod_apprehension/screens/accountScreen.dart';
+import 'package:tanod_apprehension/screens/assignmentHistoryScreen.dart';
 import 'package:tanod_apprehension/screens/notificationScreen.dart';
+import 'package:tanod_apprehension/screens/violatorsScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/myAppbar.dart';
 import 'package:tanod_apprehension/shared/myBottomSheet.dart';
@@ -26,21 +30,16 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   late Size screenSize;
 
-  final FirebaseAuth auth = FirebaseAuth.instance;
   final dbRef = FirebaseDatabase.instance.reference();
 
   var reports;
   var userData;
   String userUID = '';
+  late Timer _timer;
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  Future<String> getCurrentUserUID() async {
-    final User? user = auth.currentUser;
-    return user!.uid.toString();
-  }
-
   void saveSelectedArea() async {
-    dbRef.child('Tanods').child(userUID).update({
+    await dbRef.child('Tanods').child(userUID).update({
       'Area': selectedArea,
     });
   }
@@ -110,6 +109,7 @@ class _MainScreenState extends State<MainScreen> {
                       selectedArea = tempSelectedArea;
                       saveSelectedArea();
                       Navigator.pop(context);
+                      _buildModalSuccessMessage(context);
                     },
                   ),
                 ),
@@ -117,6 +117,49 @@ class _MainScreenState extends State<MainScreen> {
             );
           });
         });
+  }
+
+  Future<void> _buildModalSuccessMessage(BuildContext context) async {
+    return await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        _timer = Timer(Duration(seconds: 1), () {
+          Navigator.of(context).pop();
+        });
+        return AlertDialog(
+          backgroundColor: customColor[130],
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(30),
+            ),
+          ),
+          content: Container(
+            height: 100,
+            width: screenSize.width * .8,
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'You have selected $selectedArea',
+                    style: tertiaryText.copyWith(
+                      fontSize: 25,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ]),
+          ),
+        );
+      },
+    ).then((value) {
+      if (_timer.isActive) {
+        _timer.cancel();
+      }
+    });
   }
 
   @override
@@ -230,6 +273,7 @@ class _MainScreenState extends State<MainScreen> {
                                 email: userData['Email'],
                                 auth: widget.auth,
                                 onSignOut: widget.onSignOut,
+                                userUID: userUID,
                               ),
                               Container(
                                 margin: EdgeInsets.only(
@@ -259,7 +303,15 @@ class _MainScreenState extends State<MainScreen> {
                                       //   color: customColor[130],
                                       // ),
                                       text: "Assignment History",
-                                      onTap: () {},
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (ctx) =>
+                                                AssignmentHistoryScreen(
+                                                    userUID: userUID),
+                                          ),
+                                        );
+                                      },
                                     ),
                                     MyInformationCard(
                                       icon: 'suspect.png',
@@ -268,7 +320,13 @@ class _MainScreenState extends State<MainScreen> {
                                       //   color: customColor[130],
                                       // ),
                                       text: "Violators",
-                                      onTap: () {},
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (ctx) => ViolatorsScreen(),
+                                          ),
+                                        );
+                                      },
                                     ),
                                     MyInformationCard(
                                       icon: 'user.png',
@@ -277,7 +335,14 @@ class _MainScreenState extends State<MainScreen> {
                                       //   color: customColor[130],
                                       // ),
                                       text: "My Account",
-                                      onTap: () {},
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (ctx) => MyAccountScreen(
+                                                userUID: userUID),
+                                          ),
+                                        );
+                                      },
                                     ),
                                     Container(height: 10),
                                   ],
@@ -290,9 +355,7 @@ class _MainScreenState extends State<MainScreen> {
                     });
               })
           : Scaffold(
-              body: Center(
-                child: MySpinKitLoadingScreen(),
-              ),
+              body: MySpinKitLoadingScreen(),
             ),
     );
   }

@@ -19,15 +19,18 @@ class MyRaisedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ignore: deprecated_member_use
-    return RaisedButton(
-      elevation: elavation,
-      color: color,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(radius),
+    return IgnorePointer(
+      ignoring: isLoading,
+      // ignore: deprecated_member_use
+      child: RaisedButton(
+        elevation: elavation,
+        color: color,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(radius),
+        ),
+        onPressed: onPressed,
+        child: !isLoading ? text : MySpinKitCircle(),
       ),
-      onPressed: onPressed,
-      child: !isLoading ? text : MySpinKitCircle(),
     );
   }
 }

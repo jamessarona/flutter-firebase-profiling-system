@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tanod_apprehension/shared/globals.dart';
@@ -59,6 +60,12 @@ extension CapExtension on String {
   String get allInCaps => this.toUpperCase();
   String get capitalizeFirstofEach =>
       this.split(" ").map((str) => str.inCaps).join(" ");
+}
+
+Future<String> getCurrentUserUID() async {
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final User? user = auth.currentUser;
+  return user!.uid.toString();
 }
 
 String calculateTimeOfOccurence(String date) {
@@ -277,4 +284,15 @@ List filterPreferenceReport(List<dynamic> list) {
     }
   }
   return filterReport;
+}
+
+List getSelectedReportInformation(List<dynamic> list, String id) {
+  var selectedReport = new List.filled(1, []);
+  for (int i = 0; i < list.length; i++) {
+    if (list[i]['Id'].toString().compareTo(id) == 0) {
+      selectedReport[0].add(list[i]);
+      break;
+    }
+  }
+  return selectedReport[0];
 }

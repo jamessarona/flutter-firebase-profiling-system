@@ -19,7 +19,6 @@ class ReportsScreen extends StatefulWidget {
   final String name;
   final String email;
   final String profileImage;
-
   const ReportsScreen({
     required this.auth,
     required this.onSignOut,
@@ -38,9 +37,10 @@ final dbRef = FirebaseDatabase.instance.reference();
 int notifCount = 0;
 GlobalKey<ScaffoldState> _scaffoldKeyReports = GlobalKey<ScaffoldState>();
 int currentIndext = 0;
+String uid = '';
 
 class _ReportsScreenState extends State<ReportsScreen> {
-  final screens = [
+  List<StatefulWidget> screens = [
     ActiveScreen(),
     DroppedScreen(),
     TaggedScreen(),

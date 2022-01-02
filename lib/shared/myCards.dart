@@ -208,6 +208,7 @@ class MyStatusCard extends StatelessWidget {
   final String image;
   final String status;
   final String email;
+  final String userUID;
   const MyStatusCard({
     required this.name,
     required this.image,
@@ -215,6 +216,7 @@ class MyStatusCard extends StatelessWidget {
     required this.email,
     required this.auth,
     required this.onSignOut,
+    required this.userUID,
   });
 
   @override
