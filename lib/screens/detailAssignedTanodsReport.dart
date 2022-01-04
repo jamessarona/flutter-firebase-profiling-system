@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 
-class ReportDocumentation extends StatefulWidget {
+class DetailAssignedTanodsReport extends StatefulWidget {
   final String id;
-  const ReportDocumentation({required this.id});
+  const DetailAssignedTanodsReport({required this.id});
 
   @override
-  _ReportDocumentationState createState() => _ReportDocumentationState();
+  _DetailAssignedTanodsReportState createState() =>
+      _DetailAssignedTanodsReportState();
 }
 
-class _ReportDocumentationState extends State<ReportDocumentation> {
+class _DetailAssignedTanodsReportState
+    extends State<DetailAssignedTanodsReport> {
   late Size screenSize;
   @override
   Widget build(BuildContext context) {
@@ -30,7 +32,7 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
           ),
           centerTitle: true,
           title: Text(
-            'Documentation',
+            'Report Activity',
             style: primaryText.copyWith(fontSize: 18, letterSpacing: 1),
           ),
         ),

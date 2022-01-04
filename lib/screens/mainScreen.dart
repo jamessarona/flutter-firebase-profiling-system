@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:tanod_apprehension/net/authenticationService.dart';
 import 'package:tanod_apprehension/screens/accountScreen.dart';
 import 'package:tanod_apprehension/screens/assignmentHistoryScreen.dart';
+import 'package:tanod_apprehension/screens/detailReportScreen.dart';
 import 'package:tanod_apprehension/screens/notificationScreen.dart';
+import 'package:tanod_apprehension/screens/reportsScreen.dart';
 import 'package:tanod_apprehension/screens/violatorsScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/myAppbar.dart';
@@ -162,6 +164,18 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
+  String _getAssignedReportId() {
+    String reportId = '';
+    for (int i = 0; i < reports.length; i++) {
+      if (reports[i]['AssignedTanod'] != null) {
+        if (reports[i]['AssignedTanod'][reports[i]['AssignedTanod'].length - 1]
+                ['TanodId'] ==
+            userData['ID']) reportId = reports[i]['Id'].toString();
+      }
+    }
+    return reportId;
+  }
+
   @override
   void initState() {
     // ignore: todo
@@ -266,14 +280,33 @@ class _MainScreenState extends State<MainScreen> {
                                     _buildCreateChooseModal(context);
                                   }),
                               MyStatusCard(
-                                name:
-                                    "${userData['Firstname']} ${userData['Lastname']}",
-                                image: userData['Image'],
                                 status: userData['Status'],
-                                email: userData['Email'],
-                                auth: widget.auth,
-                                onSignOut: widget.onSignOut,
-                                userUID: userUID,
+                                onTap: () {
+                                  if (userData['Status'] != "Standby") {
+                                    print("Load Specific Report");
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (ctx) => DetailReportScreen(
+                                          id: _getAssignedReportId(),
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    print("Load Reports");
+                                    Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(
+                                        builder: (ctx) => ReportsScreen(
+                                          auth: widget.auth,
+                                          onSignOut: widget.onSignOut,
+                                          email: userData['Email'],
+                                          name:
+                                              "${userData['Firstname']} ${userData['Lastname']}",
+                                          profileImage: userData['Image'],
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
                               ),
                               Container(
                                 margin: EdgeInsets.only(

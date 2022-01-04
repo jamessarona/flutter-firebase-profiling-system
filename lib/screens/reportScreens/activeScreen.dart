@@ -61,10 +61,6 @@ class _ActiveScreenState extends State<ActiveScreen> {
                                       MaterialPageRoute(
                                         builder: (ctx) => DetailReportScreen(
                                           id: item['Id'].toString(),
-                                          image: item['Image'],
-                                          location: item['Location'],
-                                          category: item['Category'],
-                                          date: item['Date'],
                                         ),
                                       ),
                                     );

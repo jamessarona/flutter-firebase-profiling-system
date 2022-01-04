@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:tanod_apprehension/net/authenticationService.dart';
-import 'package:tanod_apprehension/screens/reportsScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/myContainers.dart';
 
@@ -202,21 +200,11 @@ class MyInformationCard extends StatelessWidget {
 }
 
 class MyStatusCard extends StatelessWidget {
-  final BaseAuth auth;
-  final VoidCallback onSignOut;
-  final String name;
-  final String image;
   final String status;
-  final String email;
-  final String userUID;
+  final VoidCallback onTap;
   const MyStatusCard({
-    required this.name,
-    required this.image,
     required this.status,
-    required this.email,
-    required this.auth,
-    required this.onSignOut,
-    required this.userUID,
+    required this.onTap,
   });
 
   @override
@@ -323,37 +311,19 @@ class MyStatusCard extends StatelessWidget {
               //     color: customColor[80],
               //   ),
               GestureDetector(
-                // child: Icon(
-                //   FontAwesomeIcons.angleDoubleRight,
-                //   size: 25,
-                //   color: Colors.white70,
-                // ),
-                child: Image.asset(
-                  'assets/images/two-arrows.png',
-                  width: 25,
-                  height: 25,
-                  fit: BoxFit.cover,
-                  color: Colors.white,
-                ),
-                onTap: () {
-                  if (status != "Standby") {
-                    print("Load Specific Report");
-                  } else {
-                    print("Load Reports");
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (ctx) => ReportsScreen(
-                          auth: auth,
-                          onSignOut: onSignOut,
-                          email: email,
-                          name: name,
-                          profileImage: image,
-                        ),
-                      ),
-                    );
-                  }
-                },
-              ),
+                  // child: Icon(
+                  //   FontAwesomeIcons.angleDoubleRight,
+                  //   size: 25,
+                  //   color: Colors.white70,
+                  // ),
+                  child: Image.asset(
+                    'assets/images/two-arrows.png',
+                    width: 25,
+                    height: 25,
+                    fit: BoxFit.cover,
+                    color: Colors.white,
+                  ),
+                  onTap: onTap),
             ],
           )
         ],
