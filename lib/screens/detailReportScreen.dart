@@ -6,7 +6,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tanod_apprehension/screens/detailAssignedTanodsReport.dart';
 import 'package:tanod_apprehension/screens/detailImageFullscreen.dart';
 import 'package:tanod_apprehension/screens/documentReportScreen.dart';
-import 'package:tanod_apprehension/screens/loginScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/myButtons.dart';
 import 'package:tanod_apprehension/shared/myContainers.dart';
@@ -363,6 +362,16 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
     }
   }
 
+  int _calculateApprehendedViolatorCount() {
+    int count = 0;
+    for (int i = 0; i < selectedReport[0]['AssignedTanod'].length; i++) {
+      if (selectedReport[0]['AssignedTanod'][i]['Documentation'] != null) {
+        count = selectedReport[0]['AssignedTanod'][i]['Documentation'].length;
+      }
+    }
+    return count;
+  }
+
   @override
   void initState() {
     // ignore: todo
@@ -573,6 +582,19 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
+                                  MyReportDetails(
+                                    margin:
+                                        EdgeInsets.symmetric(horizontal: 15),
+                                    width: screenSize.width,
+                                    label: Text(
+                                      "Violators Detected: ${selectedReport[0]['ViolatorCount']}",
+                                      style: tertiaryText.copyWith(
+                                        fontSize: 15,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
                                   Container(
                                     margin: EdgeInsets.only(
                                       top: 5,
@@ -681,7 +703,7 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
                                                 ),
                                                 width: screenSize.width,
                                                 label: Text(
-                                                  'Number of Violator: 1',
+                                                  'Caught Violator: ${_calculateApprehendedViolatorCount()}',
                                                   style: tertiaryText.copyWith(
                                                     fontSize: 14,
                                                   ),

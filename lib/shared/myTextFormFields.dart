@@ -43,7 +43,7 @@ class MyDocumentationTextFormField extends StatelessWidget {
   final String labelText;
   final String hintText;
   final bool isReadOnly;
-  final String initialValue;
+  final TextEditingController controller;
   MyDocumentationTextFormField({
     required this.inputType,
     required this.isObscureText,
@@ -53,22 +53,29 @@ class MyDocumentationTextFormField extends StatelessWidget {
     required this.labelText,
     required this.hintText,
     required this.isReadOnly,
-    required this.initialValue,
+    required this.controller,
   });
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      controller: controller,
       keyboardType: inputType,
       obscureText: isObscureText,
       validator: validation,
       onChanged: onChanged,
       readOnly: isReadOnly,
-      initialValue: initialValue,
       decoration: InputDecoration(
         isDense: true,
         prefixIcon: prefixIcon,
         labelText: labelText,
+        prefix: Text(labelText == 'Fine' ? '₱' : ''),
         hintText: hintText,
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(
+            color: Color(0xff1c52dd),
+          ),
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
         ),
