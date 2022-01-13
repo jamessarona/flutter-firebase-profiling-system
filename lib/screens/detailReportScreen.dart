@@ -844,7 +844,9 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
                                                       MaterialPageRoute(
                                                         builder: (ctx) =>
                                                             ReportDocumentation(
-                                                                id: widget.id),
+                                                          id: widget.id,
+                                                          userUID: userUID,
+                                                        ),
                                                       ),
                                                     );
                                                   },

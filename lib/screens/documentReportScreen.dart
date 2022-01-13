@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tanod_apprehension/screens/detailReportScreen.dart';
+import 'package:tanod_apprehension/screens/notificationScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/myButtons.dart';
 import 'package:tanod_apprehension/shared/mySpinKits.dart';
@@ -10,7 +14,8 @@ import 'package:intl/intl.dart';
 
 class ReportDocumentation extends StatefulWidget {
   final String id;
-  const ReportDocumentation({required this.id});
+  final String userUID;
+  const ReportDocumentation({required this.id, required this.userUID});
 
   @override
   _ReportDocumentationState createState() => _ReportDocumentationState();
@@ -22,6 +27,7 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
   final dbRef = FirebaseDatabase.instance.reference();
   var violators;
   var reports;
+  var selectedReport;
   static const fines = [
     300.00,
     500.00,
@@ -33,6 +39,9 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
   int violationCount = 0;
   double violationFine = 0.00;
 
+  bool isLoading = false;
+  late Timer _timer;
+  bool isTagged = false;
   TextEditingController _nameTextEditingController = TextEditingController();
   TextEditingController _birthdayTextEditingController =
       TextEditingController();
@@ -81,6 +90,19 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
       }
     }
     return count;
+  }
+
+  int _calculateNeededApprehension() {
+    var apprehendCount = selectedReport[0]['ViolatorCount'];
+    if (selectedReport[0]['AssignedTanod']
+            [selectedReport[0]['AssignedTanod'].length - 1]['Documentation'] !=
+        null) {
+      apprehendCount -= selectedReport[0]['AssignedTanod']
+              [selectedReport[0]['AssignedTanod'].length - 1]['Documentation']
+          .length;
+    }
+
+    return apprehendCount;
   }
 
   void _autoSetViolationDocumentation(int violationInstance) {
@@ -178,7 +200,7 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                   child: MyRaisedButton(
                     color: Color(0xff1640ac),
                     elavation: 5,
-                    isLoading: false,
+                    isLoading: isLoading,
                     radius: 10,
                     text: Text(
                       'Confirm',
@@ -186,7 +208,21 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                           fontSize: 14, color: Colors.white),
                     ),
                     onPressed: () {
-                      _saveDocumentSubmission();
+                      setState(() {
+                        isLoading = true;
+                        _saveDocumentSubmission().then((value) {
+                          _nameTextEditingController.clear();
+                          _birthdayTextEditingController.clear();
+                          _contactNumberTextEditingController.clear();
+                          _addressTextEditingController.clear();
+                          _violationCountTextEditingController.clear();
+                          _fineTextEditingController.clear();
+                          Navigator.pop(context);
+
+                          _buildModalSuccessMessage(context);
+                          isLoading = false;
+                        });
+                      });
                     },
                   ),
                 ),
@@ -198,60 +234,176 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
 
   void _validateDocumentation() {
     if (_formKey.currentState!.validate()) {
-      _buildCreateSubmissionConfirmaModal(context).then((value) {
-        setState(() {});
-      });
+      _buildCreateSubmissionConfirmaModal(context);
     }
   }
 
   Future<String> _saveDocumentSubmission() async {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd hh:mm:ss').format(now);
-    for (int i = 0; i < reports.length; i++) {
-      if (reports[i]['AssignedTanod'] != null) {
-        for (int x = 0; x < reports[i]['AssignedTanod'].length; x++) {
-          // if (reports[i]['Id'].toString() == widget.id) {
-          //   if (reports[i]['AssignedTanod'][x]['Documentation'] != null) {
-          //     await dbRef
-          //         .child('Reports')
-          //         .child(i.toString())
-          //         .child("AssignedTanod")
-          //         .child((reports[i]['AssignedTanod'].length - 1).toString())
-          //         .child("Documentation")
-          //         .update({
-          //       reports[i]['AssignedTanod'][x]['Documentation']
-          //           .length
-          //           .toString(): {
-          //         "Id": reports[i]['AssignedTanod'][x]['Documentation']
-          //             .length
-          //             .toString(),
-          //         "ViolatorId": violatorId,
-          //         "Fine": _fineTextEditingController.text,
-          //         "DateApprehended": formattedDate,
-          //       }
-          //     });
-          //   } else {
-          //     await dbRef
-          //         .child('Reports')
-          //         .child(i.toString())
-          //         .child("AssignedTanod")
-          //         .child((reports[i]['AssignedTanod'].length - 1).toString())
-          //         .update({
-          //       "Documentation": {
-          //         0.toString(): {
-          //           "Id": 0,
-          //           "ViolatorId": violators.length,
-          //           "Fine": _fineTextEditingController.text,
-          //           "DateApprehended": formattedDate,
-          //         }
-          //       }
-          //     });
-          //   }
-          // }
+    if (violatorId == '') {
+      violatorId = violators.length.toString();
+      //inset new violator and its information
+      await dbRef.child('Violators').update({
+        violators.length.toString(): {
+          "ViolatorId": violators.length.toString(),
+          "Name": _nameTextEditingController.text,
+          "Birthday": _birthdayTextEditingController.text,
+          "Contact": _contactNumberTextEditingController.text,
+          "Address": _addressTextEditingController.text,
+        }
+      });
+    } else {
+      //update the existing violator information
+      for (int i = 0; i < violators.length; i++) {
+        if (_nameTextEditingController.text == violators[i]['Name']) {
+          if (_birthdayTextEditingController.text != violators[i]['Birthday']) {
+            await dbRef
+                .child('Violators')
+                .child(violators[i]['ViolatorId'].toString())
+                .update({
+              "Birthday": _birthdayTextEditingController.text,
+            });
+          }
+          if (_birthdayTextEditingController.text != violators[i]['Contact']) {
+            await dbRef
+                .child('Violators')
+                .child(violators[i]['ViolatorId'].toString())
+                .update({
+              "Contact": _contactNumberTextEditingController.text,
+            });
+          }
+          if (_birthdayTextEditingController.text != violators[i]['Address']) {
+            await dbRef
+                .child('Violators')
+                .child(violators[i]['ViolatorId'].toString())
+                .update({
+              "Address": _addressTextEditingController.text,
+            });
+          }
         }
       }
     }
+
+    if (selectedReport[0]['AssignedTanod']
+            [selectedReport[0]['AssignedTanod'].length - 1]['Documentation'] !=
+        null) {
+      await dbRef
+          .child('Reports')
+          .child(selectedReport[0]['Id'].toString())
+          .child("AssignedTanod")
+          .child((selectedReport[0]['AssignedTanod'].length - 1).toString())
+          .child("Documentation")
+          .update({
+        selectedReport[0]['AssignedTanod']
+                [selectedReport[0]['AssignedTanod'].length - 1]['Documentation']
+            .length
+            .toString(): {
+          "Id": selectedReport[0]['AssignedTanod']
+                      [selectedReport[0]['AssignedTanod'].length - 1]
+                  ['Documentation']
+              .length
+              .toString(),
+          "ViolatorId": violatorId,
+          "Fine": _fineTextEditingController.text,
+          "DateApprehended": formattedDate,
+        }
+      });
+    } else {
+      await dbRef
+          .child('Reports')
+          .child(selectedReport[0]['Id'].toString())
+          .child("AssignedTanod")
+          .child((selectedReport[0]['AssignedTanod'].length - 1).toString())
+          .update({
+        "Documentation": {
+          0.toString(): {
+            "Id": 0,
+            "ViolatorId": violatorId,
+            "Fine": _fineTextEditingController.text,
+            "DateApprehended": formattedDate,
+          }
+        }
+      });
+    }
+
+    _validateReportIsTagged();
     return '';
+  }
+
+  Future<void> _buildModalSuccessMessage(BuildContext context) async {
+    return await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        _timer = Timer(Duration(seconds: 1), () {
+          Navigator.of(context).pop();
+          if (isTagged) {
+            violatorNames.clear();
+            Navigator.of(context).pop();
+          }
+        });
+        return AlertDialog(
+          backgroundColor: customColor[130],
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(30),
+            ),
+          ),
+          content: Container(
+            height: 80,
+            width: screenSize.width * .8,
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Documentation has been saved',
+                    style: tertiaryText.copyWith(
+                      fontSize: 25,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ]),
+          ),
+        );
+      },
+    ).then((value) {
+      if (_timer.isActive) {
+        _timer.cancel();
+      }
+    });
+  }
+
+  Future<void> _validateReportIsTagged() async {
+    if (selectedReport[0]['AssignedTanod']
+                [selectedReport[0]['AssignedTanod'].length - 1]['Documentation']
+            .length ==
+        selectedReport[0]['ViolatorCount']) {
+      isTagged = true;
+      await dbRef
+          .child('Reports')
+          .child(selectedReport[0]['Id'].toString())
+          .update({
+        "Category": "Tagged",
+      });
+      await dbRef
+          .child('Reports')
+          .child(selectedReport[0]['Id'].toString())
+          .child("AssignedTanod")
+          .child((selectedReport[0]['AssignedTanod'].length - 1).toString())
+          .update({
+        "Status": "Apprehended",
+      });
+      await dbRef.child('Tanods').child(widget.userUID).update({
+        'Status': 'Standby',
+      });
+    } else {
+      isTagged = false;
+    }
   }
 
   @override
@@ -281,6 +433,8 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                   } else {
                     return Scaffold(body: MySpinKitLoadingScreen());
                   }
+                  selectedReport =
+                      getSelectedReportInformation(reports, widget.id);
                   return Scaffold(
                     appBar: AppBar(
                       backgroundColor: Colors.transparent,
@@ -290,6 +444,7 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                         color: Colors.black,
                         iconSize: 20,
                         onPressed: () {
+                          violatorNames.clear();
                           Navigator.pop(context);
                         },
                       ),
@@ -325,6 +480,15 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                               'Record the Violator',
                               style: primaryText.copyWith(
                                 fontSize: 16,
+                                letterSpacing: 0,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            Text(
+                              'Apprehend: ${_calculateNeededApprehension().toString()}',
+                              style: primaryText.copyWith(
+                                fontSize: 12,
+                                fontStyle: FontStyle.italic,
                                 letterSpacing: 0,
                               ),
                               textAlign: TextAlign.center,
