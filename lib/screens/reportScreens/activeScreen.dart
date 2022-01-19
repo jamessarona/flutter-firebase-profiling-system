@@ -52,7 +52,8 @@ class _ActiveScreenState extends State<ActiveScreen> {
                               ? WrapAlignment.spaceEvenly
                               : WrapAlignment.start,
                           children: [
-                            for (var item in filteredReports[0])
+                            for (var item
+                                in filteredReports[0].reversed.toList())
                               Container(
                                 margin: EdgeInsets.only(left: 6),
                                 child: GestureDetector(

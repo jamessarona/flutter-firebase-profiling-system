@@ -223,21 +223,3 @@ class _ReportsScreenState extends State<ReportsScreen> {
     );
   }
 }
-//  Container(
-//               height: screenSize.height * 5,
-//               width: screenSize.width,
-//               child: Row(
-//                 children: [
-//                   DropdownButton<String>(
-//                     items: <String>['Maa', 'San Rafael', 'Roxas', 'Matina']
-//                         .map((String value) {
-//                       return DropdownMenuItem<String>(
-//                         value: value,
-//                         child: Text(value),
-//                       );
-//                     }).toList(),
-//                     onChanged: (_) {},
-//                   )
-//                 ],
-//               ),
-//             ),

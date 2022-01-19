@@ -296,3 +296,24 @@ List getSelectedReportInformation(List<dynamic> list, String id) {
   }
   return selectedReport[0];
 }
+
+String setDateTime(String date, String method) {
+  late DateTime dateTimeAssigned = DateTime.parse(date);
+
+  if (method == 'Date') {
+    return "${convertMonth(dateTimeAssigned.month)} ${dateTimeAssigned.day}, ${dateTimeAssigned.year}";
+  } else {
+    return "${convertHour(dateTimeAssigned.hour, 0)}:${dateTimeAssigned.minute}:${dateTimeAssigned.second} ${convertHour(dateTimeAssigned.hour, 1)}";
+  }
+}
+
+String getViolatorSpecifiedInformation(
+    List<dynamic> list, String? id, String specific) {
+  String name = "";
+  for (int i = 0; i < list.length; i++) {
+    if (list[i]['ViolatorId'].toString() == id) {
+      name = list[i][specific];
+    }
+  }
+  return name;
+}

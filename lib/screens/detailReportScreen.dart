@@ -3,7 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:tanod_apprehension/screens/detailAssignedTanodsReport.dart';
+import 'package:tanod_apprehension/screens/detailAssignedTanodsReportScreen.dart';
+import 'package:tanod_apprehension/screens/detailDocumentedViolatorsScreen.dart';
 import 'package:tanod_apprehension/screens/detailImageFullscreen.dart';
 import 'package:tanod_apprehension/screens/documentReportScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
@@ -38,7 +39,16 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
   var userData;
   var reports;
   var selectedReport;
+  var violators;
   String userUID = '';
+
+  static const _DropReason = [
+    "Violator Escaped",
+    "Not a person",
+    "Purpose is valid",
+    "Others",
+  ];
+  late String _selectedReason = "Violator Escaped";
 
   _buildCreateAssignConfirmaModal(BuildContext context, String title) {
     return showDialog(
@@ -52,38 +62,107 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
                 'Confirmation',
                 style: tertiaryText.copyWith(fontSize: 18),
               ),
-              content: Text.rich(
-                TextSpan(
-                  style: tertiaryText.copyWith(fontSize: 16),
-                  children: [
+              content: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text.rich(
                     TextSpan(
-                        text: title == 'Assign'
-                            ? 'Do you want to apprehend the violator in '
-                            : 'Do you want to '),
-                    title == 'Assign'
-                        ? TextSpan(
-                            text: selectedReport[0]['Location'],
-                            style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              color: Colors.red,
-                            ),
-                          )
-                        : TextSpan(
-                            text: 'Drop',
-                            style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              color: Colors.red,
+                      style: tertiaryText.copyWith(fontSize: 16),
+                      children: [
+                        TextSpan(
+                            text: title == 'Assign'
+                                ? 'Do you want to apprehend the violator in '
+                                : 'Do you want to '),
+                        title == 'Assign'
+                            ? TextSpan(
+                                text: selectedReport[0]['Location'],
+                                style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  color: Colors.red,
+                                ),
+                              )
+                            : TextSpan(
+                                text: 'Drop',
+                                style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  color: Colors.red,
+                                ),
+                              ),
+                        title == 'Assign'
+                            ? TextSpan(
+                                text: '?',
+                              )
+                            : TextSpan(
+                                text: ' the report?',
+                              ),
+                      ],
+                    ),
+                  ),
+                  title == 'Drop'
+                      ? Container(
+                          margin: EdgeInsets.only(
+                            top: 20,
+                            bottom: 10,
+                          ),
+                          child: Text(
+                            'Tell us why:',
+                            style: tertiaryText.copyWith(
+                              fontSize: 16,
                             ),
                           ),
-                    title == 'Assign'
-                        ? TextSpan(
-                            text: '',
-                          )
-                        : TextSpan(
-                            text: ' the report?',
+                        )
+                      : Container(),
+                  title == 'Drop'
+                      ? Container(
+                          height: 50,
+                          child: FormField<String>(
+                            builder: (FormFieldState<String> state) {
+                              return InputDecorator(
+                                decoration: InputDecoration(
+                                  //      labelStyle: textStyle,
+                                  errorStyle: TextStyle(
+                                    color: Colors.redAccent,
+                                    fontSize: 16.0,
+                                  ),
+                                  isDense: true,
+                                  hintText: 'Please select reason',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(
+                                      20,
+                                    ),
+                                  ),
+                                ),
+                                isEmpty: _selectedReason == '',
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                    isDense: true,
+                                    value: _selectedReason,
+                                    onChanged: (newValue) {
+                                      setState(() {
+                                        _selectedReason = newValue!;
+                                        state.didChange(newValue);
+                                      });
+                                    },
+                                    items: _DropReason.map((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(
+                                          value,
+                                          style: tertiaryText.copyWith(
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                              );
+                            },
                           ),
-                  ],
-                ),
+                        )
+                      : Container(),
+                ],
               ),
               actions: [
                 Container(
@@ -221,6 +300,7 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
       'Status': 'Dropped',
       'TanodId': selectedReport[0]['AssignedTanod']
           [selectedReport[0]['AssignedTanod'].length - 1]['TanodId'],
+      "Reason": _selectedReason,
     });
 
     return '';
@@ -350,26 +430,54 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
         [selectedReport[0]['AssignedTanod'].length - 1]['TanodId'];
   }
 
-  String setDateTime(String method) {
-    late DateTime dateTimeAssigned = DateTime.parse(selectedReport[0]
-            ['AssignedTanod'][selectedReport[0]['AssignedTanod'].length - 1]
-        ['DateAssign']);
-
-    if (method == 'Date') {
-      return "${convertMonth(dateTimeAssigned.month)} ${dateTimeAssigned.day}, ${dateTimeAssigned.year}";
-    } else {
-      return "${convertHour(dateTimeAssigned.hour, 0)}:${dateTimeAssigned.minute}:${dateTimeAssigned.second} ${convertHour(dateTimeAssigned.hour, 1)}";
-    }
-  }
-
   int _calculateApprehendedViolatorCount() {
-    int count = 0;
-    for (int i = 0; i < selectedReport[0]['AssignedTanod'].length; i++) {
-      if (selectedReport[0]['AssignedTanod'][i]['Documentation'] != null) {
-        count = selectedReport[0]['AssignedTanod'][i]['Documentation'].length;
+    num count = 0;
+    if (selectedReport[0]['AssignedTanod'] != null) {
+      for (int i = 0; i < selectedReport[0]['AssignedTanod'].length; i++) {
+        if (selectedReport[0]['AssignedTanod'][i]['Documentation'] != null) {
+          count +=
+              selectedReport[0]['AssignedTanod'][i]['Documentation'].length;
+        }
       }
     }
-    return count;
+    return count.toInt();
+  }
+
+  List filterDocuments() {
+    int count = _calculateApprehendedViolatorCount();
+    var documents = new List.filled(count, []);
+    int y = 0;
+    if (selectedReport[0]['AssignedTanod'] != null) {
+      for (int i = 0; i < selectedReport[0]['AssignedTanod'].length; i++) {
+        if (selectedReport[0]['AssignedTanod'][i]['Documentation'] != null) {
+          for (int x = 0;
+              x < selectedReport[0]['AssignedTanod'][i]['Documentation'].length;
+              x++) {
+            documents[y++]
+                .add(selectedReport[0]['AssignedTanod'][i]['Documentation'][x]);
+          }
+        }
+      }
+    }
+    return documents[0];
+  }
+
+  bool checkIsAssigned(String selectedViolatorId) {
+    bool isAssignedDocument = false;
+    for (int i = 0; i < selectedReport[0]['AssignedTanod'].length; i++) {
+      for (int x = 0;
+          x < selectedReport[0]['AssignedTanod'][i]['Documentation'].length;
+          x++) {
+        if (selectedViolatorId ==
+                selectedReport[0]['AssignedTanod'][i]['Documentation'][x]
+                    ['ViolatorId'] &&
+            selectedReport[0]['AssignedTanod'][i]['TanodId'] ==
+                tanods[userUID]['ID']) {
+          isAssignedDocument = true;
+        }
+      }
+    }
+    return isAssignedDocument;
   }
 
   @override
@@ -434,482 +542,637 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
                             validateActions();
                             checkUserHasActiveReport();
                             checkReportIsTagged();
-                            return Scaffold(
-                              backgroundColor: customColor[110],
-                              key: _scaffoldKeyDetailReports,
-                              appBar: PreferredSize(
-                                preferredSize: Size.fromHeight(200),
-                                child: AppBar(
-                                  backgroundColor: Colors.transparent,
-                                  shadowColor: Colors.transparent,
-                                  leading: IconButton(
-                                    icon: Icon(
-                                      FontAwesomeIcons.chevronDown,
-                                      color: Colors.white,
-                                      size: 18,
-                                    ),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                  flexibleSpace: Stack(
-                                    children: [
-                                      ClipRRect(
-                                        child: Hero(
-                                          tag: 'report_${widget.id}',
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                image: NetworkImage(
-                                                    selectedReport[0]['Image']),
-                                                fit: BoxFit.fill,
-                                              ),
-                                            ),
+                            return StreamBuilder(
+                                stream: dbRef.child('Violators').onValue,
+                                builder: (context, violatorSnapshot) {
+                                  if (violatorSnapshot.hasData &&
+                                      !violatorSnapshot.hasError &&
+                                      (violatorSnapshot.data! as Event)
+                                              .snapshot
+                                              .value !=
+                                          null) {
+                                    violators =
+                                        (violatorSnapshot.data! as Event)
+                                            .snapshot
+                                            .value;
+                                  } else {
+                                    return Scaffold(
+                                        body: MySpinKitLoadingScreen());
+                                  }
+                                  return Scaffold(
+                                    backgroundColor: customColor[110],
+                                    key: _scaffoldKeyDetailReports,
+                                    appBar: PreferredSize(
+                                      preferredSize: Size.fromHeight(200),
+                                      child: AppBar(
+                                        backgroundColor: Colors.transparent,
+                                        shadowColor: Colors.transparent,
+                                        leading: IconButton(
+                                          icon: Icon(
+                                            FontAwesomeIcons.chevronDown,
+                                            color: Colors.white,
+                                            size: 18,
                                           ),
-                                        ),
-                                      ),
-                                      Positioned(
-                                        bottom: -5,
-                                        right: -3,
-                                        child: IconButton(
-                                          icon: Icon(FontAwesomeIcons.expand),
-                                          color: Colors.white,
-                                          iconSize: 18,
                                           onPressed: () {
-                                            Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                builder: (ctx) =>
-                                                    ImageFullScreen(
-                                                  tag: widget.id,
-                                                  image: selectedReport[0]
-                                                      ['Image'],
-                                                ),
-                                              ),
-                                            );
+                                            Navigator.of(context).pop();
                                           },
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              body: ListView(
-                                children: [
-                                  Container(
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 15),
-                                    padding: EdgeInsets.only(top: 15),
-                                    width: screenSize.width,
-                                    // decoration: BoxDecoration(
-                                    //   borderRadius: BorderRadius.only(
-                                    //       topLeft: Radius.circular(20),
-                                    //       topRight: Radius.circular(20)),
-                                    //   color: customColor[130],
-                                    //   boxShadow: [
-                                    //     BoxShadow(
-                                    //       color: Colors.grey.withOpacity(0.3),
-                                    //       spreadRadius: 3,
-                                    //       blurRadius: 8,
-                                    //       offset: Offset(0, 0), // changes position of shadow
-                                    //     ),
-                                    //   ],
-                                    // ),
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          'Details',
-                                          style: secandaryText.copyWith(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: 0.5,
-                                          ),
-                                        ),
-                                        Container(
-                                          width: 5,
-                                        ),
-                                        MyReportStatusIndicator(
-                                          height: 10,
-                                          width: 10,
-                                          color: 'Pending' == 'Responding'
-                                              ? Color(0xffdd901c)
-                                              : selectedReport[0]['Category'] ==
-                                                      'Latest'
-                                                  ? Colors.green
-                                                  : Colors.red,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  Divider(
-                                    thickness: 1.5,
-                                  ),
-                                  MyReportDetails(
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 15),
-                                    width: screenSize.width,
-                                    label: Text(
-                                      'Area: ${selectedReport[0]['Location']}',
-                                      style: tertiaryText.copyWith(
-                                        fontSize: 15,
-                                      ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  MyReportDetails(
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 15),
-                                    width: screenSize.width,
-                                    label: Text(
-                                      'Date: ${convertMonth(dateTime.month)} ${dateTime.day}, ${dateTime.year}',
-                                      style: tertiaryText.copyWith(
-                                        fontSize: 15,
-                                      ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  MyReportDetails(
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 15),
-                                    width: screenSize.width,
-                                    label: Text(
-                                      'Time: ${convertHour(dateTime.hour, 0)}:${dateTime.minute}:${dateTime.second} ${convertHour(dateTime.hour, 1)}',
-                                      style: tertiaryText.copyWith(
-                                        fontSize: 15,
-                                      ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  MyReportDetails(
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 15),
-                                    width: screenSize.width,
-                                    label: Text(
-                                      "Violators Detected: ${selectedReport[0]['ViolatorCount']}",
-                                      style: tertiaryText.copyWith(
-                                        fontSize: 15,
-                                      ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                      top: 5,
-                                    ),
-                                    child: Divider(
-                                      thickness: 5,
-                                      color: Colors.grey[200],
-                                    ),
-                                  ),
-                                  isAssigned ||
-                                          selectedReport[0]['Category'] !=
-                                              'Latest'
-                                      ? Container(
-                                          margin: EdgeInsets.symmetric(
-                                            horizontal: 15,
-                                          ),
-                                          width: screenSize.width,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              RichText(
-                                                text: TextSpan(
-                                                  style: tertiaryText.copyWith(
-                                                    fontSize: 15,
-                                                    fontWeight: FontWeight.bold,
+                                        flexibleSpace: Stack(
+                                          children: [
+                                            ClipRRect(
+                                              child: Hero(
+                                                tag: 'report_${widget.id}',
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    image: DecorationImage(
+                                                      image: NetworkImage(
+                                                          selectedReport[0]
+                                                              ['Image']),
+                                                      fit: BoxFit.fill,
+                                                    ),
                                                   ),
-                                                  children: [
-                                                    TextSpan(
-                                                        text:
-                                                            'Apprehension Summary'),
-                                                    (selectedReport[0][
-                                                                'AssignedTanod'] !=
-                                                            null
-                                                        ? TextSpan(
-                                                            text:
-                                                                ' - Recent Actions',
-                                                            style: tertiaryText
-                                                                .copyWith(
-                                                              fontSize: 15,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal,
-                                                            ),
-                                                          )
-                                                        : TextSpan()),
-                                                  ],
                                                 ),
                                               ),
-                                              MyReportDetails(
-                                                margin: EdgeInsets.only(
-                                                  left: 10,
-                                                  right: 10,
-                                                  top: 5,
-                                                ),
-                                                width: screenSize.width,
-                                                label: Text(
-                                                  'Tanod: ${setAssignTanodName()}',
-                                                  style: tertiaryText.copyWith(
-                                                    fontSize: 14,
-                                                  ),
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              MyReportDetails(
-                                                margin: EdgeInsets.only(
-                                                  left: 10,
-                                                  right: 10,
-                                                  top: 5,
-                                                ),
-                                                width: screenSize.width,
-                                                label: Text(
-                                                  "Date: ${setDateTime('Date')}",
-                                                  style: tertiaryText.copyWith(
-                                                    fontSize: 14,
-                                                  ),
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              MyReportDetails(
-                                                margin: EdgeInsets.only(
-                                                  left: 10,
-                                                  right: 10,
-                                                  top: 5,
-                                                ),
-                                                width: screenSize.width,
-                                                label: Text(
-                                                  "Time: ${setDateTime('Time')}",
-                                                  style: tertiaryText.copyWith(
-                                                    fontSize: 14,
-                                                  ),
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              MyReportDetails(
-                                                margin: EdgeInsets.only(
-                                                  left: 10,
-                                                  right: 10,
-                                                  top: 5,
-                                                ),
-                                                width: screenSize.width,
-                                                label: Text(
-                                                  'Caught Violator: ${_calculateApprehendedViolatorCount()}',
-                                                  style: tertiaryText.copyWith(
-                                                    fontSize: 14,
-                                                  ),
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              MyReportDetails(
-                                                margin: EdgeInsets.only(
-                                                  left: 10,
-                                                  right: 10,
-                                                  top: 5,
-                                                  bottom: 5,
-                                                ),
-                                                width: screenSize.width,
-                                                label: Text(
-                                                  'Status: ${selectedReport[0]['AssignedTanod'][selectedReport[0]['AssignedTanod'].length - 1]['Status']}',
-                                                  style: tertiaryText.copyWith(
-                                                    fontSize: 14,
-                                                  ),
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              GestureDetector(
-                                                onTap: () {
-                                                  print('Load Report Activity');
+                                            ),
+                                            Positioned(
+                                              bottom: -5,
+                                              right: -3,
+                                              child: IconButton(
+                                                icon: Icon(
+                                                    FontAwesomeIcons.expand),
+                                                color: Colors.white,
+                                                iconSize: 18,
+                                                onPressed: () {
                                                   Navigator.of(context).push(
                                                     MaterialPageRoute(
                                                       builder: (ctx) =>
-                                                          DetailAssignedTanodsReport(
-                                                              id: widget.id),
+                                                          ImageFullScreen(
+                                                        tag: widget.id,
+                                                        image: selectedReport[0]
+                                                            ['Image'],
+                                                      ),
                                                     ),
                                                   );
                                                 },
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    body: ListView(
+                                      children: [
+                                        Container(
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 15),
+                                          padding: EdgeInsets.only(top: 15),
+                                          width: screenSize.width,
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                'Details',
+                                                style: secandaryText.copyWith(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                  letterSpacing: 0.5,
+                                                ),
+                                              ),
+                                              Container(
+                                                width: 5,
+                                              ),
+                                              MyReportStatusIndicator(
+                                                height: 10,
+                                                width: 10,
+                                                color: 'Pending' == 'Responding'
+                                                    ? Color(0xffdd901c)
+                                                    : selectedReport[0]
+                                                                ['Category'] ==
+                                                            'Latest'
+                                                        ? Colors.green
+                                                        : Colors.red,
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        Divider(
+                                          thickness: 1.5,
+                                        ),
+                                        MyReportDetails(
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 15),
+                                          width: screenSize.width,
+                                          label: Text(
+                                            'Area: ${selectedReport[0]['Location']}',
+                                            style: tertiaryText.copyWith(
+                                              fontSize: 15,
+                                            ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        MyReportDetails(
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 15),
+                                          width: screenSize.width,
+                                          label: Text(
+                                            'Time: ${convertHour(dateTime.hour, 0)}:${dateTime.minute}:${dateTime.second} ${convertHour(dateTime.hour, 1)}',
+                                            style: tertiaryText.copyWith(
+                                              fontSize: 15,
+                                            ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        MyReportDetails(
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 15),
+                                          width: screenSize.width,
+                                          label: Text(
+                                            'Date: ${convertMonth(dateTime.month)} ${dateTime.day}, ${dateTime.year}',
+                                            style: tertiaryText.copyWith(
+                                              fontSize: 15,
+                                            ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        MyReportDetails(
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 15),
+                                          width: screenSize.width,
+                                          label: Text(
+                                            "Violators Detected: ${selectedReport[0]['ViolatorCount']}",
+                                            style: tertiaryText.copyWith(
+                                              fontSize: 15,
+                                            ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        Container(
+                                          margin: EdgeInsets.only(
+                                            top: 5,
+                                          ),
+                                          child: Divider(
+                                            thickness: 5,
+                                            color: Colors.grey[200],
+                                          ),
+                                        ),
+                                        isAssigned ||
+                                                selectedReport[0]['Category'] !=
+                                                    'Latest'
+                                            ? Container(
+                                                margin: EdgeInsets.symmetric(
+                                                  horizontal: 15,
+                                                ),
+                                                width: screenSize.width,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
-                                                    RichText(
-                                                      text: TextSpan(
-                                                        style: tertiaryText
-                                                            .copyWith(
-                                                          fontSize: 15,
-                                                          color:
-                                                              customColor[130],
-                                                          decoration:
-                                                              TextDecoration
-                                                                  .underline,
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          'Apprehension Summary',
+                                                          style: tertiaryText
+                                                              .copyWith(
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
                                                         ),
-                                                        children: [
-                                                          TextSpan(
-                                                              text:
-                                                                  'See More '),
-                                                          WidgetSpan(
-                                                            child: Icon(
-                                                              FontAwesomeIcons
-                                                                  .angleDoubleRight,
-                                                              size: 18,
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            print(
+                                                                'Load Report Activity');
+                                                            Navigator.of(
+                                                                    context)
+                                                                .push(
+                                                              MaterialPageRoute(
+                                                                builder: (ctx) =>
+                                                                    DetailAssignedTanodsReport(
+                                                                        id: widget
+                                                                            .id),
+                                                              ),
+                                                            );
+                                                          },
+                                                          child: Text(
+                                                            'View History',
+                                                            style: tertiaryText
+                                                                .copyWith(
+                                                              fontSize: 14,
                                                               color:
                                                                   customColor[
                                                                       130],
                                                             ),
                                                           ),
-                                                        ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    MyReportDetails(
+                                                      margin: EdgeInsets.only(
+                                                        left: 10,
+                                                        right: 10,
+                                                        top: 5,
+                                                      ),
+                                                      width: screenSize.width,
+                                                      label: Text(
+                                                        'Tanod: ${setAssignTanodName()}',
+                                                        style: tertiaryText
+                                                            .copyWith(
+                                                          fontSize: 14,
+                                                        ),
+                                                        maxLines: 2,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ),
+                                                    MyReportDetails(
+                                                      margin: EdgeInsets.only(
+                                                        left: 10,
+                                                        right: 10,
+                                                        top: 5,
+                                                      ),
+                                                      width: screenSize.width,
+                                                      label: Text(
+                                                        "Date: ${setDateTime(selectedReport[0]['AssignedTanod'][selectedReport[0]['AssignedTanod'].length - 1]['DateAssign'], 'Date')}",
+                                                        style: tertiaryText
+                                                            .copyWith(
+                                                          fontSize: 14,
+                                                        ),
+                                                        maxLines: 2,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ),
+                                                    MyReportDetails(
+                                                      margin: EdgeInsets.only(
+                                                        left: 10,
+                                                        right: 10,
+                                                        top: 5,
+                                                      ),
+                                                      width: screenSize.width,
+                                                      label: Text(
+                                                        "Time: ${setDateTime(selectedReport[0]['AssignedTanod'][selectedReport[0]['AssignedTanod'].length - 1]['DateAssign'], 'Time')}",
+                                                        style: tertiaryText
+                                                            .copyWith(
+                                                          fontSize: 14,
+                                                        ),
+                                                        maxLines: 2,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ),
+                                                    MyReportDetails(
+                                                      margin: EdgeInsets.only(
+                                                        left: 10,
+                                                        right: 10,
+                                                        top: 5,
+                                                      ),
+                                                      width: screenSize.width,
+                                                      label: Text(
+                                                        'Caught Violator: ${_calculateApprehendedViolatorCount()}',
+                                                        style: tertiaryText
+                                                            .copyWith(
+                                                          fontSize: 14,
+                                                        ),
+                                                        maxLines: 2,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ),
+                                                    MyReportDetails(
+                                                      margin: EdgeInsets.only(
+                                                        left: 10,
+                                                        right: 10,
+                                                        top: 5,
+                                                        bottom: 5,
+                                                      ),
+                                                      width: screenSize.width,
+                                                      label: Text(
+                                                        'Status: ${selectedReport[0]['AssignedTanod'][selectedReport[0]['AssignedTanod'].length - 1]['Status']}',
+                                                        style: tertiaryText
+                                                            .copyWith(
+                                                          fontSize: 14,
+                                                        ),
+                                                        maxLines: 2,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
                                                       ),
                                                     ),
                                                   ],
                                                 ),
+                                              )
+                                            : Container(
+                                                height: 250,
+                                                alignment: Alignment.center,
+                                                width: screenSize.width,
+                                                child: Text(
+                                                  'No Apprehension Yet',
+                                                  style: tertiaryText.copyWith(
+                                                    fontSize: 20,
+                                                    color: Colors.grey,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
                                               ),
-                                            ],
-                                          ),
-                                        )
-                                      : Container(
-                                          height: 250,
-                                          alignment: Alignment.center,
-                                          width: screenSize.width,
-                                          child: Text(
-                                            'No Apprehension Yet',
-                                            style: tertiaryText.copyWith(
-                                              fontSize: 20,
-                                              color: Colors.grey,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        )
-                                ],
-                              ),
-                              floatingActionButtonLocation:
-                                  FloatingActionButtonLocation.centerDocked,
-                              floatingActionButton: Container(
-                                width: screenSize.width,
-                                height: 100,
-                                child: isAssigned
-                                    ? isAssignedToUser
-                                        ? Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Container(
-                                                  width: screenSize.width * .46,
-                                                  height: 50,
-                                                  child: MyOutlineButton(
-                                                    elavation: 0,
-                                                    color: Color(0xff1c52dd),
-                                                    radius: 10,
-                                                    onPressed: () {
-                                                      _buildCreateAssignConfirmaModal(
-                                                              context, 'Drop')
-                                                          .then((value) {
-                                                        setState(() {});
-                                                      });
-                                                    },
-                                                    isLoading: false,
-                                                    text: Text(
-                                                      'Drop Report',
-                                                      style:
-                                                          tertiaryText.copyWith(
-                                                        fontSize: 18,
-                                                        letterSpacing: 0,
-                                                        color:
-                                                            Color(0xff1c52dd),
-                                                      ),
-                                                    ),
-                                                  )),
-                                              Container(
-                                                margin:
-                                                    EdgeInsets.only(left: 10),
-                                                height: 50,
-                                                width: screenSize.width * .46,
-                                                child: MyFloatingButton(
-                                                  onPressed: () {
-                                                    print(
-                                                        'Load Report Documentation');
-                                                    Navigator.of(context).push(
-                                                      MaterialPageRoute(
-                                                        builder: (ctx) =>
-                                                            ReportDocumentation(
-                                                          id: widget.id,
-                                                          userUID: userUID,
+                                        _calculateApprehendedViolatorCount() > 0
+                                            ? Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Divider(
+                                                    thickness: 1,
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Container(
+                                                        margin: EdgeInsets.only(
+                                                          left: 15,
+                                                        ),
+                                                        child: Text(
+                                                          'Documented Violators',
+                                                          style: tertiaryText
+                                                              .copyWith(
+                                                                  fontSize: 15,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                          maxLines: 2,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
                                                         ),
                                                       ),
-                                                    );
-                                                  },
-                                                  title: Text(
-                                                    'Document Report',
-                                                    style:
-                                                        tertiaryText.copyWith(
-                                                      fontSize: 18,
-                                                      letterSpacing: 0,
-                                                      color: Colors.white,
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          print(
+                                                              'Load Documented Violators');
+                                                          Navigator.of(context)
+                                                              .push(
+                                                                  MaterialPageRoute(
+                                                            builder: (ctx) =>
+                                                                DetailDocumentedViolatorScreen(
+                                                                    id: widget
+                                                                        .id),
+                                                          ));
+                                                        },
+                                                        child: Container(
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                            right: 15,
+                                                          ),
+                                                          child: Text(
+                                                            'View all',
+                                                            style: tertiaryText
+                                                                .copyWith(
+                                                              fontSize: 14,
+                                                              color:
+                                                                  customColor[
+                                                                      130],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  for (var item
+                                                      in filterDocuments()
+                                                          .reversed
+                                                          .toList())
+                                                    Card(
+                                                      child: ListTile(
+                                                        onTap: () {
+                                                          if (checkIsAssigned(item[
+                                                              'ViolatorId'])) {
+                                                            print(
+                                                                'Load Specific Documented Violator');
+                                                            Navigator.of(
+                                                                    context)
+                                                                .push(
+                                                              MaterialPageRoute(
+                                                                builder: (ctx) => ReportDocumentation(
+                                                                    id: widget
+                                                                        .id,
+                                                                    userUID:
+                                                                        userUID,
+                                                                    selectedViolatorId:
+                                                                        item[
+                                                                            "ViolatorId"]),
+                                                              ),
+                                                            );
+                                                          } else {
+                                                            _scaffoldKeyDetailReports
+                                                                .currentState!
+                                                                // ignore: deprecated_member_use
+                                                                .showSnackBar(
+                                                              SnackBar(
+                                                                content: Text(
+                                                                  'The documentation you selected is not assigned to you',
+                                                                ),
+                                                                duration:
+                                                                    Duration(
+                                                                        seconds:
+                                                                            3),
+                                                              ),
+                                                            );
+                                                          }
+                                                        },
+                                                        leading: Container(
+                                                          height: 30,
+                                                          width: 30,
+                                                          child: Image.asset(
+                                                            'assets/images/verified-account.png',
+                                                            width: 20,
+                                                            height: 20,
+                                                            fit: BoxFit
+                                                                .fitHeight,
+                                                            color: customColor[
+                                                                130],
+                                                          ),
+                                                        ),
+                                                        title: Align(
+                                                          alignment: Alignment(
+                                                              -1.1, 0),
+                                                          child: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Text(
+                                                                getViolatorSpecifiedInformation(
+                                                                    violators,
+                                                                    item[
+                                                                        'ViolatorId'],
+                                                                    'Name'),
+                                                                style: tertiaryText
+                                                                    .copyWith(
+                                                                        fontSize:
+                                                                            14),
+                                                              ),
+                                                              Text(
+                                                                "${setDateTime(item['DateApprehended'], 'Time')} / ${setDateTime(item['DateApprehended'], 'Date')}",
+                                                                style: tertiaryText
+                                                                    .copyWith(
+                                                                        fontSize:
+                                                                            11),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        trailing: Text(
+                                                          "₱${item['Fine']}",
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
-                                                  radius: 10,
-                                                ),
-                                              ),
-                                            ],
-                                          )
-                                        : Container()
-                                    : isUserHasActiveReport || isTaggedReport
-                                        ? Container()
-                                        : Column(
-                                            children: [
-                                              Container(
-                                                margin: EdgeInsets.only(
-                                                  left: screenSize.width / 7.5,
-                                                  bottom: 5,
-                                                ),
-                                                child: Text(
-                                                  'Immediately respond to the screne',
-                                                  style: tertiaryText.copyWith(
-                                                    color: Colors.grey[700],
-                                                    fontSize: 10,
-                                                  ),
-                                                ),
-                                                alignment: Alignment.centerLeft,
-                                              ),
-                                              Container(
-                                                width: screenSize.width * .8,
-                                                height: 50,
-                                                child: MyFloatingButton(
-                                                  onPressed: () {
-                                                    _buildCreateAssignConfirmaModal(
-                                                            context, 'Assign')
-                                                        .then((value) {
-                                                      setState(() {});
-                                                    });
-                                                  },
-                                                  title: Text(
-                                                    'Apprehend',
-                                                    style:
-                                                        tertiaryText.copyWith(
-                                                      fontSize: 20,
-                                                      letterSpacing: 2,
-                                                      color: Colors.white,
+                                                  Container(
+                                                    height: 80,
+                                                  )
+                                                ],
+                                              )
+                                            : Text('')
+                                      ],
+                                    ),
+                                    floatingActionButtonLocation:
+                                        FloatingActionButtonLocation
+                                            .centerDocked,
+                                    floatingActionButton: Container(
+                                      width: screenSize.width,
+                                      height: 100,
+                                      child: isAssigned
+                                          ? isAssignedToUser
+                                              ? Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Container(
+                                                        width:
+                                                            screenSize.width *
+                                                                .46,
+                                                        height: 50,
+                                                        child: MyOutlineButton(
+                                                          elavation: 0,
+                                                          color:
+                                                              Color(0xff1c52dd),
+                                                          radius: 10,
+                                                          onPressed: () {
+                                                            _buildCreateAssignConfirmaModal(
+                                                                    context,
+                                                                    'Drop')
+                                                                .then((value) {
+                                                              setState(() {});
+                                                            });
+                                                          },
+                                                          isLoading: false,
+                                                          text: Text(
+                                                            'Drop Report',
+                                                            style: tertiaryText
+                                                                .copyWith(
+                                                              fontSize: 18,
+                                                              letterSpacing: 0,
+                                                              color: Color(
+                                                                  0xff1c52dd),
+                                                            ),
+                                                          ),
+                                                        )),
+                                                    Container(
+                                                      margin: EdgeInsets.only(
+                                                          left: 10),
+                                                      height: 50,
+                                                      width: screenSize.width *
+                                                          .46,
+                                                      child: MyFloatingButton(
+                                                        onPressed: () {
+                                                          print(
+                                                              'Load Report Documentation');
+                                                          Navigator.of(context)
+                                                              .push(
+                                                            MaterialPageRoute(
+                                                              builder: (ctx) =>
+                                                                  ReportDocumentation(
+                                                                id: widget.id,
+                                                                userUID:
+                                                                    userUID,
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                        title: Text(
+                                                          'Document Report',
+                                                          style: tertiaryText
+                                                              .copyWith(
+                                                            fontSize: 18,
+                                                            letterSpacing: 0,
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                        radius: 10,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  radius: 30,
+                                                  ],
+                                                )
+                                              : Container()
+                                          : isUserHasActiveReport ||
+                                                  isTaggedReport
+                                              ? Container()
+                                              : Column(
+                                                  children: [
+                                                    Container(
+                                                      margin: EdgeInsets.only(
+                                                        left: screenSize.width /
+                                                            7.5,
+                                                        bottom: 5,
+                                                      ),
+                                                      child: Text(
+                                                        'Immediately respond to the screne',
+                                                        style: tertiaryText
+                                                            .copyWith(
+                                                          color:
+                                                              Colors.grey[700],
+                                                          fontSize: 10,
+                                                        ),
+                                                      ),
+                                                      alignment:
+                                                          Alignment.centerLeft,
+                                                    ),
+                                                    Container(
+                                                      width:
+                                                          screenSize.width * .8,
+                                                      height: 50,
+                                                      child: MyFloatingButton(
+                                                        onPressed: () {
+                                                          _buildCreateAssignConfirmaModal(
+                                                                  context,
+                                                                  'Assign')
+                                                              .then((value) {
+                                                            setState(() {});
+                                                          });
+                                                        },
+                                                        title: Text(
+                                                          'Apprehend',
+                                                          style: tertiaryText
+                                                              .copyWith(
+                                                            fontSize: 20,
+                                                            letterSpacing: 2,
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                        radius: 30,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                              ),
-                            );
+                                    ),
+                                  );
+                                });
                           });
                     });
               },
