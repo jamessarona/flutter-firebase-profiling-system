@@ -33,7 +33,7 @@ class _MainScreenState extends State<MainScreen> {
   late Size screenSize;
 
   final dbRef = FirebaseDatabase.instance.reference();
-
+  var tanods;
   var reports;
   var userData;
   String userUID = '';
@@ -41,7 +41,7 @@ class _MainScreenState extends State<MainScreen> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void saveSelectedArea() async {
-    await dbRef.child('Tanods').child(userUID).update({
+    await dbRef.child('Tanods').child(userData['TanodId']).update({
       'Area': selectedArea,
     });
   }
@@ -196,21 +196,22 @@ class _MainScreenState extends State<MainScreen> {
     return SafeArea(
       child: userUID.isNotEmpty
           ? StreamBuilder(
-              stream: dbRef.child('Tanods').child(userUID).onValue,
-              builder: (context, userSnapshot) {
-                if (userSnapshot.hasData &&
-                    !userSnapshot.hasError &&
-                    (userSnapshot.data! as Event).snapshot.value != null) {
-                  userData = (userSnapshot.data! as Event).snapshot.value;
-                  if (userData['Area'] != null) {
-                    selectedArea = userData['Area'];
-                  }
+              stream: dbRef.child('Tanods').onValue,
+              builder: (context, tanodSnapshot) {
+                if (tanodSnapshot.hasData &&
+                    !tanodSnapshot.hasError &&
+                    (tanodSnapshot.data! as Event).snapshot.value != null) {
+                  tanods = (tanodSnapshot.data! as Event).snapshot.value;
                 } else {
                   return Scaffold(
                     body: Center(
                       child: MySpinKitLoadingScreen(),
                     ),
                   );
+                }
+                userData = filterCurrentUserInformation(tanods, userUID)[0];
+                if (userData['Area'] != null) {
+                  selectedArea = userData['Area'];
                 }
                 return StreamBuilder(
                     stream: dbRef.child('Reports').onValue,

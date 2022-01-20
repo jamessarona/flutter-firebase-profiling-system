@@ -18,6 +18,7 @@ class _AssignmentHistoryScreenState extends State<AssignmentHistoryScreen> {
   late Size screenSize;
   final dbRef = FirebaseDatabase.instance.reference();
   var reports;
+  var tanods;
   var userData;
 
   @override
@@ -55,16 +56,18 @@ class _AssignmentHistoryScreenState extends State<AssignmentHistoryScreen> {
                 return MySpinKitLoadingScreen();
               }
               return StreamBuilder<Object>(
-                  stream: dbRef.child('Tanods').child(widget.userUID).onValue,
-                  builder: (context, reportSnapshot) {
-                    if (reportSnapshot.hasData &&
-                        !reportSnapshot.hasError &&
-                        (reportSnapshot.data! as Event).snapshot.value !=
+                  stream: dbRef.child('Tanods').onValue,
+                  builder: (context, tanodsSnapshot) {
+                    if (tanodsSnapshot.hasData &&
+                        !tanodsSnapshot.hasError &&
+                        (tanodsSnapshot.data! as Event).snapshot.value !=
                             null) {
-                      userData = (reportSnapshot.data! as Event).snapshot.value;
+                      tanods = (tanodsSnapshot.data! as Event).snapshot.value;
                     } else {
                       return MySpinKitLoadingScreen();
                     }
+                    userData =
+                        filterCurrentUserInformation(tanods, widget.userUID);
                     return ListView(
                       children: [
                         Card(),

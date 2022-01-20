@@ -23,8 +23,12 @@ class _DetailAssignedTanodsReportState
 
   String _getTanodName(String tanodId) {
     String tanodName = '';
-    for (int i = 0; i < tanods.length; i++) {}
-    return tanodId;
+    for (int i = 0; i < tanods.length; i++) {
+      if (tanods[i]['TanodId'] == tanodId) {
+        tanodName = "${tanods[i]['Firstname']} ${tanods[i]['Lastname']}";
+      }
+    }
+    return tanodName;
   }
 
   String _setDateTime(String date, String method) {

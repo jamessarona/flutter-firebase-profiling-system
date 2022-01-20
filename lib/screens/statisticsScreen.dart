@@ -10,6 +10,7 @@ import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/globals.dart';
 import 'package:tanod_apprehension/shared/myAppbar.dart';
 import 'package:tanod_apprehension/shared/myBottomSheet.dart';
+import 'package:tanod_apprehension/shared/myContainers.dart';
 import 'package:tanod_apprehension/shared/myDrawers.dart';
 import 'package:tanod_apprehension/shared/myListTile.dart';
 import 'package:tanod_apprehension/shared/mySpinKits.dart';
@@ -38,14 +39,143 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   GlobalKey<ScaffoldState> _scaffoldKeyStatistics = GlobalKey<ScaffoldState>();
   late Size screenSize;
   var reports;
+  var latestReports;
+  var droppedReports;
+  var taggedReports;
   int notifCount = 0;
   final dbRef = FirebaseDatabase.instance.reference();
   String selectedFilter = "Filter Result";
   String selectedLabel = 'Month';
+
   List<Color> gradientColor = [
     Color(0xffadb1ea),
     Color(0xff1c52dd),
   ];
+  int _calculateTotalViolatorsCount() {
+    num violatorCount = 0;
+    if (latestReports.isNotEmpty) {
+      for (int i = 0; i < latestReports[0].length; i++) {
+        violatorCount += latestReports[0][i]['ViolatorCount'];
+      }
+    }
+    if (droppedReports.isNotEmpty) {
+      for (int i = 0; i < droppedReports[0].length; i++) {
+        violatorCount += droppedReports[0][i]['ViolatorCount'];
+      }
+    }
+    if (taggedReports.isNotEmpty) {
+      for (int i = 0; i < taggedReports[0].length; i++) {
+        violatorCount += taggedReports[0][i]['ViolatorCount'];
+      }
+    }
+    return violatorCount.toInt();
+  }
+
+  int _calculateDocumentedViolator() {
+    num violatorCount = 0;
+    if (latestReports.isNotEmpty) {
+      for (int i = 0; i < latestReports[0].length; i++) {
+        if (latestReports[0][i]['AssignedTanod'] != null) {
+          for (int x = 0;
+              x < latestReports[0][i]['AssignedTanod'].length;
+              x++) {
+            if (latestReports[0][i]['AssignedTanod'][x]['Documentation'] !=
+                null) {
+              violatorCount += latestReports[0][i]['AssignedTanod'][x]
+                      ['Documentation']
+                  .length;
+            }
+          }
+        }
+      }
+    }
+    if (droppedReports.isNotEmpty) {
+      for (int i = 0; i < droppedReports[0].length; i++) {
+        if (droppedReports[0][i]['AssignedTanod'] != null) {
+          for (int x = 0;
+              x < droppedReports[0][i]['AssignedTanod'].length;
+              x++) {
+            if (droppedReports[0][i]['AssignedTanod'][x]['Documentation'] !=
+                null) {
+              violatorCount += droppedReports[0][i]['AssignedTanod'][x]
+                      ['Documentation']
+                  .length;
+            }
+          }
+        }
+      }
+    }
+    if (taggedReports.isNotEmpty) {
+      for (int i = 0; i < taggedReports[0].length; i++) {
+        if (taggedReports[0][i]['AssignedTanod'] != null) {
+          for (int x = 0;
+              x < taggedReports[0][i]['AssignedTanod'].length;
+              x++) {
+            if (taggedReports[0][i]['AssignedTanod'][x]['Documentation'] !=
+                null) {
+              violatorCount += taggedReports[0][i]['AssignedTanod'][x]
+                      ['Documentation']
+                  .length;
+            }
+          }
+        }
+      }
+    }
+    return violatorCount.toInt();
+  }
+
+  int _calculateEscapedViolator() {
+    num violatorCount = 0;
+    bool isRecorded = false;
+    // if (droppedReports.isNotEmpty) {
+    //   for (int i = 0; i < droppedReports[0].length; i++) {
+    //     if (droppedReports[0][i]['AssignedTanod'] != null) {
+    //       for (int x = droppedReports[0][i]['AssignedTanod'].length - 1;
+    //           x >= 0;
+    //           x--) {
+    //         print(droppedReports[0][i]['AssignedTanod'][x]['Documentation'] !=
+    //             null);
+    //         if (droppedReports[0][i]['AssignedTanod'][x]['Reason'] ==
+    //                 'Violator Escaped' &&
+    //             !isRecorded) {
+    //           isRecorded = true;
+    //           if(
+    //             droppedReports[0][i]['AssignedTanod'][x]['Documentation'] !=
+    //                 null){}
+    //           violatorCount += droppedReports[0][i]['ViolatorCount'];
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
+    return violatorCount.toInt();
+  }
+
+  int _calculateReportCount(String category) {
+    int reportCount = 0;
+    if (category == "Latest") {
+      if (latestReports.isNotEmpty) {
+        for (int i = 0; i < latestReports[0].length; i++) {
+          if (latestReports[0][i]['AssignedTanod'] == null) {
+            reportCount++;
+          }
+        }
+      }
+    } else {
+      if (droppedReports.isNotEmpty) {
+        for (int i = 0; i < droppedReports[0].length; i++) {
+          if (droppedReports[0][i]['AssignedTanod']
+                      [droppedReports[0][i]['AssignedTanod'].length - 1]
+                  ['Status'] ==
+              'Dropped') {
+            reportCount++;
+          }
+        }
+      }
+    }
+    return reportCount;
+  }
+
   @override
   Widget build(BuildContext context) {
     screenSize = MediaQuery.of(context).size;
@@ -65,6 +195,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               );
             }
             notifCount = countReportsByLocation(reports);
+
+            latestReports = filterReport("Latest", reports);
+            droppedReports = filterReport("Dropped", reports);
+            taggedReports = filterReport("Tagged", reports);
+
             return Scaffold(
               key: _scaffoldKeyStatistics,
               drawer: BuildDrawer(
@@ -116,8 +251,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     Container(
                       margin: EdgeInsets.only(
                         top: 15,
-                        left: screenSize.width * .13,
-                        right: screenSize.width * .13,
+                        left: screenSize.width * .1,
+                        right: screenSize.width * .1,
                       ),
                       height: 50,
                       decoration: BoxDecoration(
@@ -210,15 +345,36 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                       child: Column(
                         children: [
                           Text(
-                            'Caught Violators',
+                            'Total Violators',
                             style: tertiaryText.copyWith(fontSize: 18),
                           ),
                           Text(
-                            '159',
+                            '${_calculateTotalViolatorsCount()}',
                             style: tertiaryText.copyWith(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
                             ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 25),
+                      height: 150,
+                      width: screenSize.width,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          MyStatisticsCountsContainer(
+                            title: 'Documented',
+                            count: _calculateDocumentedViolator(),
+                          ),
+                          Container(
+                            width: screenSize.width * .03,
+                          ),
+                          MyStatisticsCountsContainer(
+                            title: 'Escaped',
+                            count: _calculateEscapedViolator(),
                           ),
                         ],
                       ),
@@ -495,7 +651,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                 MyReportAvailabilityTile(
                                   color: Color(0xff1c52dd),
                                   title: 'Latest Detection',
-                                  count: 3,
+                                  count: _calculateReportCount("Latest"),
                                 ),
                                 Container(
                                   height: 10,
@@ -503,7 +659,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                 MyReportAvailabilityTile(
                                   color: Color(0xff6400e3),
                                   title: 'Dropped Reports',
-                                  count: 3,
+                                  count: _calculateReportCount("Dropped"),
                                 )
                               ],
                             ),

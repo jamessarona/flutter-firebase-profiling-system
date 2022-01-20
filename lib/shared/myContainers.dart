@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/globals.dart';
 
@@ -197,6 +198,87 @@ class PageResultMessage extends StatelessWidget {
             letterSpacing: 1,
             color: Colors.grey),
         textAlign: TextAlign.center,
+      ),
+    );
+  }
+}
+
+class MyStatisticsCountsContainer extends StatelessWidget {
+  final String title;
+  final int count;
+  const MyStatisticsCountsContainer({required this.title, required this.count});
+
+  @override
+  Widget build(BuildContext context) {
+    Size screenSize = MediaQuery.of(context).size;
+    return Container(
+      height: 150,
+      width: screenSize.width * .4,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(20)),
+        color: title == 'Documented' ? customColor[130] : customColor[110],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            spreadRadius: 3,
+            blurRadius: 8,
+            offset: Offset(0, 0), // changes position of shadow
+          ),
+        ],
+      ),
+      child: Container(
+        width: screenSize.width * .35,
+        margin: EdgeInsets.only(
+          top: 20,
+          left: 16,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(
+              title == 'Documented'
+                  ? FontAwesomeIcons.userCheck
+                  : FontAwesomeIcons.userTimes,
+              size: 20,
+              color: title == 'Documented' ? Colors.white : Colors.black,
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(
+                vertical: 10,
+              ),
+              child: Text(
+                title,
+                style: tertiaryText.copyWith(
+                  fontSize: 15,
+                  color:
+                      title == 'Documented' ? customColor[110] : Colors.black,
+                ),
+              ),
+            ),
+            Container(
+              height: 50,
+              padding: EdgeInsets.only(left: 10),
+              width: screenSize.width * .35,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    bottomLeft: Radius.circular(15)),
+                color:
+                    title == 'Documented' ? customColor[140] : customColor[120],
+              ),
+              alignment: Alignment.centerLeft,
+              child: Text(
+                '$count',
+                style: tertiaryText.copyWith(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color:
+                      title == 'Documented' ? customColor[110] : Colors.black,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

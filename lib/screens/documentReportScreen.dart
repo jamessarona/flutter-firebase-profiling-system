@@ -12,11 +12,11 @@ import 'package:intl/intl.dart';
 
 class ReportDocumentation extends StatefulWidget {
   final String id;
-  final String userUID;
+  final String tanodId;
   final String? selectedViolatorId;
   const ReportDocumentation({
     required this.id,
-    required this.userUID,
+    required this.tanodId,
     this.selectedViolatorId,
   });
 
@@ -513,7 +513,7 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
           .update({
         "Status": "Apprehended",
       });
-      await dbRef.child('Tanods').child(widget.userUID).update({
+      await dbRef.child('Tanods').child(widget.tanodId).update({
         'Status': 'Standby',
       });
     } else {

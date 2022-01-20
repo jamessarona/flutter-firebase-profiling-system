@@ -317,3 +317,13 @@ String getViolatorSpecifiedInformation(
   }
   return name;
 }
+
+List filterCurrentUserInformation(List<dynamic> list, String tanodUID) {
+  var filterCurrentUser = new List.filled(1, []);
+  for (int i = 0; i < list.length; i++) {
+    if (list[i]['TanodUID'] == tanodUID) {
+      filterCurrentUser[0].add(list[i]);
+    }
+  }
+  return filterCurrentUser[0];
+}

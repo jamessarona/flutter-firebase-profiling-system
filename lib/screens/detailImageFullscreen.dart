@@ -40,11 +40,13 @@ class _ImageFullScreenState extends State<ImageFullScreen> {
         Container(
           height: screenSize.height,
           width: screenSize.width,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(
-                widget.image,
-              ),
+          child: InteractiveViewer(
+            panEnabled: false, // Set it to false
+            boundaryMargin: EdgeInsets.all(100),
+            minScale: 1,
+            maxScale: 5,
+            child: Image.network(
+              widget.image,
               fit: BoxFit.fitWidth,
             ),
           ),
