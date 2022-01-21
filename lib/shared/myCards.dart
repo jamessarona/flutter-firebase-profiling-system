@@ -201,9 +201,11 @@ class MyInformationCard extends StatelessWidget {
 
 class MyStatusCard extends StatelessWidget {
   final String status;
+  final String location;
   final VoidCallback onTap;
   const MyStatusCard({
     required this.status,
+    required this.location,
     required this.onTap,
   });
 
@@ -264,7 +266,7 @@ class MyStatusCard extends StatelessWidget {
                           TextSpan(text: status),
                           status != "Standby"
                               ? TextSpan(
-                                  text: ' to\nSilver Street, D.C.',
+                                  text: ' to\n$location',
                                 )
                               : TextSpan()
                         ],

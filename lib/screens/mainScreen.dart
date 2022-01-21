@@ -164,13 +164,30 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
+  String _getAssignedReportLocation() {
+    String reportLocation = '';
+    for (int i = 0; i < reports.length; i++) {
+      if (reports[i]['AssignedTanod'] != null) {
+        if (reports[i]['Category'] != 'Tagged' &&
+            reports[i]['AssignedTanod'][reports[i]['AssignedTanod'].length - 1]
+                    ['TanodId'] ==
+                userData['TanodId'])
+          reportLocation = reports[i]['Location'].toString();
+      }
+    }
+    return reportLocation;
+  }
+
   String _getAssignedReportId() {
     String reportId = '';
     for (int i = 0; i < reports.length; i++) {
       if (reports[i]['AssignedTanod'] != null) {
-        if (reports[i]['AssignedTanod'][reports[i]['AssignedTanod'].length - 1]
-                ['TanodId'] ==
-            userData['ID']) reportId = reports[i]['Id'].toString();
+        if (reports[i]['Category'] != 'Tagged' &&
+            reports[i]['AssignedTanod'][reports[i]['AssignedTanod'].length - 1]
+                    ['TanodId'] ==
+                userData['TanodId']) {
+          reportId = reports[i]['Id'].toString();
+        }
       }
     }
     return reportId;
@@ -282,6 +299,7 @@ class _MainScreenState extends State<MainScreen> {
                                   }),
                               MyStatusCard(
                                 status: userData['Status'],
+                                location: _getAssignedReportLocation(),
                                 onTap: () {
                                   if (userData['Status'] != "Standby") {
                                     print("Load Specific Report");

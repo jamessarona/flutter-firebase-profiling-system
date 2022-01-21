@@ -471,7 +471,22 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
 
   bool checkIsAssigned(String selectedViolatorId) {
     bool isAssignedDocument = false;
-
+    for (int i = 0; i < selectedReport[0]['AssignedTanod'].length; i++) {
+      if (selectedReport[0]['AssignedTanod'][i]['Documentation'] != null) {
+        for (int x = 0;
+            x < selectedReport[0]['AssignedTanod'][i]['Documentation'].length;
+            x++) {
+          if (selectedReport[0]['AssignedTanod'][i]['Documentation'][x]
+                      ['ViolatorId'] ==
+                  selectedViolatorId &&
+              selectedReport[0]['AssignedTanod'][i]['TanodId'] ==
+                  userData['TanodId']) {
+            isAssignedDocument = true;
+            break;
+          }
+        }
+      }
+    }
     return isAssignedDocument;
   }
 
