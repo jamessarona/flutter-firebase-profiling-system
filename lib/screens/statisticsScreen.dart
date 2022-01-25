@@ -15,6 +15,7 @@ import 'package:tanod_apprehension/shared/myDrawers.dart';
 import 'package:tanod_apprehension/shared/myListTile.dart';
 import 'package:tanod_apprehension/shared/mySpinKits.dart';
 import 'package:tanod_apprehension/shared/myText.dart';
+import 'package:intl/intl.dart';
 
 class StatisticsScreen extends StatefulWidget {
   final BaseAuth auth;
@@ -43,9 +44,12 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   var droppedReports;
   var taggedReports;
   int notifCount = 0;
+  var formatter = NumberFormat('#,##,#00');
   final dbRef = FirebaseDatabase.instance.reference();
   String selectedFilter = "Filter Result";
-  String selectedLabel = 'Month';
+  String selectedLabel = '';
+  String chartTitle = '';
+  String methodTitle = '';
 
   List<Color> gradientColor = [
     Color(0xffadb1ea),
@@ -125,29 +129,31 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   }
 
   int _calculateEscapedViolator() {
+    num documentedCount = 0;
     num violatorCount = 0;
-    bool isRecorded = false;
-    // if (droppedReports.isNotEmpty) {
-    //   for (int i = 0; i < droppedReports[0].length; i++) {
-    //     if (droppedReports[0][i]['AssignedTanod'] != null) {
-    //       for (int x = droppedReports[0][i]['AssignedTanod'].length - 1;
-    //           x >= 0;
-    //           x--) {
-    //         print(droppedReports[0][i]['AssignedTanod'][x]['Documentation'] !=
-    //             null);
-    //         if (droppedReports[0][i]['AssignedTanod'][x]['Reason'] ==
-    //                 'Violator Escaped' &&
-    //             !isRecorded) {
-    //           isRecorded = true;
-    //           if(
-    //             droppedReports[0][i]['AssignedTanod'][x]['Documentation'] !=
-    //                 null){}
-    //           violatorCount += droppedReports[0][i]['ViolatorCount'];
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
+    if (droppedReports.isNotEmpty) {
+      for (int i = 0; i < droppedReports[0].length; i++) {
+        documentedCount = 0;
+        if (droppedReports[0][i]['AssignedTanod'] != null) {
+          for (int x = 0;
+              x < droppedReports[0][i]['AssignedTanod'].length;
+              x++) {
+            if (droppedReports[0][i]['AssignedTanod'][x]['Documentation'] !=
+                null) {
+              documentedCount += droppedReports[0][i]['AssignedTanod'][x]
+                      ['Documentation']
+                  .length;
+            }
+            if (x == droppedReports[0][i]['AssignedTanod'].length - 1 &&
+                droppedReports[0][i]['AssignedTanod'][x]['Reason'] ==
+                    'Violator Escaped') {
+              violatorCount +=
+                  droppedReports[0][i]['ViolatorCount'] - documentedCount;
+            }
+          }
+        }
+      }
+    }
     return violatorCount.toInt();
   }
 
@@ -170,6 +176,24 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               'Dropped') {
             reportCount++;
           }
+        }
+      }
+    }
+    return reportCount;
+  }
+
+  int _calculteOverallReportCount(String category) {
+    int reportCount = 0;
+    if (category == "Latest") {
+      if (latestReports.isNotEmpty) {
+        for (int i = 0; i < latestReports[0].length; i++) {
+          reportCount++;
+        }
+      }
+    } else {
+      if (droppedReports.isNotEmpty) {
+        for (int i = 0; i < droppedReports[0].length; i++) {
+          reportCount++;
         }
       }
     }
@@ -345,11 +369,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                       child: Column(
                         children: [
                           Text(
-                            'Total Violators',
+                            'Total Violations',
                             style: tertiaryText.copyWith(fontSize: 18),
                           ),
                           Text(
-                            '${_calculateTotalViolatorsCount()}',
+                            '${formatter.format(_calculateTotalViolatorsCount())}',
                             style: tertiaryText.copyWith(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
@@ -359,7 +383,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(top: 25),
+                      margin: EdgeInsets.only(top: 10),
                       height: 150,
                       width: screenSize.width,
                       child: Row(
@@ -381,7 +405,21 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     ),
                     Container(
                       margin: EdgeInsets.only(
-                        top: 15,
+                        top: 30,
+                        left: screenSize.width * 0.05,
+                        right: screenSize.width * 0.05,
+                      ),
+                      child: Text(
+                        'Visualization',
+                        style: tertiaryText.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(
+                        top: 20,
                         left: screenSize.width * .1,
                         right: screenSize.width * .1,
                       ),
@@ -395,6 +433,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             onTap: () {
                               setState(() {
                                 selectedLabel = 'Day';
+                                chartTitle = 'Daily Violators';
+                                methodTitle = 'Sum';
                               });
                             },
                             selectedLabel: selectedLabel,
@@ -404,6 +444,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             onTap: () {
                               setState(() {
                                 selectedLabel = 'Week';
+                                chartTitle = 'Weekly Violators';
+                                methodTitle = 'Sum';
                               });
                             },
                             selectedLabel: selectedLabel,
@@ -413,6 +455,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             onTap: () {
                               setState(() {
                                 selectedLabel = 'Month';
+                                chartTitle = 'Monthly Violators';
+                                methodTitle = 'Sum';
                               });
                             },
                             selectedLabel: selectedLabel,
@@ -422,6 +466,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             onTap: () {
                               setState(() {
                                 selectedLabel = 'Year';
+                                chartTitle = 'Yearly Violators';
+                                methodTitle = 'Sum';
                               });
                             },
                             selectedLabel: selectedLabel,
@@ -429,14 +475,51 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                         ],
                       ),
                     ),
+                    Container(
+                      margin: EdgeInsets.only(
+                        top: 10,
+                      ),
+                      child: Text(
+                        chartTitle,
+                        style: tertiaryText.copyWith(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[800],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          if (methodTitle == 'Sum') {
+                            methodTitle = 'Avg';
+                          } else {
+                            methodTitle = 'Sum';
+                          }
+                        });
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          left: screenSize.width * 0.05,
+                          right: screenSize.width * 0.05,
+                        ),
+                        child: Text(
+                          methodTitle,
+                          style: tertiaryText.copyWith(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey[800],
+                          ),
+                        ),
+                      ),
+                    ),
                     //NOT YET DONE
                     Container(
                       margin: EdgeInsets.only(
-                        top: 5,
                         left: screenSize.width * 0.05,
                         right: screenSize.width * 0.05,
                       ),
-                      padding: EdgeInsets.all(10),
                       height: 250,
                       width: screenSize.width,
                       // decoration: BoxDecoration(
@@ -485,14 +568,60 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                   showTitles: true,
                                   // reservedSize: 20,
                                   getTitles: (value) {
-                                    switch (value.toInt()) {
-                                      case 0:
-                                        return 'MAR';
-                                      case 5:
-                                        return 'APR';
-                                      case 11:
-                                        return 'MAY';
+                                    // print(start!.weekday);
+                                    // print(start!.month);
+                                    if (selectedLabel == 'Day') {
+                                      switch (value.toInt()) {
+                                        case 0:
+                                          return 'Mon';
+                                        case 2:
+                                          return 'Tue';
+                                        case 4:
+                                          return 'Wed';
+                                        case 5:
+                                          return 'Thu';
+                                        case 7:
+                                          return 'Fri';
+                                        case 9:
+                                          return 'Sat';
+                                        case 11:
+                                          return 'Sun';
+                                      }
+                                    } else if (selectedLabel == 'Week') {
+                                      switch (value.toInt()) {
+                                        case 1:
+                                          return 'Week 1';
+                                        case 4:
+                                          return 'Week 2';
+                                        case 7:
+                                          return 'Week 3';
+                                        case 10:
+                                          return 'Week 4';
+                                      }
+                                    } else if (selectedLabel == 'Month') {
+                                      switch (value.toInt()) {
+                                        case 1:
+                                          return 'JAN';
+                                        case 4:
+                                          return 'FEB';
+                                        case 7:
+                                          return 'MAR';
+                                        case 10:
+                                          return 'APR';
+                                      }
+                                    } else {
+                                      switch (value.toInt()) {
+                                        case 1:
+                                          return '2022';
+                                        case 4:
+                                          return '2023';
+                                        case 7:
+                                          return '2024';
+                                        case 10:
+                                          return '2025';
+                                      }
                                     }
+
                                     return '';
                                   }),
                             ),
@@ -584,11 +713,13 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                               CircularPercentIndicator(
                                 radius: 135,
                                 lineWidth: 6,
-                                percent: 0.4,
+                                percent: _calculateReportCount('Latest') /
+                                    _calculteOverallReportCount('Latest'),
                                 center: CircularPercentIndicator(
                                   radius: 110,
                                   lineWidth: 6,
-                                  percent: 0.8,
+                                  percent: _calculateReportCount('Dropped') /
+                                      _calculteOverallReportCount('Dropped'),
                                   animationDuration: 1200,
                                   center: Container(
                                     height: 40,

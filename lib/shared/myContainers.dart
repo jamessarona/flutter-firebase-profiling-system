@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/globals.dart';
+import 'package:intl/intl.dart';
 
 class MyUserDetail extends StatelessWidget {
   final String image;
@@ -210,6 +211,7 @@ class MyStatisticsCountsContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var formatter = NumberFormat('#,##,#00');
     Size screenSize = MediaQuery.of(context).size;
     return Container(
       height: 150,
@@ -268,7 +270,7 @@ class MyStatisticsCountsContainer extends StatelessWidget {
               ),
               alignment: Alignment.centerLeft,
               child: Text(
-                '$count',
+                '${formatter.format(count)}',
                 style: tertiaryText.copyWith(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,

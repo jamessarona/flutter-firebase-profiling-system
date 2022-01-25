@@ -1,7 +1,9 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tanod_apprehension/screens/detailReportScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
+import 'package:tanod_apprehension/shared/myCards.dart';
 import 'package:tanod_apprehension/shared/mySpinKits.dart';
 
 class AssignmentHistoryScreen extends StatefulWidget {
@@ -20,6 +22,34 @@ class _AssignmentHistoryScreenState extends State<AssignmentHistoryScreen> {
   var reports;
   var tanods;
   var userData;
+  var assignedReports;
+
+  List filterReportHistory() {
+    int len = 0;
+    for (int i = 0; i < reports.length; i++) {
+      if (reports[i]['AssignedTanod'] != null) {
+        for (int x = 0; x < reports[i]['AssignedTanod'].length; x++) {
+          if (reports[i]['AssignedTanod'][x]['TanodId'] ==
+              userData['TanodId']) {
+            len++;
+          }
+        }
+      }
+    }
+    var filterReportHistoryList = new List.filled(len, []);
+    int y = 0;
+    for (int i = 0; i < reports.length; i++) {
+      if (reports[i]['AssignedTanod'] != null) {
+        for (int x = 0; x < reports[i]['AssignedTanod'].length; x++) {
+          if (reports[i]['AssignedTanod'][x]['TanodId'] ==
+              userData['TanodId']) {
+            filterReportHistoryList[y++].add(reports[i]);
+          }
+        }
+      }
+    }
+    return filterReportHistoryList[0];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,10 +97,26 @@ class _AssignmentHistoryScreenState extends State<AssignmentHistoryScreen> {
                       return MySpinKitLoadingScreen();
                     }
                     userData =
-                        filterCurrentUserInformation(tanods, widget.userUID);
+                        filterCurrentUserInformation(tanods, widget.userUID)[0];
+                    assignedReports = filterReportHistory();
                     return ListView(
                       children: [
-                        Card(),
+                        for (var item in assignedReports.reversed.toList())
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (ctx) => DetailReportScreen(
+                                    id: item['Id'].toString(),
+                                  ),
+                                ),
+                              );
+                            },
+                            child: MyApprehenssionHistoryCard(
+                              id: item['Id'].toString(),
+                              image: item['Image'],
+                            ),
+                          ),
                       ],
                     );
                   });

@@ -71,6 +71,8 @@ class _TaggedScreenState extends State<TaggedScreen> {
                                     category: item['Category'],
                                     date: item['Date'],
                                     color: Colors.grey,
+                                    isAssigned: checkReportIsAssignedToTanod(
+                                        item['Id'].toString()),
                                   ),
                                 ),
                               ),

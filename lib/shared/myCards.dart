@@ -11,6 +11,7 @@ class MyReportCard extends StatelessWidget {
   final String date;
   final String category;
   final Color color;
+  final bool isAssigned;
   const MyReportCard({
     required this.id,
     required this.image,
@@ -18,11 +19,13 @@ class MyReportCard extends StatelessWidget {
     required this.date,
     required this.category,
     required this.color,
+    required this.isAssigned,
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
+      shadowColor: customColor[130],
       child: Container(
         padding: EdgeInsets.all(7),
         width: 180,
@@ -420,6 +423,42 @@ class MyNotificationReportCard extends StatelessWidget {
             color: Colors.grey,
             size: 20,
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class MyApprehenssionHistoryCard extends StatelessWidget {
+  final String id;
+  final String image;
+  const MyApprehenssionHistoryCard({
+    required this.id,
+    required this.image,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 3,
+      child: ListTile(
+        title: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              height: 110,
+              width: 140,
+              margin: EdgeInsets.only(bottom: 8),
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  fit: BoxFit.fill,
+                  image: NetworkImage(
+                    image,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

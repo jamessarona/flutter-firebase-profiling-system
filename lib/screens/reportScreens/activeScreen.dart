@@ -73,6 +73,8 @@ class _ActiveScreenState extends State<ActiveScreen> {
                                     category: item['Category'],
                                     date: item['Date'],
                                     color: Colors.green,
+                                    isAssigned: checkReportIsAssignedToTanod(
+                                        item['Id'].toString()),
                                   ),
                                 ),
                               ),

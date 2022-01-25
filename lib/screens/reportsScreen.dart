@@ -37,7 +37,6 @@ final dbRef = FirebaseDatabase.instance.reference();
 int notifCount = 0;
 GlobalKey<ScaffoldState> _scaffoldKeyReports = GlobalKey<ScaffoldState>();
 int currentIndext = 0;
-String uid = '';
 
 class _ReportsScreenState extends State<ReportsScreen> {
   List<StatefulWidget> screens = [

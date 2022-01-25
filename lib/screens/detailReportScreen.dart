@@ -1015,7 +1015,7 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
                                   FloatingActionButtonLocation.centerDocked,
                               floatingActionButton: Container(
                                 width: screenSize.width,
-                                height: 100,
+                                height: 90,
                                 child: isAssigned
                                     ? isAssignedToUser
                                         ? Row(

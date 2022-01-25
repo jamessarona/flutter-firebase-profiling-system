@@ -71,6 +71,8 @@ class _DroppedScreenState extends State<DroppedScreen> {
                                     category: item['Category'],
                                     date: item['Date'],
                                     color: Colors.red,
+                                    isAssigned: checkReportIsAssignedToTanod(
+                                        item['Id'].toString()),
                                   ),
                                 ),
                               ),

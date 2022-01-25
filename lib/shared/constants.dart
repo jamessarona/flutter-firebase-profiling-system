@@ -92,7 +92,7 @@ String calculateTimeOfOccurence(String date) {
       if (now.day.compareTo(dateDetected.day) == 0) {
         if (now.hour.compareTo(dateDetected.hour) == 0) {
           if (now.minute.compareTo(dateDetected.minute) == 0) {
-            time = "1m ago";
+            time = "1m";
           } else {
             time = "${(now.minute - dateDetected.minute).toString()}m";
           }
@@ -326,4 +326,8 @@ List filterCurrentUserInformation(List<dynamic> list, String tanodUID) {
     }
   }
   return filterCurrentUser[0];
+}
+
+bool checkReportIsAssignedToTanod(String id) {
+  return false;
 }

@@ -15,13 +15,31 @@ class MyDateLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Text(
-        title,
-        style: tertiaryText.copyWith(
-          fontSize: 15,
-          fontWeight: FontWeight.bold,
-          color: selectedLabel == title ? customColor[140] : Colors.grey,
+      child: Container(
+        width: 60,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          color: customColor[110],
+          boxShadow: [
+            BoxShadow(
+              color: selectedLabel == title
+                  ? customColor[140]!.withOpacity(0.1)
+                  : Colors.grey.withOpacity(0.1),
+              spreadRadius: 3,
+              blurRadius: 5,
+              offset: Offset(0, 0), // changes position of shadow
+            ),
+          ],
         ),
+        child: Text(
+          title,
+          style: tertiaryText.copyWith(
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+            color: selectedLabel == title ? customColor[140] : Colors.grey,
+          ),
+        ),
+        alignment: Alignment.center,
       ),
     );
   }
