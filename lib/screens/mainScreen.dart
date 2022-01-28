@@ -168,10 +168,12 @@ class _MainScreenState extends State<MainScreen> {
     String reportLocation = '';
     for (int i = 0; i < reports.length; i++) {
       if (reports[i]['AssignedTanod'] != null) {
-        if (reports[i]['Category'] != 'Tagged' &&
-            reports[i]['AssignedTanod'][reports[i]['AssignedTanod'].length - 1]
+        if (reports[i]['AssignedTanod'][reports[i]['AssignedTanod'].length - 1]
                     ['TanodId'] ==
-                userData['TanodId'])
+                userData['TanodId'] &&
+            reports[i]['AssignedTanod'][reports[i]['AssignedTanod'].length - 1]
+                    ['Status'] ==
+                'Responding')
           reportLocation = reports[i]['Location'].toString();
       }
     }
@@ -182,10 +184,12 @@ class _MainScreenState extends State<MainScreen> {
     String reportDate = '';
     for (int i = 0; i < reports.length; i++) {
       if (reports[i]['AssignedTanod'] != null) {
-        if (reports[i]['Category'] != 'Tagged' &&
-            reports[i]['AssignedTanod'][reports[i]['AssignedTanod'].length - 1]
+        if (reports[i]['AssignedTanod'][reports[i]['AssignedTanod'].length - 1]
                     ['TanodId'] ==
-                userData['TanodId'])
+                userData['TanodId'] &&
+            reports[i]['AssignedTanod'][reports[i]['AssignedTanod'].length - 1]
+                    ['Status'] ==
+                'Responding')
           reportDate = reports[i]['AssignedTanod']
                   [reports[i]['AssignedTanod'].length - 1]['DateAssign']
               .toString();
@@ -198,10 +202,12 @@ class _MainScreenState extends State<MainScreen> {
     String reportId = '';
     for (int i = 0; i < reports.length; i++) {
       if (reports[i]['AssignedTanod'] != null) {
-        if (reports[i]['Category'] != 'Tagged' &&
-            reports[i]['AssignedTanod'][reports[i]['AssignedTanod'].length - 1]
+        if (reports[i]['AssignedTanod'][reports[i]['AssignedTanod'].length - 1]
                     ['TanodId'] ==
-                userData['TanodId']) {
+                userData['TanodId'] &&
+            reports[i]['AssignedTanod'][reports[i]['AssignedTanod'].length - 1]
+                    ['Status'] ==
+                'Responding') {
           reportId = reports[i]['Id'].toString();
         }
       }

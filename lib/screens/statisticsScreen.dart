@@ -50,11 +50,21 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   String selectedLabel = '';
   String chartTitle = '';
   String methodTitle = '';
-
+  String selectedMonth = '';
   List<Color> gradientColor = [
     Color(0xffadb1ea),
     Color(0xff1c52dd),
   ];
+  List<String> weekDays = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+  ];
+
   int _calculateTotalViolatorsCount() {
     num violatorCount = 0;
     if (latestReports.isNotEmpty) {
@@ -218,6 +228,67 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       }
     }
     return reportCount;
+  }
+
+  double _calculateReportsCount(String dateKind, int position, String method) {
+    double value = 0;
+    if (dateKind == 'Day') {
+      if (method == 'AVG') {
+        if (latestReports.isNotEmpty) {
+          for (int i = 0; i < latestReports[0].length; i++) {
+            DateTime date = DateTime.parse(latestReports[0][i]['Date']);
+            if (date.weekday - 1 == position) {
+              value += latestReports[0][i]['ViolatorCount'];
+            }
+          }
+        }
+        if (droppedReports.isNotEmpty) {
+          for (int i = 0; i < droppedReports[0].length; i++) {
+            DateTime date = DateTime.parse(droppedReports[0][i]['Date']);
+            if (date.weekday - 1 == position) {
+              value += droppedReports[0][i]['ViolatorCount'];
+            }
+          }
+        }
+        if (taggedReports.isNotEmpty) {
+          for (int i = 0; i < taggedReports[0].length; i++) {
+            DateTime date = DateTime.parse(taggedReports[0][i]['Date']);
+            if (date.weekday - 1 == position) {
+              value += taggedReports[0][i]['ViolatorCount'];
+            }
+          }
+        }
+      }
+    } else if (dateKind == 'Month') {
+      if (method == 'AVG') {
+        if (latestReports.isNotEmpty) {
+          for (int i = 0; i < latestReports[0].length; i++) {
+            DateTime date = DateTime.parse(latestReports[0][i]['Date']);
+            if (date.month - 1 == position) {
+              value += latestReports[0][i]['ViolatorCount'];
+            }
+          }
+        }
+        if (droppedReports.isNotEmpty) {
+          for (int i = 0; i < droppedReports[0].length; i++) {
+            DateTime date = DateTime.parse(droppedReports[0][i]['Date']);
+            if (date.month - 1 == position) {
+              value += droppedReports[0][i]['ViolatorCount'];
+            }
+          }
+        }
+        if (taggedReports.isNotEmpty) {
+          for (int i = 0; i < taggedReports[0].length; i++) {
+            DateTime date = DateTime.parse(taggedReports[0][i]['Date']);
+            print('object');
+            if (date.month - 1 == position) {
+              value += taggedReports[0][i]['ViolatorCount'];
+            }
+          }
+        }
+      }
+    }
+    return value;
   }
 
   @override
@@ -466,6 +537,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                 selectedLabel = 'Week';
                                 chartTitle = 'Estimated Weekly Violators';
                                 methodTitle = 'AVG';
+                                selectedMonth = 'January';
                               });
                             },
                             selectedLabel: selectedLabel,
@@ -531,23 +603,20 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                               alignment: Alignment.center,
                               width: 60,
                               height: 25,
-                              decoration: methodTitle != ''
-                                  ? BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
-                                      color: customColor[110],
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: customColor[140]!
-                                              .withOpacity(0.1),
-                                          spreadRadius: 3,
-                                          blurRadius: 5,
-                                          offset: Offset(0,
-                                              0), // changes position of shadow
-                                        ),
-                                      ],
-                                    )
-                                  : BoxDecoration(),
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
+                                color: customColor[110],
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: customColor[140]!.withOpacity(0.1),
+                                    spreadRadius: 3,
+                                    blurRadius: 5,
+                                    offset: Offset(
+                                        0, 0), // changes position of shadow
+                                  ),
+                                ],
+                              ),
                               child: Text(
                                 methodTitle,
                                 style: tertiaryText.copyWith(
@@ -582,128 +651,531 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             //     ),
                             //   ],
                             // ),
-                            child: LineChart(
-                              LineChartData(
-                                  minX: 0,
-                                  maxX: 11,
-                                  minY: 0,
-                                  maxY: 6,
-                                  titlesData: FlTitlesData(
-                                    show: true,
-                                    topTitles: SideTitles(
-                                      showTitles: false,
-                                    ),
-                                    rightTitles: SideTitles(
-                                      showTitles: false,
-                                    ),
-                                    leftTitles: SideTitles(
-                                      showTitles: true,
-                                      getTitles: (value) {
-                                        switch (value.toInt()) {
-                                          case 1:
-                                            return '10';
-                                          case 3:
-                                            return '20';
-                                          case 5:
-                                            return '30';
-                                        }
-                                        return '';
-                                      },
-                                    ),
-                                    bottomTitles: SideTitles(
-                                        showTitles: true,
-                                        // reservedSize: 20,
-                                        getTitles: (value) {
-                                          // print(start!.weekday);
-                                          // print(start!.month);
-                                          if (selectedLabel == 'Day') {
+                            child: selectedLabel == 'Day'
+                                ? BarChart(
+                                    BarChartData(
+                                      alignment: BarChartAlignment.spaceEvenly,
+                                      maxY: 20,
+                                      minY: 0,
+                                      groupsSpace: 12,
+                                      titlesData: FlTitlesData(
+                                        show: true,
+                                        topTitles: SideTitles(
+                                          showTitles: false,
+                                        ),
+                                        bottomTitles: SideTitles(
+                                          showTitles: true,
+                                          getTextStyles: (context, value) =>
+                                              const TextStyle(fontSize: 10),
+                                          margin: 10,
+                                          rotateAngle: 0,
+                                          getTitles: (double value) {
                                             switch (value.toInt()) {
                                               case 0:
                                                 return 'Mon';
-                                              case 2:
+                                              case 1:
                                                 return 'Tue';
-                                              case 4:
+                                              case 2:
                                                 return 'Wed';
-                                              case 5:
+                                              case 3:
                                                 return 'Thu';
-                                              case 7:
+                                              case 4:
                                                 return 'Fri';
-                                              case 9:
+                                              case 5:
                                                 return 'Sat';
-                                              case 11:
+                                              case 6:
                                                 return 'Sun';
+                                              default:
+                                                return '';
                                             }
-                                          } else if (selectedLabel == 'Week') {
-                                            switch (value.toInt()) {
-                                              case 1:
-                                                return 'Week 1';
-                                              case 4:
-                                                return 'Week 2';
-                                              case 7:
-                                                return 'Week 3';
-                                              case 10:
-                                                return 'Week 4';
+                                          },
+                                        ),
+                                        leftTitles: SideTitles(
+                                          showTitles: true,
+                                          getTextStyles: (context, value) =>
+                                              const TextStyle(fontSize: 10),
+                                          rotateAngle: 45,
+                                          getTitles: (double value) {
+                                            if (value == 0) {
+                                              return '0';
                                             }
-                                          } else if (selectedLabel == 'Month') {
-                                            switch (value.toInt()) {
-                                              case 1:
-                                                return 'JAN';
-                                              case 4:
-                                                return 'FEB';
-                                              case 7:
-                                                return 'MAR';
-                                              case 10:
-                                                return 'APR';
+                                            if (value == 5) {
+                                              return '23';
                                             }
-                                          } else {
-                                            switch (value.toInt()) {
-                                              case 1:
-                                                return '2022';
-                                              case 4:
-                                                return '2023';
-                                              case 7:
-                                                return '2024';
-                                              case 10:
-                                                return '2025';
-                                            }
-                                          }
-
-                                          return '';
-                                        }),
-                                  ),
-                                  gridData: FlGridData(
-                                    show: true,
-                                    drawVerticalLine: false,
-                                    drawHorizontalLine: false,
-                                  ),
-                                  borderData: FlBorderData(
-                                    show: false,
-                                  ),
-                                  lineBarsData: [
-                                    LineChartBarData(
-                                      spots: [
-                                        FlSpot(0, 0),
-                                        FlSpot(2, 3),
-                                        FlSpot(4, 1),
-                                        FlSpot(5, 4),
-                                        FlSpot(7, 5),
-                                        FlSpot(9, 4),
-                                        FlSpot(11, 1),
-                                      ],
-                                      colors: gradientColor,
-                                      dotData: FlDotData(show: false),
-                                      barWidth: 3,
-                                      isCurved: true,
-                                      belowBarData: BarAreaData(
-                                        show: true,
-                                        colors: gradientColor
-                                            .map((color) =>
-                                                color.withOpacity(0.8))
-                                            .toList(),
+                                            return '${value.toInt()}';
+                                          },
+                                          interval: 5,
+                                          margin: 8,
+                                          reservedSize: 30,
+                                        ),
+                                        rightTitles: SideTitles(
+                                          showTitles: false,
+                                        ),
                                       ),
-                                    )
-                                  ]),
-                            ),
+                                      gridData: FlGridData(
+                                        show: false,
+                                      ),
+                                      borderData: FlBorderData(
+                                        show: false,
+                                      ),
+                                      barGroups: [
+                                        BarChartGroupData(
+                                          x: 0,
+                                          barRods: [
+                                            BarChartRodData(
+                                              colors: gradientColor,
+                                              y: _calculateReportsCount(
+                                                  selectedLabel,
+                                                  0,
+                                                  methodTitle),
+                                              width: 22,
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(6),
+                                                      topRight:
+                                                          Radius.circular(6)),
+                                            ),
+                                          ],
+                                        ),
+                                        BarChartGroupData(
+                                          x: 1,
+                                          barRods: [
+                                            BarChartRodData(
+                                              y: _calculateReportsCount(
+                                                  selectedLabel,
+                                                  1,
+                                                  methodTitle),
+                                              colors: gradientColor,
+                                              width: 22,
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(6),
+                                                      topRight:
+                                                          Radius.circular(6)),
+                                            ),
+                                          ],
+                                        ),
+                                        BarChartGroupData(
+                                          x: 2,
+                                          barRods: [
+                                            BarChartRodData(
+                                              y: _calculateReportsCount(
+                                                  selectedLabel,
+                                                  2,
+                                                  methodTitle),
+                                              colors: gradientColor,
+                                              width: 22,
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(6),
+                                                      topRight:
+                                                          Radius.circular(6)),
+                                            ),
+                                          ],
+                                        ),
+                                        BarChartGroupData(
+                                          x: 3,
+                                          barRods: [
+                                            BarChartRodData(
+                                              y: _calculateReportsCount(
+                                                  selectedLabel,
+                                                  3,
+                                                  methodTitle),
+                                              colors: gradientColor,
+                                              width: 22,
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(6),
+                                                      topRight:
+                                                          Radius.circular(6)),
+                                            ),
+                                          ],
+                                        ),
+                                        BarChartGroupData(
+                                          x: 4,
+                                          barRods: [
+                                            BarChartRodData(
+                                              y: _calculateReportsCount(
+                                                  selectedLabel,
+                                                  4,
+                                                  methodTitle),
+                                              colors: gradientColor,
+                                              width: 22,
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(6),
+                                                      topRight:
+                                                          Radius.circular(6)),
+                                            ),
+                                          ],
+                                        ),
+                                        BarChartGroupData(
+                                          x: 5,
+                                          barRods: [
+                                            BarChartRodData(
+                                              y: _calculateReportsCount(
+                                                  selectedLabel,
+                                                  5,
+                                                  methodTitle),
+                                              colors: gradientColor,
+                                              width: 22,
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(6),
+                                                      topRight:
+                                                          Radius.circular(6)),
+                                            ),
+                                          ],
+                                        ),
+                                        BarChartGroupData(
+                                          x: 6,
+                                          barRods: [
+                                            BarChartRodData(
+                                              y: _calculateReportsCount(
+                                                  selectedLabel,
+                                                  6,
+                                                  methodTitle),
+                                              colors: gradientColor,
+                                              width: 22,
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(6),
+                                                      topRight:
+                                                          Radius.circular(6)),
+                                            ),
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                : selectedLabel == 'Month'
+                                    ? BarChart(
+                                        BarChartData(
+                                          alignment:
+                                              BarChartAlignment.spaceEvenly,
+                                          maxY: 20,
+                                          minY: 0,
+                                          groupsSpace: 12,
+                                          titlesData: FlTitlesData(
+                                            show: true,
+                                            topTitles: SideTitles(
+                                              showTitles: false,
+                                            ),
+                                            bottomTitles: SideTitles(
+                                              showTitles: true,
+                                              getTextStyles: (context, value) =>
+                                                  const TextStyle(fontSize: 10),
+                                              margin: 10,
+                                              rotateAngle: 0,
+                                              getTitles: (double value) {
+                                                switch (value.toInt()) {
+                                                  case 0:
+                                                    return 'Jan';
+                                                  case 1:
+                                                    return 'Feb';
+                                                  case 2:
+                                                    return 'Mar';
+                                                  case 3:
+                                                    return 'Apr';
+                                                  case 4:
+                                                    return 'May';
+                                                  case 5:
+                                                    return 'Jun';
+                                                  default:
+                                                    return '';
+                                                }
+                                              },
+                                            ),
+                                            leftTitles: SideTitles(
+                                              showTitles: true,
+                                              getTextStyles: (context, value) =>
+                                                  const TextStyle(fontSize: 10),
+                                              rotateAngle: 45,
+                                              getTitles: (double value) {
+                                                if (value == 0) {
+                                                  return '0';
+                                                }
+                                                if (value == 5) {
+                                                  return '23';
+                                                }
+                                                return '${value.toInt()}';
+                                              },
+                                              interval: 5,
+                                              margin: 8,
+                                              reservedSize: 30,
+                                            ),
+                                            rightTitles: SideTitles(
+                                              showTitles: false,
+                                            ),
+                                          ),
+                                          gridData: FlGridData(
+                                            show: false,
+                                          ),
+                                          borderData: FlBorderData(
+                                            show: false,
+                                          ),
+                                          barGroups: [
+                                            BarChartGroupData(
+                                              x: 0,
+                                              barRods: [
+                                                BarChartRodData(
+                                                  colors: gradientColor,
+                                                  y: _calculateReportsCount(
+                                                      selectedLabel,
+                                                      0,
+                                                      methodTitle),
+                                                  width: 22,
+                                                  borderRadius:
+                                                      const BorderRadius.only(
+                                                          topLeft:
+                                                              Radius.circular(
+                                                                  6),
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  6)),
+                                                ),
+                                              ],
+                                            ),
+                                            BarChartGroupData(
+                                              x: 1,
+                                              barRods: [
+                                                BarChartRodData(
+                                                  y: _calculateReportsCount(
+                                                      selectedLabel,
+                                                      1,
+                                                      methodTitle),
+                                                  colors: gradientColor,
+                                                  width: 22,
+                                                  borderRadius:
+                                                      const BorderRadius.only(
+                                                          topLeft:
+                                                              Radius.circular(
+                                                                  6),
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  6)),
+                                                ),
+                                              ],
+                                            ),
+                                            BarChartGroupData(
+                                              x: 2,
+                                              barRods: [
+                                                BarChartRodData(
+                                                  y: _calculateReportsCount(
+                                                      selectedLabel,
+                                                      2,
+                                                      methodTitle),
+                                                  colors: gradientColor,
+                                                  width: 22,
+                                                  borderRadius:
+                                                      const BorderRadius.only(
+                                                          topLeft:
+                                                              Radius.circular(
+                                                                  6),
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  6)),
+                                                ),
+                                              ],
+                                            ),
+                                            BarChartGroupData(
+                                              x: 3,
+                                              barRods: [
+                                                BarChartRodData(
+                                                  y: _calculateReportsCount(
+                                                      selectedLabel,
+                                                      3,
+                                                      methodTitle),
+                                                  colors: gradientColor,
+                                                  width: 22,
+                                                  borderRadius:
+                                                      const BorderRadius.only(
+                                                          topLeft:
+                                                              Radius.circular(
+                                                                  6),
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  6)),
+                                                ),
+                                              ],
+                                            ),
+                                            BarChartGroupData(
+                                              x: 4,
+                                              barRods: [
+                                                BarChartRodData(
+                                                  y: _calculateReportsCount(
+                                                      selectedLabel,
+                                                      4,
+                                                      methodTitle),
+                                                  colors: gradientColor,
+                                                  width: 22,
+                                                  borderRadius:
+                                                      const BorderRadius.only(
+                                                          topLeft:
+                                                              Radius.circular(
+                                                                  6),
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  6)),
+                                                ),
+                                              ],
+                                            ),
+                                            BarChartGroupData(
+                                              x: 5,
+                                              barRods: [
+                                                BarChartRodData(
+                                                  y: _calculateReportsCount(
+                                                      selectedLabel,
+                                                      5,
+                                                      methodTitle),
+                                                  colors: gradientColor,
+                                                  width: 22,
+                                                  borderRadius:
+                                                      const BorderRadius.only(
+                                                          topLeft:
+                                                              Radius.circular(
+                                                                  6),
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  6)),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : LineChart(
+                                        LineChartData(
+                                            minX: 0,
+                                            maxX: 11,
+                                            minY: 0,
+                                            maxY: 6,
+                                            titlesData: FlTitlesData(
+                                              show: true,
+                                              topTitles: SideTitles(
+                                                showTitles: false,
+                                              ),
+                                              rightTitles: SideTitles(
+                                                showTitles: false,
+                                              ),
+                                              leftTitles: SideTitles(
+                                                showTitles: true,
+                                                getTitles: (value) {
+                                                  switch (value.toInt()) {
+                                                    case 1:
+                                                      return '10';
+                                                    case 3:
+                                                      return '20';
+                                                    case 5:
+                                                      return '30';
+                                                  }
+                                                  return '';
+                                                },
+                                              ),
+                                              bottomTitles: SideTitles(
+                                                  showTitles: true,
+                                                  // reservedSize: 20,
+                                                  getTitles: (value) {
+                                                    // print(start!.weekday);
+                                                    // print(start!.month);
+                                                    if (selectedLabel ==
+                                                        'Day') {
+                                                      switch (value.toInt()) {
+                                                        case 0:
+                                                          return 'Mon';
+                                                        case 2:
+                                                          return 'Tue';
+                                                        case 4:
+                                                          return 'Wed';
+                                                        case 5:
+                                                          return 'Thu';
+                                                        case 7:
+                                                          return 'Fri';
+                                                        case 9:
+                                                          return 'Sat';
+                                                        case 11:
+                                                          return 'Sun';
+                                                      }
+                                                    } else if (selectedLabel ==
+                                                        'Week') {
+                                                      switch (value.toInt()) {
+                                                        case 1:
+                                                          return 'Week 1';
+                                                        case 4:
+                                                          return 'Week 2';
+                                                        case 7:
+                                                          return 'Week 3';
+                                                        case 10:
+                                                          return 'Week 4';
+                                                      }
+                                                    } else if (selectedLabel ==
+                                                        'Month') {
+                                                      switch (value.toInt()) {
+                                                        case 1:
+                                                          return 'JAN';
+                                                        case 4:
+                                                          return 'FEB';
+                                                        case 7:
+                                                          return 'MAR';
+                                                        case 10:
+                                                          return 'APR';
+                                                      }
+                                                    } else {
+                                                      switch (value.toInt()) {
+                                                        case 1:
+                                                          return '2022';
+                                                        case 4:
+                                                          return '2023';
+                                                        case 7:
+                                                          return '2024';
+                                                        case 10:
+                                                          return '2025';
+                                                      }
+                                                    }
+
+                                                    return '';
+                                                  }),
+                                            ),
+                                            gridData: FlGridData(
+                                              show: true,
+                                              drawVerticalLine: false,
+                                              drawHorizontalLine: false,
+                                            ),
+                                            borderData: FlBorderData(
+                                              show: false,
+                                            ),
+                                            lineBarsData: [
+                                              LineChartBarData(
+                                                spots: [
+                                                  FlSpot(0, 0),
+                                                  FlSpot(2, 3),
+                                                  FlSpot(4, 1),
+                                                  FlSpot(5, 4),
+                                                  FlSpot(7, 5),
+                                                  FlSpot(9, 4),
+                                                  FlSpot(11, 1),
+                                                ],
+                                                colors: gradientColor,
+                                                dotData: FlDotData(show: false),
+                                                barWidth: 3,
+                                                isCurved: true,
+                                                belowBarData: BarAreaData(
+                                                  show: true,
+                                                  colors: gradientColor
+                                                      .map((color) => color
+                                                          .withOpacity(0.8))
+                                                      .toList(),
+                                                ),
+                                              )
+                                            ]),
+                                      ),
                           )
                         : Container(),
                     Container(
