@@ -46,6 +46,7 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
     "Violator Escaped",
     "Not a person",
     "Purpose is valid",
+    "Duplicate",
     "Others",
   ];
   late String _selectedReason = "Violator Escaped";
@@ -1093,7 +1094,7 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
                                                   bottom: 5,
                                                 ),
                                                 child: Text(
-                                                  'Immediately respond to the screne',
+                                                  'Immediately respond to the scene',
                                                   style: tertiaryText.copyWith(
                                                     color: Colors.grey[700],
                                                     fontSize: 10,
@@ -1113,7 +1114,7 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
                                                     });
                                                   },
                                                   title: Text(
-                                                    'Apprehend',
+                                                    'Respond',
                                                     style:
                                                         tertiaryText.copyWith(
                                                       fontSize: 20,

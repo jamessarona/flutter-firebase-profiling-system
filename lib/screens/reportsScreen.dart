@@ -73,83 +73,33 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 profileImage: widget.profileImage,
                 backgroundImage: "https://wallpaperaccess.com/full/1397098.jpg",
               ),
-              appBar: PreferredSize(
-                preferredSize: Size.fromHeight(80),
-                child: AppBar(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  leading: MyAppBarLeading(
-                    onPressendDrawer: () {
-                      _scaffoldKeyReports.currentState!.openDrawer();
-                    },
-                  ),
-                  centerTitle: true,
-                  title: Text(
-                    'Reports',
-                    style: primaryText.copyWith(fontSize: 18, letterSpacing: 1),
-                  ),
-                  actions: [
-                    MyAppBarAction(
-                      notifCount: notifCount,
-                      color: Colors.black,
-                      onPressed: () {
-                        Reset.filter();
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (ctx) => NotificationScreen(),
-                          ),
-                        );
-                      },
-                    )
-                  ],
-                  flexibleSpace: Container(
-                    margin: EdgeInsets.only(
-                      top: 45,
-                    ),
-                    padding:
-                        EdgeInsets.symmetric(horizontal: screenSize.width / 25),
-                    width: screenSize.width,
-                    height: 80,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          height: 30,
-                          width: screenSize.width * .8,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            showModalBottomSheet(
-                              context: context,
-                              backgroundColor: customColor[110],
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(50),
-                                ),
-                              ),
-                              builder: (context) => BuildBottomSheet(
-                                page: 'Reports',
-                              ),
-                            ).then((value) {});
-                          },
-                          child: Image.asset(
-                            'assets/images/filter-data.png',
-                            width: 17,
-                            height: 17,
-                            fit: BoxFit.cover,
-                            color: filters['Date']['Start'] ||
-                                    filters['Date']['End'] ||
-                                    filters['Area']['Tarape\'s Store'] ||
-                                    filters['Area']['ShopStrutt.ph'] ||
-                                    filters['Area']['Melchor\'s Store']
-                                ? customColor[170]
-                                : Colors.grey[700],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+              appBar: AppBar(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                leading: MyAppBarLeading(
+                  onPressendDrawer: () {
+                    _scaffoldKeyReports.currentState!.openDrawer();
+                  },
                 ),
+                centerTitle: true,
+                title: Text(
+                  'Reports',
+                  style: primaryText.copyWith(fontSize: 18, letterSpacing: 1),
+                ),
+                actions: [
+                  MyAppBarAction(
+                    notifCount: notifCount,
+                    color: Colors.black,
+                    onPressed: () {
+                      Reset.filter();
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (ctx) => NotificationScreen(),
+                        ),
+                      );
+                    },
+                  )
+                ],
               ),
               body: ListView(
                 children: [

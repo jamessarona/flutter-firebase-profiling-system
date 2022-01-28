@@ -63,8 +63,28 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       }
     }
     if (droppedReports.isNotEmpty) {
+      num tempCount = 0;
       for (int i = 0; i < droppedReports[0].length; i++) {
-        violatorCount += droppedReports[0][i]['ViolatorCount'];
+        if (droppedReports[0][i]['AssignedTanod']
+                [droppedReports[0][i]['AssignedTanod'].length - 1]['Reason'] ==
+            'Duplicate') {
+          for (int x = 0;
+              x < droppedReports[0][i]['AssignedTanod'].length;
+              x++) {
+            if (droppedReports[0][i]['AssignedTanod'][x]['Documentation'] !=
+                null) {
+              tempCount += droppedReports[0][i]['AssignedTanod'][x]
+                      ['Documentation']
+                  .length;
+            }
+          }
+          if (tempCount > 0) {
+            violatorCount +=
+                (droppedReports[0][i]['ViolatorCount'] - tempCount);
+          }
+        } else {
+          violatorCount += droppedReports[0][i]['ViolatorCount'];
+        }
       }
     }
     if (taggedReports.isNotEmpty) {
@@ -369,7 +389,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                       child: Column(
                         children: [
                           Text(
-                            'Total Violations',
+                            'Estimated Total Violations',
                             style: tertiaryText.copyWith(fontSize: 18),
                           ),
                           Text(
@@ -433,8 +453,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             onTap: () {
                               setState(() {
                                 selectedLabel = 'Day';
-                                chartTitle = 'Daily Violators';
-                                methodTitle = 'Sum';
+                                chartTitle = 'Estimated Daily Violators';
+                                methodTitle = 'AVG';
                               });
                             },
                             selectedLabel: selectedLabel,
@@ -444,8 +464,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             onTap: () {
                               setState(() {
                                 selectedLabel = 'Week';
-                                chartTitle = 'Weekly Violators';
-                                methodTitle = 'Sum';
+                                chartTitle = 'Estimated Weekly Violators';
+                                methodTitle = 'AVG';
                               });
                             },
                             selectedLabel: selectedLabel,
@@ -455,8 +475,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             onTap: () {
                               setState(() {
                                 selectedLabel = 'Month';
-                                chartTitle = 'Monthly Violators';
-                                methodTitle = 'Sum';
+                                chartTitle = 'Estimated Monthly Violators';
+                                methodTitle = 'AVG';
                               });
                             },
                             selectedLabel: selectedLabel,
@@ -466,8 +486,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             onTap: () {
                               setState(() {
                                 selectedLabel = 'Year';
-                                chartTitle = 'Yearly Violators';
-                                methodTitle = 'Sum';
+                                chartTitle = 'Estimated Yearly Violators';
+                                methodTitle = 'AVG';
                               });
                             },
                             selectedLabel: selectedLabel,
@@ -475,188 +495,217 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                         ],
                       ),
                     ),
-                    Container(
-                      margin: EdgeInsets.only(
-                        top: 10,
-                      ),
-                      child: Text(
-                        chartTitle,
-                        style: tertiaryText.copyWith(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey[800],
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          if (methodTitle == 'Sum') {
-                            methodTitle = 'Avg';
-                          } else {
-                            methodTitle = 'Sum';
-                          }
-                        });
-                      },
-                      child: Container(
-                        margin: EdgeInsets.only(
-                          left: screenSize.width * 0.05,
-                          right: screenSize.width * 0.05,
-                        ),
-                        child: Text(
-                          methodTitle,
-                          style: tertiaryText.copyWith(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey[800],
-                          ),
-                        ),
-                      ),
-                    ),
-                    //NOT YET DONE
-                    Container(
-                      margin: EdgeInsets.only(
-                        left: screenSize.width * 0.05,
-                        right: screenSize.width * 0.05,
-                      ),
-                      height: 250,
-                      width: screenSize.width,
-                      // decoration: BoxDecoration(
-                      //   borderRadius: BorderRadius.all(
-                      //     Radius.circular(20),
-                      //   ),
-                      //   color: customColor[110],
-                      //   boxShadow: [
-                      //     BoxShadow(
-                      //       color: Colors.grey.withOpacity(0.3),
-                      //       spreadRadius: 3,
-                      //       blurRadius: 8,
-                      //       offset: Offset(0, 0), // changes position of shadow
-                      //     ),
-                      //   ],
-                      // ),
-                      child: LineChart(
-                        LineChartData(
-                            minX: 0,
-                            maxX: 11,
-                            minY: 0,
-                            maxY: 6,
-                            titlesData: FlTitlesData(
-                              show: true,
-                              topTitles: SideTitles(
-                                showTitles: false,
-                              ),
-                              rightTitles: SideTitles(
-                                showTitles: false,
-                              ),
-                              leftTitles: SideTitles(
-                                showTitles: true,
-                                getTitles: (value) {
-                                  switch (value.toInt()) {
-                                    case 1:
-                                      return '10';
-                                    case 3:
-                                      return '20';
-                                    case 5:
-                                      return '30';
-                                  }
-                                  return '';
-                                },
-                              ),
-                              bottomTitles: SideTitles(
-                                  showTitles: true,
-                                  // reservedSize: 20,
-                                  getTitles: (value) {
-                                    // print(start!.weekday);
-                                    // print(start!.month);
-                                    if (selectedLabel == 'Day') {
-                                      switch (value.toInt()) {
-                                        case 0:
-                                          return 'Mon';
-                                        case 2:
-                                          return 'Tue';
-                                        case 4:
-                                          return 'Wed';
-                                        case 5:
-                                          return 'Thu';
-                                        case 7:
-                                          return 'Fri';
-                                        case 9:
-                                          return 'Sat';
-                                        case 11:
-                                          return 'Sun';
-                                      }
-                                    } else if (selectedLabel == 'Week') {
-                                      switch (value.toInt()) {
-                                        case 1:
-                                          return 'Week 1';
-                                        case 4:
-                                          return 'Week 2';
-                                        case 7:
-                                          return 'Week 3';
-                                        case 10:
-                                          return 'Week 4';
-                                      }
-                                    } else if (selectedLabel == 'Month') {
-                                      switch (value.toInt()) {
-                                        case 1:
-                                          return 'JAN';
-                                        case 4:
-                                          return 'FEB';
-                                        case 7:
-                                          return 'MAR';
-                                        case 10:
-                                          return 'APR';
-                                      }
-                                    } else {
-                                      switch (value.toInt()) {
-                                        case 1:
-                                          return '2022';
-                                        case 4:
-                                          return '2023';
-                                        case 7:
-                                          return '2024';
-                                        case 10:
-                                          return '2025';
-                                      }
-                                    }
-
-                                    return '';
-                                  }),
+                    selectedLabel != ''
+                        ? Container(
+                            margin: EdgeInsets.only(
+                              top: 10,
                             ),
-                            gridData: FlGridData(
-                              show: true,
-                              drawVerticalLine: false,
-                              drawHorizontalLine: false,
+                            child: Text(
+                              chartTitle,
+                              style: tertiaryText.copyWith(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey[800],
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                            borderData: FlBorderData(
-                              show: false,
-                            ),
-                            lineBarsData: [
-                              LineChartBarData(
-                                spots: [
-                                  FlSpot(0, 3),
-                                  FlSpot(2.6, 2),
-                                  FlSpot(4.9, 5),
-                                  FlSpot(6.8, 2),
-                                  FlSpot(9.4, 1),
-                                  FlSpot(11, 6),
-                                ],
-                                colors: gradientColor,
-                                dotData: FlDotData(show: false),
-                                barWidth: 3,
-                                isCurved: true,
-                                belowBarData: BarAreaData(
-                                  show: true,
-                                  colors: gradientColor
-                                      .map((color) => color.withOpacity(0.8))
-                                      .toList(),
+                          )
+                        : Container(),
+                    selectedLabel != ''
+                        ? GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                if (methodTitle == 'AVG') {
+                                  methodTitle = 'TTL';
+                                } else {
+                                  methodTitle = 'AVG';
+                                }
+                              });
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(
+                                top: 10,
+                                left: screenSize.width * 0.4,
+                                right: screenSize.width * 0.4,
+                              ),
+                              alignment: Alignment.center,
+                              width: 60,
+                              height: 25,
+                              decoration: methodTitle != ''
+                                  ? BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(10)),
+                                      color: customColor[110],
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: customColor[140]!
+                                              .withOpacity(0.1),
+                                          spreadRadius: 3,
+                                          blurRadius: 5,
+                                          offset: Offset(0,
+                                              0), // changes position of shadow
+                                        ),
+                                      ],
+                                    )
+                                  : BoxDecoration(),
+                              child: Text(
+                                methodTitle,
+                                style: tertiaryText.copyWith(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[800],
                                 ),
-                              )
-                            ]),
-                      ),
-                    ),
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    //NOT YET DONE
+                    selectedLabel != ''
+                        ? Container(
+                            margin: EdgeInsets.only(
+                              left: screenSize.width * 0.05,
+                              right: screenSize.width * 0.05,
+                            ),
+                            height: 250,
+                            width: screenSize.width,
+                            // decoration: BoxDecoration(
+                            //   borderRadius: BorderRadius.all(
+                            //     Radius.circular(20),
+                            //   ),
+                            //   color: customColor[110],
+                            //   boxShadow: [
+                            //     BoxShadow(
+                            //       color: Colors.grey.withOpacity(0.3),
+                            //       spreadRadius: 3,
+                            //       blurRadius: 8,
+                            //       offset: Offset(0, 0), // changes position of shadow
+                            //     ),
+                            //   ],
+                            // ),
+                            child: LineChart(
+                              LineChartData(
+                                  minX: 0,
+                                  maxX: 11,
+                                  minY: 0,
+                                  maxY: 6,
+                                  titlesData: FlTitlesData(
+                                    show: true,
+                                    topTitles: SideTitles(
+                                      showTitles: false,
+                                    ),
+                                    rightTitles: SideTitles(
+                                      showTitles: false,
+                                    ),
+                                    leftTitles: SideTitles(
+                                      showTitles: true,
+                                      getTitles: (value) {
+                                        switch (value.toInt()) {
+                                          case 1:
+                                            return '10';
+                                          case 3:
+                                            return '20';
+                                          case 5:
+                                            return '30';
+                                        }
+                                        return '';
+                                      },
+                                    ),
+                                    bottomTitles: SideTitles(
+                                        showTitles: true,
+                                        // reservedSize: 20,
+                                        getTitles: (value) {
+                                          // print(start!.weekday);
+                                          // print(start!.month);
+                                          if (selectedLabel == 'Day') {
+                                            switch (value.toInt()) {
+                                              case 0:
+                                                return 'Mon';
+                                              case 2:
+                                                return 'Tue';
+                                              case 4:
+                                                return 'Wed';
+                                              case 5:
+                                                return 'Thu';
+                                              case 7:
+                                                return 'Fri';
+                                              case 9:
+                                                return 'Sat';
+                                              case 11:
+                                                return 'Sun';
+                                            }
+                                          } else if (selectedLabel == 'Week') {
+                                            switch (value.toInt()) {
+                                              case 1:
+                                                return 'Week 1';
+                                              case 4:
+                                                return 'Week 2';
+                                              case 7:
+                                                return 'Week 3';
+                                              case 10:
+                                                return 'Week 4';
+                                            }
+                                          } else if (selectedLabel == 'Month') {
+                                            switch (value.toInt()) {
+                                              case 1:
+                                                return 'JAN';
+                                              case 4:
+                                                return 'FEB';
+                                              case 7:
+                                                return 'MAR';
+                                              case 10:
+                                                return 'APR';
+                                            }
+                                          } else {
+                                            switch (value.toInt()) {
+                                              case 1:
+                                                return '2022';
+                                              case 4:
+                                                return '2023';
+                                              case 7:
+                                                return '2024';
+                                              case 10:
+                                                return '2025';
+                                            }
+                                          }
+
+                                          return '';
+                                        }),
+                                  ),
+                                  gridData: FlGridData(
+                                    show: true,
+                                    drawVerticalLine: false,
+                                    drawHorizontalLine: false,
+                                  ),
+                                  borderData: FlBorderData(
+                                    show: false,
+                                  ),
+                                  lineBarsData: [
+                                    LineChartBarData(
+                                      spots: [
+                                        FlSpot(0, 0),
+                                        FlSpot(2, 3),
+                                        FlSpot(4, 1),
+                                        FlSpot(5, 4),
+                                        FlSpot(7, 5),
+                                        FlSpot(9, 4),
+                                        FlSpot(11, 1),
+                                      ],
+                                      colors: gradientColor,
+                                      dotData: FlDotData(show: false),
+                                      barWidth: 3,
+                                      isCurved: true,
+                                      belowBarData: BarAreaData(
+                                        show: true,
+                                        colors: gradientColor
+                                            .map((color) =>
+                                                color.withOpacity(0.8))
+                                            .toList(),
+                                      ),
+                                    )
+                                  ]),
+                            ),
+                          )
+                        : Container(),
                     Container(
                       margin: EdgeInsets.only(
                         top: 30,

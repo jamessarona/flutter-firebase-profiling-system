@@ -206,10 +206,12 @@ class MyStatusCard extends StatelessWidget {
   final String status;
   final String location;
   final VoidCallback onTap;
+  final String date;
   const MyStatusCard({
     required this.status,
     required this.location,
     required this.onTap,
+    required this.date,
   });
 
   @override
@@ -277,7 +279,7 @@ class MyStatusCard extends StatelessWidget {
                     ),
                     Text(
                       status != "Standby"
-                          ? "${calculateTimeOfOccurence("2021-12-13 21:49:12")}"
+                          ? "${calculateTimeOfOccurence(date)}"
                           : "",
                       style: tertiaryText.copyWith(
                           fontSize: 12, color: Colors.white70),
