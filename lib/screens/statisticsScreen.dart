@@ -10,6 +10,7 @@ import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/globals.dart';
 import 'package:tanod_apprehension/shared/myAppbar.dart';
 import 'package:tanod_apprehension/shared/myBottomSheet.dart';
+import 'package:tanod_apprehension/shared/myButtons.dart';
 import 'package:tanod_apprehension/shared/myContainers.dart';
 import 'package:tanod_apprehension/shared/myDrawers.dart';
 import 'package:tanod_apprehension/shared/myListTile.dart';
@@ -46,15 +47,18 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   int notifCount = 0;
   var formatter = NumberFormat('#,##,#00');
   final dbRef = FirebaseDatabase.instance.reference();
+  String visualTipMessage =
+      "The graph below represents the estimated average number of violators per category eg. hour, day, and month.";
   String selectedFilter = "Filter Result";
-  String selectedLabel = '';
-  String chartTitle = '';
-  String methodTitle = '';
+  String selectedLabel = 'Hour';
+  String chartTitle = 'Estimated Violators/Hour';
+  String methodTitle = 'AVG';
   String selectedMonth = '';
   List<Color> gradientColor = [
     Color(0xffadb1ea),
     Color(0xff1c52dd),
   ];
+  int selectedCategory = 1;
   List<String> weekDays = [
     'Monday',
     'Tuesday',
@@ -232,63 +236,207 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
 
   double _calculateReportsCount(String dateKind, int position, String method) {
     double value = 0;
-    if (dateKind == 'Day') {
-      if (method == 'AVG') {
-        if (latestReports.isNotEmpty) {
-          for (int i = 0; i < latestReports[0].length; i++) {
-            DateTime date = DateTime.parse(latestReports[0][i]['Date']);
-            if (date.weekday - 1 == position) {
-              value += latestReports[0][i]['ViolatorCount'];
-            }
-          }
-        }
-        if (droppedReports.isNotEmpty) {
-          for (int i = 0; i < droppedReports[0].length; i++) {
-            DateTime date = DateTime.parse(droppedReports[0][i]['Date']);
-            if (date.weekday - 1 == position) {
-              value += droppedReports[0][i]['ViolatorCount'];
-            }
-          }
-        }
-        if (taggedReports.isNotEmpty) {
-          for (int i = 0; i < taggedReports[0].length; i++) {
-            DateTime date = DateTime.parse(taggedReports[0][i]['Date']);
-            if (date.weekday - 1 == position) {
-              value += taggedReports[0][i]['ViolatorCount'];
-            }
+    if (dateKind == 'Hour') {
+      int defaultTime = 5;
+      if (selectedCategory == 2) {
+        defaultTime = 12;
+      }
+
+      if (latestReports.isNotEmpty) {
+        for (int i = 0; i < latestReports[0].length; i++) {
+          DateTime date = DateTime.parse(latestReports[0][i]['Date']);
+          if (date.hour == position + defaultTime) {
+            value += latestReports[0][i]['ViolatorCount'];
           }
         }
       }
-    } else if (dateKind == 'Month') {
-      if (method == 'AVG') {
-        if (latestReports.isNotEmpty) {
-          for (int i = 0; i < latestReports[0].length; i++) {
-            DateTime date = DateTime.parse(latestReports[0][i]['Date']);
-            if (date.month - 1 == position) {
-              value += latestReports[0][i]['ViolatorCount'];
-            }
+      if (droppedReports.isNotEmpty) {
+        for (int i = 0; i < droppedReports[0].length; i++) {
+          DateTime date = DateTime.parse(droppedReports[0][i]['Date']);
+          if (date.hour == position + defaultTime) {
+            value += droppedReports[0][i]['ViolatorCount'];
           }
         }
-        if (droppedReports.isNotEmpty) {
-          for (int i = 0; i < droppedReports[0].length; i++) {
-            DateTime date = DateTime.parse(droppedReports[0][i]['Date']);
-            if (date.month - 1 == position) {
-              value += droppedReports[0][i]['ViolatorCount'];
-            }
+      }
+      if (taggedReports.isNotEmpty) {
+        for (int i = 0; i < taggedReports[0].length; i++) {
+          DateTime date = DateTime.parse(taggedReports[0][i]['Date']);
+          if (date.hour == position + defaultTime) {
+            value += droppedReports[0][i]['ViolatorCount'];
           }
         }
-        if (taggedReports.isNotEmpty) {
-          for (int i = 0; i < taggedReports[0].length; i++) {
-            DateTime date = DateTime.parse(taggedReports[0][i]['Date']);
-            print('object');
-            if (date.month - 1 == position) {
-              value += taggedReports[0][i]['ViolatorCount'];
-            }
+      }
+    } else if (dateKind == 'Day') {
+      if (latestReports.isNotEmpty) {
+        for (int i = 0; i < latestReports[0].length; i++) {
+          DateTime date = DateTime.parse(latestReports[0][i]['Date']);
+          if (date.weekday - 1 == position) {
+            value += latestReports[0][i]['ViolatorCount'];
+          }
+        }
+      }
+      if (droppedReports.isNotEmpty) {
+        for (int i = 0; i < droppedReports[0].length; i++) {
+          DateTime date = DateTime.parse(droppedReports[0][i]['Date']);
+          if (date.weekday - 1 == position) {
+            value += droppedReports[0][i]['ViolatorCount'];
+          }
+        }
+      }
+      if (taggedReports.isNotEmpty) {
+        for (int i = 0; i < taggedReports[0].length; i++) {
+          DateTime date = DateTime.parse(taggedReports[0][i]['Date']);
+          if (date.weekday - 1 == position) {
+            value += taggedReports[0][i]['ViolatorCount'];
+          }
+        }
+      }
+    } else {
+      int defaultTime = 1;
+      if (selectedCategory == 2) {
+        defaultTime = 7;
+      }
+      if (latestReports.isNotEmpty) {
+        for (int i = 0; i < latestReports[0].length; i++) {
+          DateTime date = DateTime.parse(latestReports[0][i]['Date']);
+          if (date.month == position + defaultTime) {
+            value += latestReports[0][i]['ViolatorCount'];
+          }
+        }
+      }
+      if (droppedReports.isNotEmpty) {
+        for (int i = 0; i < droppedReports[0].length; i++) {
+          DateTime date = DateTime.parse(droppedReports[0][i]['Date']);
+          if (date.month == position + defaultTime) {
+            value += droppedReports[0][i]['ViolatorCount'];
+          }
+        }
+      }
+      if (taggedReports.isNotEmpty) {
+        for (int i = 0; i < taggedReports[0].length; i++) {
+          DateTime date = DateTime.parse(taggedReports[0][i]['Date']);
+          if (date.month == position + defaultTime) {
+            value += taggedReports[0][i]['ViolatorCount'];
           }
         }
       }
     }
     return value;
+  }
+
+  double _calculateGreatestNumber(String dateKind) {
+    double maxYAxis = 10;
+    double tempYAxis = 0;
+    if (dateKind == 'Hour') {
+      int defaultTime = 4;
+      if (selectedCategory == 2) {
+        defaultTime = 11;
+      }
+      for (int x = 1; x <= 7; x++) {
+        tempYAxis = 0;
+        if (latestReports.isNotEmpty) {
+          for (int i = 0; i < latestReports[0].length; i++) {
+            DateTime date = DateTime.parse(latestReports[0][i]['Date']);
+            if (date.hour == x + defaultTime) {
+              tempYAxis += latestReports[0][i]['ViolatorCount'];
+            }
+          }
+        }
+        if (droppedReports.isNotEmpty) {
+          for (int i = 0; i < droppedReports[0].length; i++) {
+            DateTime date = DateTime.parse(droppedReports[0][i]['Date']);
+            if (date.hour == x + defaultTime) {
+              tempYAxis += droppedReports[0][i]['ViolatorCount'];
+            }
+          }
+        }
+        if (taggedReports.isNotEmpty) {
+          for (int i = 0; i < taggedReports[0].length; i++) {
+            DateTime date = DateTime.parse(taggedReports[0][i]['Date']);
+            if (date.hour == x + defaultTime) {
+              tempYAxis += taggedReports[0][i]['ViolatorCount'];
+            }
+          }
+        }
+
+        if (tempYAxis > maxYAxis) {
+          maxYAxis = tempYAxis;
+        }
+      }
+    } else if (dateKind == 'Day') {
+      int defaultTime = 0;
+      for (int x = 1; x <= 7; x++) {
+        tempYAxis = 0;
+        if (latestReports.isNotEmpty) {
+          for (int i = 0; i < latestReports[0].length; i++) {
+            DateTime date = DateTime.parse(latestReports[0][i]['Date']);
+            if (date.weekday == x + defaultTime) {
+              tempYAxis += latestReports[0][i]['ViolatorCount'];
+            }
+          }
+        }
+        if (droppedReports.isNotEmpty) {
+          for (int i = 0; i < droppedReports[0].length; i++) {
+            DateTime date = DateTime.parse(droppedReports[0][i]['Date']);
+            if (date.weekday == x + defaultTime) {
+              tempYAxis += droppedReports[0][i]['ViolatorCount'];
+            }
+          }
+        }
+        if (taggedReports.isNotEmpty) {
+          for (int i = 0; i < taggedReports[0].length; i++) {
+            DateTime date = DateTime.parse(taggedReports[0][i]['Date']);
+            if (date.weekday == x + defaultTime) {
+              tempYAxis += taggedReports[0][i]['ViolatorCount'];
+            }
+          }
+        }
+
+        if (tempYAxis > maxYAxis) {
+          maxYAxis = tempYAxis;
+        }
+      }
+    } else {
+      int defaultTime = 0;
+      if (selectedCategory == 2) {
+        defaultTime = 6;
+      }
+      for (int x = 1; x <= 7; x++) {
+        tempYAxis = 0;
+        if (latestReports.isNotEmpty) {
+          for (int i = 0; i < latestReports[0].length; i++) {
+            DateTime date = DateTime.parse(latestReports[0][i]['Date']);
+            if (date.month == x + defaultTime) {
+              tempYAxis += latestReports[0][i]['ViolatorCount'];
+            }
+          }
+        }
+        if (droppedReports.isNotEmpty) {
+          for (int i = 0; i < droppedReports[0].length; i++) {
+            DateTime date = DateTime.parse(droppedReports[0][i]['Date']);
+            if (date.month == x + defaultTime) {
+              tempYAxis += droppedReports[0][i]['ViolatorCount'];
+            }
+          }
+        }
+        if (taggedReports.isNotEmpty) {
+          for (int i = 0; i < taggedReports[0].length; i++) {
+            DateTime date = DateTime.parse(taggedReports[0][i]['Date']);
+            if (date.month == x + defaultTime) {
+              tempYAxis += taggedReports[0][i]['ViolatorCount'];
+            }
+          }
+        }
+        if (tempYAxis > maxYAxis) {
+          maxYAxis = tempYAxis;
+        }
+      }
+    }
+    return maxYAxis;
+  }
+
+  double _setInterval(double maxYNumber) {
+    return maxYNumber * .25;
   }
 
   @override
@@ -500,12 +648,36 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                         left: screenSize.width * 0.05,
                         right: screenSize.width * 0.05,
                       ),
-                      child: Text(
-                        'Visualization',
-                        style: tertiaryText.copyWith(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Visualization',
+                            style: tertiaryText.copyWith(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(left: 5),
+                            child: Tooltip(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 5,
+                              ),
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: screenSize.width * .2),
+                              message: visualTipMessage,
+                              textStyle: tertiaryText.copyWith(
+                                color: Colors.white,
+                                fontSize: 14,
+                              ),
+                              child: Icon(
+                                FontAwesomeIcons.questionCircle,
+                                size: 15,
+                              ),
+                            ),
+                          )
+                        ],
                       ),
                     ),
                     Container(
@@ -520,24 +692,24 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           MyDateLabel(
-                            title: 'Day',
+                            title: 'Hour',
                             onTap: () {
                               setState(() {
-                                selectedLabel = 'Day';
-                                chartTitle = 'Estimated Daily Violators';
-                                methodTitle = 'AVG';
+                                selectedLabel = 'Hour';
+                                chartTitle = 'Estimated Violators/Hour';
+                                selectedCategory = 1;
+                                // 5-11am
+                                // 12-6pm
                               });
                             },
                             selectedLabel: selectedLabel,
                           ),
                           MyDateLabel(
-                            title: 'Week',
+                            title: 'Day',
                             onTap: () {
                               setState(() {
-                                selectedLabel = 'Week';
-                                chartTitle = 'Estimated Weekly Violators';
-                                methodTitle = 'AVG';
-                                selectedMonth = 'January';
+                                selectedLabel = 'Day';
+                                chartTitle = 'Estimated Violators/Day';
                               });
                             },
                             selectedLabel: selectedLabel,
@@ -547,19 +719,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             onTap: () {
                               setState(() {
                                 selectedLabel = 'Month';
-                                chartTitle = 'Estimated Monthly Violators';
-                                methodTitle = 'AVG';
-                              });
-                            },
-                            selectedLabel: selectedLabel,
-                          ),
-                          MyDateLabel(
-                            title: 'Year',
-                            onTap: () {
-                              setState(() {
-                                selectedLabel = 'Year';
-                                chartTitle = 'Estimated Yearly Violators';
-                                methodTitle = 'AVG';
+                                chartTitle = 'Estimated Violators/Month';
+                                selectedCategory = 1;
                               });
                             },
                             selectedLabel: selectedLabel,
@@ -567,617 +728,498 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                         ],
                       ),
                     ),
-                    selectedLabel != ''
+                    selectedLabel != 'Day'
                         ? Container(
                             margin: EdgeInsets.only(
-                              top: 10,
-                            ),
-                            child: Text(
-                              chartTitle,
-                              style: tertiaryText.copyWith(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey[800],
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          )
-                        : Container(),
-                    selectedLabel != ''
-                        ? GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                if (methodTitle == 'AVG') {
-                                  methodTitle = 'TTL';
-                                } else {
-                                  methodTitle = 'AVG';
-                                }
-                              });
-                            },
-                            child: Container(
-                              margin: EdgeInsets.only(
-                                top: 10,
-                                left: screenSize.width * 0.4,
-                                right: screenSize.width * 0.4,
-                              ),
-                              alignment: Alignment.center,
-                              width: 60,
-                              height: 25,
-                              decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10)),
-                                color: customColor[110],
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: customColor[140]!.withOpacity(0.1),
-                                    spreadRadius: 3,
-                                    blurRadius: 5,
-                                    offset: Offset(
-                                        0, 0), // changes position of shadow
-                                  ),
-                                ],
-                              ),
-                              child: Text(
-                                methodTitle,
-                                style: tertiaryText.copyWith(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey[800],
-                                ),
-                              ),
-                            ),
-                          )
-                        : Container(),
-                    //NOT YET DONE
-                    selectedLabel != ''
-                        ? Container(
-                            margin: EdgeInsets.only(
+                              top: 15,
+                              bottom: 10,
                               left: screenSize.width * 0.05,
                               right: screenSize.width * 0.05,
                             ),
-                            height: 250,
+                            height: 30,
                             width: screenSize.width,
-                            // decoration: BoxDecoration(
-                            //   borderRadius: BorderRadius.all(
-                            //     Radius.circular(20),
-                            //   ),
-                            //   color: customColor[110],
-                            //   boxShadow: [
-                            //     BoxShadow(
-                            //       color: Colors.grey.withOpacity(0.3),
-                            //       spreadRadius: 3,
-                            //       blurRadius: 8,
-                            //       offset: Offset(0, 0), // changes position of shadow
-                            //     ),
-                            //   ],
-                            // ),
-                            child: selectedLabel == 'Day'
-                                ? BarChart(
-                                    BarChartData(
-                                      alignment: BarChartAlignment.spaceEvenly,
-                                      maxY: 20,
-                                      minY: 0,
-                                      groupsSpace: 12,
-                                      titlesData: FlTitlesData(
-                                        show: true,
-                                        topTitles: SideTitles(
-                                          showTitles: false,
-                                        ),
-                                        bottomTitles: SideTitles(
-                                          showTitles: true,
-                                          getTextStyles: (context, value) =>
-                                              const TextStyle(fontSize: 10),
-                                          margin: 10,
-                                          rotateAngle: 0,
-                                          getTitles: (double value) {
-                                            switch (value.toInt()) {
-                                              case 0:
-                                                return 'Mon';
-                                              case 1:
-                                                return 'Tue';
-                                              case 2:
-                                                return 'Wed';
-                                              case 3:
-                                                return 'Thu';
-                                              case 4:
-                                                return 'Fri';
-                                              case 5:
-                                                return 'Sat';
-                                              case 6:
-                                                return 'Sun';
-                                              default:
-                                                return '';
-                                            }
-                                          },
-                                        ),
-                                        leftTitles: SideTitles(
-                                          showTitles: true,
-                                          getTextStyles: (context, value) =>
-                                              const TextStyle(fontSize: 10),
-                                          rotateAngle: 45,
-                                          getTitles: (double value) {
-                                            if (value == 0) {
-                                              return '0';
-                                            }
-                                            if (value == 5) {
-                                              return '23';
-                                            }
-                                            return '${value.toInt()}';
-                                          },
-                                          interval: 5,
-                                          margin: 8,
-                                          reservedSize: 30,
-                                        ),
-                                        rightTitles: SideTitles(
-                                          showTitles: false,
-                                        ),
-                                      ),
-                                      gridData: FlGridData(
-                                        show: false,
-                                      ),
-                                      borderData: FlBorderData(
-                                        show: false,
-                                      ),
-                                      barGroups: [
-                                        BarChartGroupData(
-                                          x: 0,
-                                          barRods: [
-                                            BarChartRodData(
-                                              colors: gradientColor,
-                                              y: _calculateReportsCount(
-                                                  selectedLabel,
-                                                  0,
-                                                  methodTitle),
-                                              width: 22,
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                      topLeft:
-                                                          Radius.circular(6),
-                                                      topRight:
-                                                          Radius.circular(6)),
-                                            ),
-                                          ],
-                                        ),
-                                        BarChartGroupData(
-                                          x: 1,
-                                          barRods: [
-                                            BarChartRodData(
-                                              y: _calculateReportsCount(
-                                                  selectedLabel,
-                                                  1,
-                                                  methodTitle),
-                                              colors: gradientColor,
-                                              width: 22,
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                      topLeft:
-                                                          Radius.circular(6),
-                                                      topRight:
-                                                          Radius.circular(6)),
-                                            ),
-                                          ],
-                                        ),
-                                        BarChartGroupData(
-                                          x: 2,
-                                          barRods: [
-                                            BarChartRodData(
-                                              y: _calculateReportsCount(
-                                                  selectedLabel,
-                                                  2,
-                                                  methodTitle),
-                                              colors: gradientColor,
-                                              width: 22,
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                      topLeft:
-                                                          Radius.circular(6),
-                                                      topRight:
-                                                          Radius.circular(6)),
-                                            ),
-                                          ],
-                                        ),
-                                        BarChartGroupData(
-                                          x: 3,
-                                          barRods: [
-                                            BarChartRodData(
-                                              y: _calculateReportsCount(
-                                                  selectedLabel,
-                                                  3,
-                                                  methodTitle),
-                                              colors: gradientColor,
-                                              width: 22,
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                      topLeft:
-                                                          Radius.circular(6),
-                                                      topRight:
-                                                          Radius.circular(6)),
-                                            ),
-                                          ],
-                                        ),
-                                        BarChartGroupData(
-                                          x: 4,
-                                          barRods: [
-                                            BarChartRodData(
-                                              y: _calculateReportsCount(
-                                                  selectedLabel,
-                                                  4,
-                                                  methodTitle),
-                                              colors: gradientColor,
-                                              width: 22,
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                      topLeft:
-                                                          Radius.circular(6),
-                                                      topRight:
-                                                          Radius.circular(6)),
-                                            ),
-                                          ],
-                                        ),
-                                        BarChartGroupData(
-                                          x: 5,
-                                          barRods: [
-                                            BarChartRodData(
-                                              y: _calculateReportsCount(
-                                                  selectedLabel,
-                                                  5,
-                                                  methodTitle),
-                                              colors: gradientColor,
-                                              width: 22,
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                      topLeft:
-                                                          Radius.circular(6),
-                                                      topRight:
-                                                          Radius.circular(6)),
-                                            ),
-                                          ],
-                                        ),
-                                        BarChartGroupData(
-                                          x: 6,
-                                          barRods: [
-                                            BarChartRodData(
-                                              y: _calculateReportsCount(
-                                                  selectedLabel,
-                                                  6,
-                                                  methodTitle),
-                                              colors: gradientColor,
-                                              width: 22,
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                      topLeft:
-                                                          Radius.circular(6),
-                                                      topRight:
-                                                          Radius.circular(6)),
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  )
-                                : selectedLabel == 'Month'
-                                    ? BarChart(
-                                        BarChartData(
-                                          alignment:
-                                              BarChartAlignment.spaceEvenly,
-                                          maxY: 20,
-                                          minY: 0,
-                                          groupsSpace: 12,
-                                          titlesData: FlTitlesData(
-                                            show: true,
-                                            topTitles: SideTitles(
-                                              showTitles: false,
-                                            ),
-                                            bottomTitles: SideTitles(
-                                              showTitles: true,
-                                              getTextStyles: (context, value) =>
-                                                  const TextStyle(fontSize: 10),
-                                              margin: 10,
-                                              rotateAngle: 0,
-                                              getTitles: (double value) {
-                                                switch (value.toInt()) {
-                                                  case 0:
-                                                    return 'Jan';
-                                                  case 1:
-                                                    return 'Feb';
-                                                  case 2:
-                                                    return 'Mar';
-                                                  case 3:
-                                                    return 'Apr';
-                                                  case 4:
-                                                    return 'May';
-                                                  case 5:
-                                                    return 'Jun';
-                                                  default:
-                                                    return '';
-                                                }
-                                              },
-                                            ),
-                                            leftTitles: SideTitles(
-                                              showTitles: true,
-                                              getTextStyles: (context, value) =>
-                                                  const TextStyle(fontSize: 10),
-                                              rotateAngle: 45,
-                                              getTitles: (double value) {
-                                                if (value == 0) {
-                                                  return '0';
-                                                }
-                                                if (value == 5) {
-                                                  return '23';
-                                                }
-                                                return '${value.toInt()}';
-                                              },
-                                              interval: 5,
-                                              margin: 8,
-                                              reservedSize: 30,
-                                            ),
-                                            rightTitles: SideTitles(
-                                              showTitles: false,
-                                            ),
-                                          ),
-                                          gridData: FlGridData(
-                                            show: false,
-                                          ),
-                                          borderData: FlBorderData(
-                                            show: false,
-                                          ),
-                                          barGroups: [
-                                            BarChartGroupData(
-                                              x: 0,
-                                              barRods: [
-                                                BarChartRodData(
-                                                  colors: gradientColor,
-                                                  y: _calculateReportsCount(
-                                                      selectedLabel,
-                                                      0,
-                                                      methodTitle),
-                                                  width: 22,
-                                                  borderRadius:
-                                                      const BorderRadius.only(
-                                                          topLeft:
-                                                              Radius.circular(
-                                                                  6),
-                                                          topRight:
-                                                              Radius.circular(
-                                                                  6)),
-                                                ),
-                                              ],
-                                            ),
-                                            BarChartGroupData(
-                                              x: 1,
-                                              barRods: [
-                                                BarChartRodData(
-                                                  y: _calculateReportsCount(
-                                                      selectedLabel,
-                                                      1,
-                                                      methodTitle),
-                                                  colors: gradientColor,
-                                                  width: 22,
-                                                  borderRadius:
-                                                      const BorderRadius.only(
-                                                          topLeft:
-                                                              Radius.circular(
-                                                                  6),
-                                                          topRight:
-                                                              Radius.circular(
-                                                                  6)),
-                                                ),
-                                              ],
-                                            ),
-                                            BarChartGroupData(
-                                              x: 2,
-                                              barRods: [
-                                                BarChartRodData(
-                                                  y: _calculateReportsCount(
-                                                      selectedLabel,
-                                                      2,
-                                                      methodTitle),
-                                                  colors: gradientColor,
-                                                  width: 22,
-                                                  borderRadius:
-                                                      const BorderRadius.only(
-                                                          topLeft:
-                                                              Radius.circular(
-                                                                  6),
-                                                          topRight:
-                                                              Radius.circular(
-                                                                  6)),
-                                                ),
-                                              ],
-                                            ),
-                                            BarChartGroupData(
-                                              x: 3,
-                                              barRods: [
-                                                BarChartRodData(
-                                                  y: _calculateReportsCount(
-                                                      selectedLabel,
-                                                      3,
-                                                      methodTitle),
-                                                  colors: gradientColor,
-                                                  width: 22,
-                                                  borderRadius:
-                                                      const BorderRadius.only(
-                                                          topLeft:
-                                                              Radius.circular(
-                                                                  6),
-                                                          topRight:
-                                                              Radius.circular(
-                                                                  6)),
-                                                ),
-                                              ],
-                                            ),
-                                            BarChartGroupData(
-                                              x: 4,
-                                              barRods: [
-                                                BarChartRodData(
-                                                  y: _calculateReportsCount(
-                                                      selectedLabel,
-                                                      4,
-                                                      methodTitle),
-                                                  colors: gradientColor,
-                                                  width: 22,
-                                                  borderRadius:
-                                                      const BorderRadius.only(
-                                                          topLeft:
-                                                              Radius.circular(
-                                                                  6),
-                                                          topRight:
-                                                              Radius.circular(
-                                                                  6)),
-                                                ),
-                                              ],
-                                            ),
-                                            BarChartGroupData(
-                                              x: 5,
-                                              barRods: [
-                                                BarChartRodData(
-                                                  y: _calculateReportsCount(
-                                                      selectedLabel,
-                                                      5,
-                                                      methodTitle),
-                                                  colors: gradientColor,
-                                                  width: 22,
-                                                  borderRadius:
-                                                      const BorderRadius.only(
-                                                          topLeft:
-                                                              Radius.circular(
-                                                                  6),
-                                                          topRight:
-                                                              Radius.circular(
-                                                                  6)),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                    : LineChart(
-                                        LineChartData(
-                                            minX: 0,
-                                            maxX: 11,
-                                            minY: 0,
-                                            maxY: 6,
-                                            titlesData: FlTitlesData(
-                                              show: true,
-                                              topTitles: SideTitles(
-                                                showTitles: false,
-                                              ),
-                                              rightTitles: SideTitles(
-                                                showTitles: false,
-                                              ),
-                                              leftTitles: SideTitles(
-                                                showTitles: true,
-                                                getTitles: (value) {
-                                                  switch (value.toInt()) {
-                                                    case 1:
-                                                      return '10';
-                                                    case 3:
-                                                      return '20';
-                                                    case 5:
-                                                      return '30';
-                                                  }
-                                                  return '';
-                                                },
-                                              ),
-                                              bottomTitles: SideTitles(
-                                                  showTitles: true,
-                                                  // reservedSize: 20,
-                                                  getTitles: (value) {
-                                                    // print(start!.weekday);
-                                                    // print(start!.month);
-                                                    if (selectedLabel ==
-                                                        'Day') {
-                                                      switch (value.toInt()) {
-                                                        case 0:
-                                                          return 'Mon';
-                                                        case 2:
-                                                          return 'Tue';
-                                                        case 4:
-                                                          return 'Wed';
-                                                        case 5:
-                                                          return 'Thu';
-                                                        case 7:
-                                                          return 'Fri';
-                                                        case 9:
-                                                          return 'Sat';
-                                                        case 11:
-                                                          return 'Sun';
-                                                      }
-                                                    } else if (selectedLabel ==
-                                                        'Week') {
-                                                      switch (value.toInt()) {
-                                                        case 1:
-                                                          return 'Week 1';
-                                                        case 4:
-                                                          return 'Week 2';
-                                                        case 7:
-                                                          return 'Week 3';
-                                                        case 10:
-                                                          return 'Week 4';
-                                                      }
-                                                    } else if (selectedLabel ==
-                                                        'Month') {
-                                                      switch (value.toInt()) {
-                                                        case 1:
-                                                          return 'JAN';
-                                                        case 4:
-                                                          return 'FEB';
-                                                        case 7:
-                                                          return 'MAR';
-                                                        case 10:
-                                                          return 'APR';
-                                                      }
-                                                    } else {
-                                                      switch (value.toInt()) {
-                                                        case 1:
-                                                          return '2022';
-                                                        case 4:
-                                                          return '2023';
-                                                        case 7:
-                                                          return '2024';
-                                                        case 10:
-                                                          return '2025';
-                                                      }
-                                                    }
-
-                                                    return '';
-                                                  }),
-                                            ),
-                                            gridData: FlGridData(
-                                              show: true,
-                                              drawVerticalLine: false,
-                                              drawHorizontalLine: false,
-                                            ),
-                                            borderData: FlBorderData(
-                                              show: false,
-                                            ),
-                                            lineBarsData: [
-                                              LineChartBarData(
-                                                spots: [
-                                                  FlSpot(0, 0),
-                                                  FlSpot(2, 3),
-                                                  FlSpot(4, 1),
-                                                  FlSpot(5, 4),
-                                                  FlSpot(7, 5),
-                                                  FlSpot(9, 4),
-                                                  FlSpot(11, 1),
-                                                ],
-                                                colors: gradientColor,
-                                                dotData: FlDotData(show: false),
-                                                barWidth: 3,
-                                                isCurved: true,
-                                                belowBarData: BarAreaData(
-                                                  show: true,
-                                                  colors: gradientColor
-                                                      .map((color) => color
-                                                          .withOpacity(0.8))
-                                                      .toList(),
-                                                ),
-                                              )
-                                            ]),
-                                      ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                MyOutlineButton(
+                                  elavation: 5,
+                                  color: selectedCategory == 1
+                                      ? Color(0xff1c52dd)
+                                      : Colors.grey,
+                                  radius: 10,
+                                  onPressed: () {
+                                    setState(() {
+                                      selectedCategory = 1;
+                                    });
+                                  },
+                                  isLoading: false,
+                                  text: Text(
+                                    selectedLabel == 'Hour' ? 'AM' : 'Q1 & Q2',
+                                  ),
+                                ),
+                                Container(
+                                  width: 5,
+                                ),
+                                MyOutlineButton(
+                                  elavation: 5,
+                                  color: selectedCategory == 2
+                                      ? Color(0xff1c52dd)
+                                      : Colors.grey,
+                                  radius: 10,
+                                  onPressed: () {
+                                    setState(() {
+                                      selectedCategory = 2;
+                                    });
+                                  },
+                                  isLoading: false,
+                                  text: Text(
+                                    selectedLabel == 'Hour' ? 'PM' : 'Q3 & Q4',
+                                  ),
+                                ),
+                              ],
+                            ),
                           )
-                        : Container(),
+                        : Container(
+                            margin: EdgeInsets.only(
+                              top: 10,
+                              bottom: 10,
+                              left: screenSize.width * 0.05,
+                              right: screenSize.width * 0.05,
+                            ),
+                          ),
+                    //NOT YET DONE
+                    Container(
+                      child: Text(
+                        chartTitle,
+                        style: tertiaryText.copyWith(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[800],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(
+                        top: 20,
+                        left: screenSize.width * 0.03,
+                        right: screenSize.width * 0.03,
+                      ),
+                      height: 300,
+                      width: screenSize.width,
+                      child: selectedLabel != 'Month'
+                          ? BarChart(
+                              BarChartData(
+                                alignment: BarChartAlignment.spaceEvenly,
+                                maxY: _calculateGreatestNumber(selectedLabel),
+                                minY: 0,
+                                groupsSpace: 12,
+                                axisTitleData: FlAxisTitleData(
+                                  show: true,
+                                  bottomTitle: AxisTitle(
+                                    showTitle: true,
+                                    titleText: selectedLabel,
+                                    textStyle: tertiaryText.copyWith(
+                                      color: Colors.black,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  leftTitle: AxisTitle(
+                                    showTitle: true,
+                                    titleText: 'Violators',
+                                    textStyle: tertiaryText.copyWith(
+                                      color: Colors.black,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
+                                titlesData: FlTitlesData(
+                                  show: true,
+                                  topTitles: SideTitles(
+                                    showTitles: false,
+                                  ),
+                                  bottomTitles: SideTitles(
+                                    showTitles: true,
+                                    getTextStyles: (context, value) =>
+                                        const TextStyle(fontSize: 10),
+                                    margin: 10,
+                                    rotateAngle: 20,
+                                    getTitles: (double value) {
+                                      if (selectedLabel == 'Hour') {
+                                        if (selectedCategory == 1) {
+                                          switch (value.toInt()) {
+                                            case 0:
+                                              return '5am';
+                                            case 1:
+                                              return '6am';
+                                            case 2:
+                                              return '7am';
+                                            case 3:
+                                              return '8am';
+                                            case 4:
+                                              return '9am';
+                                            case 5:
+                                              return '10am';
+                                            case 6:
+                                              return '11am';
+                                            default:
+                                              return '';
+                                          }
+                                        } else {
+                                          switch (value.toInt()) {
+                                            case 0:
+                                              return '12pm';
+                                            case 1:
+                                              return '1pm';
+                                            case 2:
+                                              return '2pm';
+                                            case 3:
+                                              return '3pm';
+                                            case 4:
+                                              return '4pm';
+                                            case 5:
+                                              return '5pm';
+                                            case 6:
+                                              return '6pm';
+                                            default:
+                                              return '';
+                                          }
+                                        }
+                                      } else {
+                                        switch (value.toInt()) {
+                                          case 0:
+                                            return 'Mon';
+                                          case 1:
+                                            return 'Tue';
+                                          case 2:
+                                            return 'Wed';
+                                          case 3:
+                                            return 'Thu';
+                                          case 4:
+                                            return 'Fri';
+                                          case 5:
+                                            return 'Sat';
+                                          case 6:
+                                            return 'Sun';
+                                          default:
+                                            return '';
+                                        }
+                                      }
+                                    },
+                                  ),
+                                  leftTitles: SideTitles(
+                                    showTitles: true,
+                                    getTextStyles: (context, value) =>
+                                        const TextStyle(fontSize: 10),
+                                    rotateAngle: 0,
+                                    getTitles: (double value) {
+                                      return '${value.toInt()}';
+                                    },
+                                    interval: _setInterval(
+                                        _calculateGreatestNumber(
+                                            selectedLabel)),
+                                    margin: 8,
+                                    reservedSize: 30,
+                                  ),
+                                  rightTitles: SideTitles(
+                                    showTitles: false,
+                                  ),
+                                ),
+                                gridData: FlGridData(
+                                  show: false,
+                                ),
+                                borderData: FlBorderData(
+                                  show: false,
+                                ),
+                                barGroups: [
+                                  BarChartGroupData(
+                                    x: 0,
+                                    barRods: [
+                                      BarChartRodData(
+                                        colors: gradientColor,
+                                        y: _calculateReportsCount(
+                                            selectedLabel, 0, methodTitle),
+                                        width: 22,
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(6),
+                                            topRight: Radius.circular(6)),
+                                      ),
+                                    ],
+                                  ),
+                                  BarChartGroupData(
+                                    x: 1,
+                                    barRods: [
+                                      BarChartRodData(
+                                        y: _calculateReportsCount(
+                                            selectedLabel, 1, methodTitle),
+                                        colors: gradientColor,
+                                        width: 22,
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(6),
+                                            topRight: Radius.circular(6)),
+                                      ),
+                                    ],
+                                  ),
+                                  BarChartGroupData(
+                                    x: 2,
+                                    barRods: [
+                                      BarChartRodData(
+                                        y: _calculateReportsCount(
+                                            selectedLabel, 2, methodTitle),
+                                        colors: gradientColor,
+                                        width: 22,
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(6),
+                                            topRight: Radius.circular(6)),
+                                      ),
+                                    ],
+                                  ),
+                                  BarChartGroupData(
+                                    x: 3,
+                                    barRods: [
+                                      BarChartRodData(
+                                        y: _calculateReportsCount(
+                                            selectedLabel, 3, methodTitle),
+                                        colors: gradientColor,
+                                        width: 22,
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(6),
+                                            topRight: Radius.circular(6)),
+                                      ),
+                                    ],
+                                  ),
+                                  BarChartGroupData(
+                                    x: 4,
+                                    barRods: [
+                                      BarChartRodData(
+                                        y: _calculateReportsCount(
+                                            selectedLabel, 4, methodTitle),
+                                        colors: gradientColor,
+                                        width: 22,
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(6),
+                                            topRight: Radius.circular(6)),
+                                      ),
+                                    ],
+                                  ),
+                                  BarChartGroupData(
+                                    x: 5,
+                                    barRods: [
+                                      BarChartRodData(
+                                        y: _calculateReportsCount(
+                                            selectedLabel, 5, methodTitle),
+                                        colors: gradientColor,
+                                        width: 22,
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(6),
+                                            topRight: Radius.circular(6)),
+                                      ),
+                                    ],
+                                  ),
+                                  BarChartGroupData(
+                                    x: 6,
+                                    barRods: [
+                                      BarChartRodData(
+                                        y: _calculateReportsCount(
+                                            selectedLabel, 6, methodTitle),
+                                        colors: gradientColor,
+                                        width: 22,
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(6),
+                                            topRight: Radius.circular(6)),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            )
+                          : BarChart(
+                              BarChartData(
+                                alignment: BarChartAlignment.spaceEvenly,
+                                maxY: _calculateGreatestNumber(selectedLabel),
+                                minY: 0,
+                                groupsSpace: 12,
+                                axisTitleData: FlAxisTitleData(
+                                  show: true,
+                                  bottomTitle: AxisTitle(
+                                    showTitle: true,
+                                    titleText: selectedLabel,
+                                    textStyle: tertiaryText.copyWith(
+                                      color: Colors.black,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  leftTitle: AxisTitle(
+                                    showTitle: true,
+                                    titleText: 'Violators',
+                                    textStyle: tertiaryText.copyWith(
+                                      color: Colors.black,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
+                                titlesData: FlTitlesData(
+                                  show: true,
+                                  topTitles: SideTitles(
+                                    showTitles: false,
+                                  ),
+                                  bottomTitles: SideTitles(
+                                    showTitles: true,
+                                    getTextStyles: (context, value) =>
+                                        const TextStyle(fontSize: 10),
+                                    margin: 10,
+                                    rotateAngle: 20,
+                                    getTitles: (double value) {
+                                      if (selectedCategory == 1) {
+                                        switch (value.toInt()) {
+                                          case 0:
+                                            return 'Jan';
+                                          case 1:
+                                            return 'Feb';
+                                          case 2:
+                                            return 'Mar';
+                                          case 3:
+                                            return 'Apr';
+                                          case 4:
+                                            return 'May';
+                                          case 5:
+                                            return 'Jun';
+                                          default:
+                                            return '';
+                                        }
+                                      } else {
+                                        switch (value.toInt()) {
+                                          case 0:
+                                            return 'Jul';
+                                          case 1:
+                                            return 'Aug';
+                                          case 2:
+                                            return 'Sep';
+                                          case 3:
+                                            return 'Oct';
+                                          case 4:
+                                            return 'Nov';
+                                          case 5:
+                                            return 'Dec';
+                                          default:
+                                            return '';
+                                        }
+                                      }
+                                    },
+                                  ),
+                                  leftTitles: SideTitles(
+                                    showTitles: true,
+                                    getTextStyles: (context, value) =>
+                                        const TextStyle(fontSize: 10),
+                                    rotateAngle: 0,
+                                    getTitles: (double value) {
+                                      return '${value.toInt()}';
+                                    },
+                                    interval: _setInterval(
+                                        _calculateGreatestNumber(
+                                            selectedLabel)),
+                                    margin: 8,
+                                    reservedSize: 30,
+                                  ),
+                                  rightTitles: SideTitles(
+                                    showTitles: false,
+                                  ),
+                                ),
+                                gridData: FlGridData(
+                                  show: false,
+                                ),
+                                borderData: FlBorderData(
+                                  show: false,
+                                ),
+                                barGroups: [
+                                  BarChartGroupData(
+                                    x: 0,
+                                    barRods: [
+                                      BarChartRodData(
+                                        colors: gradientColor,
+                                        y: _calculateReportsCount(
+                                            selectedLabel, 0, methodTitle),
+                                        width: 22,
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(6),
+                                            topRight: Radius.circular(6)),
+                                      ),
+                                    ],
+                                  ),
+                                  BarChartGroupData(
+                                    x: 1,
+                                    barRods: [
+                                      BarChartRodData(
+                                        y: _calculateReportsCount(
+                                            selectedLabel, 1, methodTitle),
+                                        colors: gradientColor,
+                                        width: 22,
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(6),
+                                            topRight: Radius.circular(6)),
+                                      ),
+                                    ],
+                                  ),
+                                  BarChartGroupData(
+                                    x: 2,
+                                    barRods: [
+                                      BarChartRodData(
+                                        y: _calculateReportsCount(
+                                            selectedLabel, 2, methodTitle),
+                                        colors: gradientColor,
+                                        width: 22,
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(6),
+                                            topRight: Radius.circular(6)),
+                                      ),
+                                    ],
+                                  ),
+                                  BarChartGroupData(
+                                    x: 3,
+                                    barRods: [
+                                      BarChartRodData(
+                                        y: _calculateReportsCount(
+                                            selectedLabel, 3, methodTitle),
+                                        colors: gradientColor,
+                                        width: 22,
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(6),
+                                            topRight: Radius.circular(6)),
+                                      ),
+                                    ],
+                                  ),
+                                  BarChartGroupData(
+                                    x: 4,
+                                    barRods: [
+                                      BarChartRodData(
+                                        y: _calculateReportsCount(
+                                            selectedLabel, 4, methodTitle),
+                                        colors: gradientColor,
+                                        width: 22,
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(6),
+                                            topRight: Radius.circular(6)),
+                                      ),
+                                    ],
+                                  ),
+                                  BarChartGroupData(
+                                    x: 5,
+                                    barRods: [
+                                      BarChartRodData(
+                                        y: _calculateReportsCount(
+                                            selectedLabel, 5, methodTitle),
+                                        colors: gradientColor,
+                                        width: 22,
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(6),
+                                            topRight: Radius.circular(6)),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                    ),
                     Container(
                       margin: EdgeInsets.only(
                         top: 30,
