@@ -32,79 +32,79 @@ class BuildBottomSheet extends StatelessWidget {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                page != "Reports"
-                    ? Container(
-                        margin: EdgeInsets.only(bottom: 5),
-                        padding: EdgeInsets.only(top: 15),
-                        height: 40,
-                        width: screenSize.width,
-                        child: Text(
-                          'Category',
-                          style: tertiaryText.copyWith(fontSize: 15),
-                        ),
-                      )
-                    : Container(),
-                page != "Reports"
-                    ? Container(
-                        margin: EdgeInsets.only(left: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            MyCategoryButton(
-                              text: 'Recent',
-                              color: globals.filters['Category']['Latest']
-                                  ? Color(0xffdd901c)
-                                  : Color(0xff7d7d7d),
-                              onTap: () {
-                                setState(() {
-                                  globals.filters['Category']['Latest'] =
-                                      !globals.filters['Category']['Latest'];
-                                });
-                              },
-                              padding: 3,
-                              height: 28,
-                              width: screenSize.width * .26,
-                            ),
-                            Container(
-                              width: 8,
-                            ),
-                            MyCategoryButton(
-                              text: 'Dropped',
-                              color: globals.filters['Category']['Dropped']
-                                  ? Color(0xffdd901c)
-                                  : Color(0xff7d7d7d),
-                              onTap: () {
-                                setState(() {
-                                  globals.filters['Category']['Dropped'] =
-                                      !globals.filters['Category']['Dropped'];
-                                });
-                              },
-                              padding: 3,
-                              height: 28,
-                              width: screenSize.width * .26,
-                            ),
-                            Container(
-                              width: 8,
-                            ),
-                            MyCategoryButton(
-                              text: 'Tagged',
-                              color: globals.filters['Category']['Tagged']
-                                  ? Color(0xffdd901c)
-                                  : Color(0xff7d7d7d),
-                              onTap: () {
-                                setState(() {
-                                  globals.filters['Category']['Tagged'] =
-                                      !globals.filters['Category']['Tagged'];
-                                });
-                              },
-                              padding: 3,
-                              height: 28,
-                              width: screenSize.width * .26,
-                            ),
-                          ],
-                        ),
-                      )
-                    : Container(),
+                // page != "Reports"
+                //     ? Container(
+                //         margin: EdgeInsets.only(bottom: 5),
+                //         padding: EdgeInsets.only(top: 15),
+                //         height: 40,
+                //         width: screenSize.width,
+                //         child: Text(
+                //           'Category',
+                //           style: tertiaryText.copyWith(fontSize: 15),
+                //         ),
+                //       )
+                //     : Container(),
+                // page != "Reports"
+                //     ? Container(
+                //         margin: EdgeInsets.only(left: 10),
+                //         child: Row(
+                //           mainAxisAlignment: MainAxisAlignment.start,
+                //           children: [
+                //             MyCategoryButton(
+                //               text: 'Recent',
+                //               color: globals.filters['Category']['Latest']
+                //                   ? Color(0xffdd901c)
+                //                   : Color(0xff7d7d7d),
+                //               onTap: () {
+                //                 setState(() {
+                //                   globals.filters['Category']['Latest'] =
+                //                       !globals.filters['Category']['Latest'];
+                //                 });
+                //               },
+                //               padding: 3,
+                //               height: 28,
+                //               width: screenSize.width * .26,
+                //             ),
+                //             Container(
+                //               width: 8,
+                //             ),
+                //             MyCategoryButton(
+                //               text: 'Dropped',
+                //               color: globals.filters['Category']['Dropped']
+                //                   ? Color(0xffdd901c)
+                //                   : Color(0xff7d7d7d),
+                //               onTap: () {
+                //                 setState(() {
+                //                   globals.filters['Category']['Dropped'] =
+                //                       !globals.filters['Category']['Dropped'];
+                //                 });
+                //               },
+                //               padding: 3,
+                //               height: 28,
+                //               width: screenSize.width * .26,
+                //             ),
+                //             Container(
+                //               width: 8,
+                //             ),
+                //             MyCategoryButton(
+                //               text: 'Tagged',
+                //               color: globals.filters['Category']['Tagged']
+                //                   ? Color(0xffdd901c)
+                //                   : Color(0xff7d7d7d),
+                //               onTap: () {
+                //                 setState(() {
+                //                   globals.filters['Category']['Tagged'] =
+                //                       !globals.filters['Category']['Tagged'];
+                //                 });
+                //               },
+                //               padding: 3,
+                //               height: 28,
+                //               width: screenSize.width * .26,
+                //             ),
+                //           ],
+                //         ),
+                //       )
+                //     : Container(),
                 Container(
                   margin: EdgeInsets.only(bottom: 5),
                   padding: EdgeInsets.only(top: 15),

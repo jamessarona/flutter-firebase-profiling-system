@@ -4,7 +4,6 @@ import 'package:tanod_apprehension/net/authenticationService.dart';
 import 'package:tanod_apprehension/screens/notificationScreen.dart';
 import 'package:tanod_apprehension/screens/reportScreens/activeScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
-import 'package:tanod_apprehension/shared/globals.dart';
 import 'package:tanod_apprehension/shared/myAppbar.dart';
 import 'package:tanod_apprehension/shared/myBottomSheet.dart';
 import 'package:tanod_apprehension/shared/myDrawers.dart';
@@ -15,13 +14,14 @@ import 'reportScreens/taggedScreen.dart';
 class ReportsScreen extends StatefulWidget {
   final BaseAuth auth;
   final VoidCallback onSignOut;
-
+  final String userUID;
   final String name;
   final String email;
   final String profileImage;
   const ReportsScreen({
     required this.auth,
     required this.onSignOut,
+    required this.userUID,
     required this.name,
     required this.email,
     required this.profileImage,
@@ -37,24 +37,32 @@ final dbRef = FirebaseDatabase.instance.reference();
 int notifCount = 0;
 GlobalKey<ScaffoldState> _scaffoldKeyReports = GlobalKey<ScaffoldState>();
 int currentIndext = 0;
+String userUID = '';
+List<StatefulWidget> screens = [
+  ActiveScreen(
+    userUID: userUID,
+  ),
+  DroppedScreen(
+    userUID: userUID,
+  ),
+  TaggedScreen(
+    userUID: userUID,
+  ),
+];
 
 class _ReportsScreenState extends State<ReportsScreen> {
-  List<StatefulWidget> screens = [
-    ActiveScreen(),
-    DroppedScreen(),
-    TaggedScreen(),
-  ];
   @override
   Widget build(BuildContext context) {
+    userUID = widget.userUID;
     screenSize = MediaQuery.of(context).size;
     return SafeArea(
       child: StreamBuilder(
           stream: dbRef.child("Reports").onValue,
-          builder: (context, preportsSnapshot) {
-            if (preportsSnapshot.hasData &&
-                !preportsSnapshot.hasError &&
-                (preportsSnapshot.data! as Event).snapshot.value != null) {
-              reports = (preportsSnapshot.data! as Event).snapshot.value;
+          builder: (context, reportsSnapshot) {
+            if (reportsSnapshot.hasData &&
+                !reportsSnapshot.hasError &&
+                (reportsSnapshot.data! as Event).snapshot.value != null) {
+              reports = (reportsSnapshot.data! as Event).snapshot.value;
             } else {
               return Center(
                 child: MySpinKitLoadingScreen(),
@@ -68,6 +76,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 leading: "Reports",
                 auth: widget.auth,
                 onSignOut: widget.onSignOut,
+                userUID: widget.userUID,
                 name: widget.name,
                 email: widget.email,
                 profileImage: widget.profileImage,

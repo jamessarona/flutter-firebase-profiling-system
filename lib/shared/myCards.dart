@@ -25,7 +25,9 @@ class MyReportCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      shadowColor: customColor[130],
+      shadowColor: isAssigned ? customColor[80] : customColor[130],
+      color: isAssigned ? customColor[160] : Colors.white,
+      elevation: isAssigned ? 5 : 1,
       child: Container(
         padding: EdgeInsets.all(7),
         width: 180,
@@ -410,7 +412,7 @@ class MyNotificationReportCard extends StatelessWidget {
                       'Pending',
                       style: tertiaryText.copyWith(
                         fontSize: 13,
-                        color: Colors.orange,
+                        color: color,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,

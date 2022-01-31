@@ -11,6 +11,7 @@ class BuildDrawer extends StatelessWidget {
   final String leading;
   final BaseAuth auth;
   final VoidCallback onSignOut;
+  final String userUID;
   final String name;
   final String email;
   final String profileImage;
@@ -19,6 +20,7 @@ class BuildDrawer extends StatelessWidget {
     required this.leading,
     required this.auth,
     required this.onSignOut,
+    required this.userUID,
     required this.name,
     required this.email,
     required this.profileImage,
@@ -105,6 +107,7 @@ class BuildDrawer extends StatelessWidget {
                         builder: (ctx) => StatisticsScreen(
                           auth: auth,
                           onSignOut: onSignOut,
+                          userUID: userUID,
                           email: email,
                           name: name,
                           profileImage: profileImage,
@@ -127,6 +130,7 @@ class BuildDrawer extends StatelessWidget {
                         builder: (ctx) => ReportsScreen(
                           auth: auth,
                           onSignOut: onSignOut,
+                          userUID: userUID,
                           email: email,
                           name: name,
                           profileImage: profileImage,

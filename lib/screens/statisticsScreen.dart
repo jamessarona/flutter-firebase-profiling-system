@@ -21,6 +21,7 @@ import 'package:intl/intl.dart';
 class StatisticsScreen extends StatefulWidget {
   final BaseAuth auth;
   final VoidCallback onSignOut;
+  final String userUID;
 
   final String name;
   final String email;
@@ -28,6 +29,7 @@ class StatisticsScreen extends StatefulWidget {
   const StatisticsScreen({
     required this.auth,
     required this.onSignOut,
+    required this.userUID,
     required this.name,
     required this.email,
     required this.profileImage,
@@ -77,8 +79,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       }
     }
     if (droppedReports.isNotEmpty) {
-      num tempCount = 0;
       for (int i = 0; i < droppedReports[0].length; i++) {
+        num tempCount = 0;
         if (droppedReports[0][i]['AssignedTanod']
                 [droppedReports[0][i]['AssignedTanod'].length - 1]['Reason'] ==
             'Duplicate') {
@@ -254,7 +256,28 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         for (int i = 0; i < droppedReports[0].length; i++) {
           DateTime date = DateTime.parse(droppedReports[0][i]['Date']);
           if (date.hour == position + defaultTime) {
-            value += droppedReports[0][i]['ViolatorCount'];
+            num tempCount = 0;
+            if (droppedReports[0][i]['AssignedTanod']
+                        [droppedReports[0][i]['AssignedTanod'].length - 1]
+                    ['Reason'] ==
+                'Duplicate') {
+              for (int x = 0;
+                  x < droppedReports[0][i]['AssignedTanod'].length;
+                  x++) {
+                if (droppedReports[0][i]['AssignedTanod'][x]['Documentation'] !=
+                    null) {
+                  tempCount += droppedReports[0][i]['AssignedTanod'][x]
+                          ['Documentation']
+                      .length;
+                }
+              }
+              if (tempCount > 0) {
+                value += (droppedReports[0][i]['ViolatorCount'] - tempCount);
+              }
+            } else {
+              value += droppedReports[0][i]['ViolatorCount'];
+            }
+            //value += droppedReports[0][i]['ViolatorCount'];
           }
         }
       }
@@ -279,7 +302,28 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         for (int i = 0; i < droppedReports[0].length; i++) {
           DateTime date = DateTime.parse(droppedReports[0][i]['Date']);
           if (date.weekday - 1 == position) {
-            value += droppedReports[0][i]['ViolatorCount'];
+            num tempCount = 0;
+            if (droppedReports[0][i]['AssignedTanod']
+                        [droppedReports[0][i]['AssignedTanod'].length - 1]
+                    ['Reason'] ==
+                'Duplicate') {
+              for (int x = 0;
+                  x < droppedReports[0][i]['AssignedTanod'].length;
+                  x++) {
+                if (droppedReports[0][i]['AssignedTanod'][x]['Documentation'] !=
+                    null) {
+                  tempCount += droppedReports[0][i]['AssignedTanod'][x]
+                          ['Documentation']
+                      .length;
+                }
+              }
+              if (tempCount > 0) {
+                value += (droppedReports[0][i]['ViolatorCount'] - tempCount);
+              }
+            } else {
+              value += droppedReports[0][i]['ViolatorCount'];
+            }
+            //value += droppedReports[0][i]['ViolatorCount'];
           }
         }
       }
@@ -308,7 +352,28 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         for (int i = 0; i < droppedReports[0].length; i++) {
           DateTime date = DateTime.parse(droppedReports[0][i]['Date']);
           if (date.month == position + defaultTime) {
-            value += droppedReports[0][i]['ViolatorCount'];
+            num tempCount = 0;
+            if (droppedReports[0][i]['AssignedTanod']
+                        [droppedReports[0][i]['AssignedTanod'].length - 1]
+                    ['Reason'] ==
+                'Duplicate') {
+              for (int x = 0;
+                  x < droppedReports[0][i]['AssignedTanod'].length;
+                  x++) {
+                if (droppedReports[0][i]['AssignedTanod'][x]['Documentation'] !=
+                    null) {
+                  tempCount += droppedReports[0][i]['AssignedTanod'][x]
+                          ['Documentation']
+                      .length;
+                }
+              }
+              if (tempCount > 0) {
+                value += (droppedReports[0][i]['ViolatorCount'] - tempCount);
+              }
+            } else {
+              value += droppedReports[0][i]['ViolatorCount'];
+            }
+            //value += droppedReports[0][i]['ViolatorCount'];
           }
         }
       }
@@ -346,7 +411,30 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           for (int i = 0; i < droppedReports[0].length; i++) {
             DateTime date = DateTime.parse(droppedReports[0][i]['Date']);
             if (date.hour == x + defaultTime) {
-              tempYAxis += droppedReports[0][i]['ViolatorCount'];
+              num tempCount = 0;
+              if (droppedReports[0][i]['AssignedTanod']
+                          [droppedReports[0][i]['AssignedTanod'].length - 1]
+                      ['Reason'] ==
+                  'Duplicate') {
+                for (int x = 0;
+                    x < droppedReports[0][i]['AssignedTanod'].length;
+                    x++) {
+                  if (droppedReports[0][i]['AssignedTanod'][x]
+                          ['Documentation'] !=
+                      null) {
+                    tempCount += droppedReports[0][i]['AssignedTanod'][x]
+                            ['Documentation']
+                        .length;
+                  }
+                }
+                if (tempCount > 0) {
+                  tempYAxis +=
+                      (droppedReports[0][i]['ViolatorCount'] - tempCount);
+                }
+              } else {
+                tempYAxis += droppedReports[0][i]['ViolatorCount'];
+              }
+              // tempYAxis += droppedReports[0][i]['ViolatorCount'];
             }
           }
         }
@@ -379,7 +467,30 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           for (int i = 0; i < droppedReports[0].length; i++) {
             DateTime date = DateTime.parse(droppedReports[0][i]['Date']);
             if (date.weekday == x + defaultTime) {
-              tempYAxis += droppedReports[0][i]['ViolatorCount'];
+              num tempCount = 0;
+              if (droppedReports[0][i]['AssignedTanod']
+                          [droppedReports[0][i]['AssignedTanod'].length - 1]
+                      ['Reason'] ==
+                  'Duplicate') {
+                for (int x = 0;
+                    x < droppedReports[0][i]['AssignedTanod'].length;
+                    x++) {
+                  if (droppedReports[0][i]['AssignedTanod'][x]
+                          ['Documentation'] !=
+                      null) {
+                    tempCount += droppedReports[0][i]['AssignedTanod'][x]
+                            ['Documentation']
+                        .length;
+                  }
+                }
+                if (tempCount > 0) {
+                  tempYAxis +=
+                      (droppedReports[0][i]['ViolatorCount'] - tempCount);
+                }
+              } else {
+                tempYAxis += droppedReports[0][i]['ViolatorCount'];
+              }
+              // tempYAxis += droppedReports[0][i]['ViolatorCount'];
             }
           }
         }
@@ -415,7 +526,30 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           for (int i = 0; i < droppedReports[0].length; i++) {
             DateTime date = DateTime.parse(droppedReports[0][i]['Date']);
             if (date.month == x + defaultTime) {
-              tempYAxis += droppedReports[0][i]['ViolatorCount'];
+              num tempCount = 0;
+              if (droppedReports[0][i]['AssignedTanod']
+                          [droppedReports[0][i]['AssignedTanod'].length - 1]
+                      ['Reason'] ==
+                  'Duplicate') {
+                for (int x = 0;
+                    x < droppedReports[0][i]['AssignedTanod'].length;
+                    x++) {
+                  if (droppedReports[0][i]['AssignedTanod'][x]
+                          ['Documentation'] !=
+                      null) {
+                    tempCount += droppedReports[0][i]['AssignedTanod'][x]
+                            ['Documentation']
+                        .length;
+                  }
+                }
+                if (tempCount > 0) {
+                  tempYAxis +=
+                      (droppedReports[0][i]['ViolatorCount'] - tempCount);
+                }
+              } else {
+                tempYAxis += droppedReports[0][i]['ViolatorCount'];
+              }
+              // tempYAxis += droppedReports[0][i]['ViolatorCount'];
             }
           }
         }
@@ -458,7 +592,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               );
             }
             notifCount = countReportsByLocation(reports);
-
             latestReports = filterReport("Latest", reports);
             droppedReports = filterReport("Dropped", reports);
             taggedReports = filterReport("Tagged", reports);
@@ -469,6 +602,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 leading: "Statistics",
                 auth: widget.auth,
                 onSignOut: widget.onSignOut,
+                userUID: widget.userUID,
                 name: widget.name,
                 email: widget.email,
                 profileImage: widget.profileImage,
@@ -1318,6 +1452,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                         builder: (ctx) => ReportsScreen(
                                           auth: widget.auth,
                                           onSignOut: widget.onSignOut,
+                                          userUID: widget.userUID,
                                           email: widget.email,
                                           name: widget.name,
                                           profileImage: widget.profileImage,

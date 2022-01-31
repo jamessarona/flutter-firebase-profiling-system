@@ -10,7 +10,10 @@ import 'package:tanod_apprehension/shared/myContainers.dart';
 import 'package:tanod_apprehension/shared/mySpinKits.dart';
 
 class TaggedScreen extends StatefulWidget {
-  const TaggedScreen();
+  final String userUID;
+  const TaggedScreen({
+    required this.userUID,
+  });
 
   @override
   _TaggedScreenState createState() => _TaggedScreenState();
@@ -20,6 +23,7 @@ class _TaggedScreenState extends State<TaggedScreen> {
   late Size screenSize;
   final dbRef = FirebaseDatabase.instance.reference();
   var reports;
+
   @override
   Widget build(BuildContext context) {
     screenSize = MediaQuery.of(context).size;
@@ -121,9 +125,7 @@ class _TaggedScreenState extends State<TaggedScreen> {
                                         category: item['Category'],
                                         date: item['Date'],
                                         color: Colors.grey,
-                                        isAssigned:
-                                            checkReportIsAssignedToTanod(
-                                                item['Id'].toString()),
+                                        isAssigned: false,
                                       ),
                                     ),
                                   ),

@@ -636,12 +636,25 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
                                         MyReportStatusIndicator(
                                           height: 10,
                                           width: 10,
-                                          color: 'Pending' == 'Responding'
-                                              ? Color(0xffdd901c)
+                                          color: selectedReport[0]
+                                                          ['AssignedTanod'] !=
+                                                      null &&
+                                                  selectedReport[0]
+                                                              ['AssignedTanod'][
+                                                          selectedReport[0][
+                                                                      'AssignedTanod']
+                                                                  .length -
+                                                              1]['Status'] ==
+                                                      'Responding'
+                                              ? Colors.orange
                                               : selectedReport[0]['Category'] ==
                                                       'Latest'
                                                   ? Colors.green
-                                                  : Colors.red,
+                                                  : selectedReport[0]
+                                                              ['Category'] ==
+                                                          'Dropped'
+                                                      ? Colors.red
+                                                      : Colors.grey,
                                         )
                                       ],
                                     ),

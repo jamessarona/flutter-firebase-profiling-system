@@ -121,7 +121,8 @@ int countReportsByLocation(List<dynamic> list) {
   int count = 0;
   for (int i = 0; i < list.length; i++) {
     if (selectedArea == list[i]['Location'] &&
-        list[i]['Category'] == "Latest") {
+        list[i]['Category'] == "Latest" &&
+        list[i]['AssignedTanod'] == null) {
       count++;
     }
   }
@@ -269,7 +270,8 @@ List filterPreferenceReport(List<dynamic> list) {
   int len = 0;
   for (int i = 0; i < list.length; i++) {
     if (selectedArea == list[i]['Location'] &&
-        list[i]['Category'] == "Latest") {
+        list[i]['Category'] == "Latest" &&
+        list[i]['AssignedTanod'] == null) {
       len++;
     }
   }
@@ -279,7 +281,8 @@ List filterPreferenceReport(List<dynamic> list) {
 
   for (int i = 0; i < list.length; i++) {
     if (selectedArea == list[i]['Location'] &&
-        list[i]['Category'] == "Latest") {
+        list[i]['Category'] == "Latest" &&
+        list[i]['AssignedTanod'] == null) {
       filterReport[x++].add(list[i]);
     }
   }
@@ -326,8 +329,4 @@ List filterCurrentUserInformation(List<dynamic> list, String tanodUID) {
     }
   }
   return filterCurrentUser[0];
-}
-
-bool checkReportIsAssignedToTanod(String id) {
-  return false;
 }
