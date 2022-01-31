@@ -32,7 +32,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
           ),
           centerTitle: true,
           title: Text(
-            'Account',
+            'My Account',
             style: primaryText.copyWith(fontSize: 18, letterSpacing: 1),
           ),
         ),

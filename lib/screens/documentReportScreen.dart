@@ -57,13 +57,14 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
   TextEditingController _fineTextEditingController = TextEditingController();
 
   static List<String> violatorNames = [];
-  var gender = [
+
+  String selectedGender = "Male";
+  static const _DropGender = [
     "Male",
     "Female",
     "Others",
   ];
 
-  String? selectedGender;
   void _setViolatorInformation() {
     if (updateProcess < 1) {
       _nameTextEditingController.text = getViolatorSpecifiedInformation(
@@ -83,6 +84,13 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
       violatorNames.sort((a, b) => a.toString().compareTo(b.toString()));
       process++;
     }
+  }
+
+  String numberFormat(int number) {
+    if (number >= 0 && number < 10) {
+      return '0$number';
+    }
+    return number.toString();
   }
 
   int _calculateViolatorViolationHistory(String selectedName) {
@@ -141,8 +149,12 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
     }
     _birthdayTextEditingController.text =
         _getSelectedViolatoInformation('Birthday');
+    selectedGender = _getSelectedViolatoInformation('Gender');
     _contactNumberTextEditingController.text =
         _getSelectedViolatoInformation('Contact');
+    selectedGender = _getSelectedViolatoInformation('Gender') != ''
+        ? _getSelectedViolatoInformation('Gender')
+        : 'Male';
     _addressTextEditingController.text =
         _getSelectedViolatoInformation('Address');
     _violationCountTextEditingController.text = violationCount.toString();
@@ -187,6 +199,9 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                     TextSpan(
                       text:
                           'Birthday: ${_birthdayTextEditingController.text}\n',
+                    ),
+                    TextSpan(
+                      text: 'Gender: $selectedGender\n',
                     ),
                     TextSpan(
                       text:
@@ -238,6 +253,7 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                           _saveDocumentSubmission().then((value) {
                             _nameTextEditingController.clear();
                             _birthdayTextEditingController.clear();
+                            selectedGender = 'Male';
                             _contactNumberTextEditingController.clear();
                             _addressTextEditingController.clear();
                             _violationCountTextEditingController.clear();
@@ -400,6 +416,7 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
           "ViolatorId": violators.length.toString(),
           "Name": _nameTextEditingController.text,
           "Birthday": _birthdayTextEditingController.text,
+          "Gender": selectedGender,
           "Contact": _contactNumberTextEditingController.text,
           "Address": _addressTextEditingController.text,
         }
@@ -414,6 +431,14 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                 .child(violators[i]['ViolatorId'].toString())
                 .update({
               "Birthday": _birthdayTextEditingController.text,
+            });
+          }
+          if (selectedGender != violators[i]['Gender']) {
+            await dbRef
+                .child('Violators')
+                .child(violators[i]['ViolatorId'].toString())
+                .update({
+              "Gender": selectedGender,
             });
           }
           if (_contactNumberTextEditingController.text !=
@@ -588,7 +613,7 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                               height: 80,
                               width: 80,
                               child: Image.asset(
-                                'assets/images/man.png',
+                                "assets/images/${selectedGender == 'Female' ? 'woman' : 'man'}.png",
                                 width: 20,
                                 height: 20,
                                 fit: BoxFit.fitHeight,
@@ -637,6 +662,7 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                                   this._nameTextEditingController.text = val;
                                   setState(() {
                                     _birthdayTextEditingController.clear();
+                                    selectedGender = 'Male';
                                     _contactNumberTextEditingController.clear();
                                     _addressTextEditingController.clear();
                                     _violationCountTextEditingController
@@ -659,6 +685,7 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                                   onChanged: (value) {
                                     setState(() {
                                       _birthdayTextEditingController.clear();
+                                      selectedGender = "Male";
                                       _contactNumberTextEditingController
                                           .clear();
                                       _addressTextEditingController.clear();
@@ -722,6 +749,22 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                                   }
                                 },
                                 onChanged: (value) {},
+                                onTap: () {
+                                  showDatePicker(
+                                          context: context,
+                                          initialDate: DateTime.now(),
+                                          firstDate:
+                                              DateTime(1900, 1, 1, 1, 0, 0),
+                                          lastDate: DateTime.now())
+                                      .then((selectedDate) {
+                                    setState(() {
+                                      if (selectedDate != null) {
+                                        _birthdayTextEditingController.text =
+                                            "${numberFormat(selectedDate.year)}-${numberFormat(selectedDate.month)}-${selectedDate.month}";
+                                      }
+                                    });
+                                  });
+                                },
                                 prefixIcon: GestureDetector(
                                   onTap: () {},
                                   child: Icon(
@@ -732,8 +775,74 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                                 ),
                                 labelText: "Birthday",
                                 hintText: "12/31/2022",
-                                isReadOnly: false,
+                                isReadOnly: true,
                                 controller: _birthdayTextEditingController,
+                              ),
+                            ),
+                            Container(
+                              height: 50,
+                              margin: EdgeInsets.only(
+                                top: 15,
+                                left: screenSize.width * .1,
+                                right: screenSize.width * .1,
+                              ),
+                              child: FormField<String>(
+                                builder: (FormFieldState<String> state) {
+                                  return InputDecorator(
+                                    decoration: InputDecoration(
+                                      labelText: 'Gender',
+                                      prefixIcon: GestureDetector(
+                                        onTap: () {},
+                                        child: Icon(
+                                          selectedGender == 'Male'
+                                              ? FontAwesomeIcons.mars
+                                              : selectedGender == 'Female'
+                                                  ? FontAwesomeIcons.venus
+                                                  : FontAwesomeIcons
+                                                      .transgenderAlt,
+                                          size: 20,
+                                          color: customColor[130],
+                                        ),
+                                      ),
+                                      //      labelStyle: textStyle,
+                                      errorStyle: TextStyle(
+                                        color: Colors.redAccent,
+                                        fontSize: 16.0,
+                                      ),
+                                      isDense: true,
+                                      hintText: 'Please select reason',
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          20,
+                                        ),
+                                      ),
+                                    ),
+                                    isEmpty: selectedGender == '',
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton<String>(
+                                        isDense: true,
+                                        value: selectedGender,
+                                        onChanged: (newValue) {
+                                          setState(() {
+                                            selectedGender = newValue!;
+                                            state.didChange(newValue);
+                                          });
+                                        },
+                                        items: _DropGender.map((String value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Text(
+                                              value,
+                                              style: tertiaryText.copyWith(
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                             Container(
@@ -753,6 +862,7 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                                     return 'Contact Number must be of 11 digit';
                                 },
                                 onChanged: (value) {},
+                                onTap: () {},
                                 prefixIcon: GestureDetector(
                                   onTap: () {},
                                   child: Icon(
@@ -782,6 +892,7 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                                   }
                                 },
                                 onChanged: (value) {},
+                                onTap: () {},
                                 prefixIcon: GestureDetector(
                                   onTap: () {},
                                   child: Icon(
@@ -814,6 +925,7 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                                       isObscureText: false,
                                       validation: (value) {},
                                       onChanged: (value) {},
+                                      onTap: () {},
                                       prefixIcon: GestureDetector(
                                         onTap: () {},
                                         child: Icon(
@@ -836,6 +948,7 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                                       isObscureText: false,
                                       validation: (value) {},
                                       onChanged: (value) {},
+                                      onTap: () {},
                                       prefixIcon: GestureDetector(
                                         onTap: () {},
                                         child: Icon(

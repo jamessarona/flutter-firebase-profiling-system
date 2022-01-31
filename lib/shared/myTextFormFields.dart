@@ -39,6 +39,7 @@ class MyDocumentationTextFormField extends StatelessWidget {
   final bool isObscureText;
   final FormFieldValidator<String> validation;
   final FormFieldValidator<String> onChanged;
+  final VoidCallback onTap;
   final GestureDetector? prefixIcon;
   final String labelText;
   final String hintText;
@@ -49,6 +50,7 @@ class MyDocumentationTextFormField extends StatelessWidget {
     required this.isObscureText,
     required this.validation,
     required this.onChanged,
+    required this.onTap,
     required this.prefixIcon,
     required this.labelText,
     required this.hintText,
@@ -64,6 +66,7 @@ class MyDocumentationTextFormField extends StatelessWidget {
       validator: validation,
       onChanged: onChanged,
       readOnly: isReadOnly,
+      onTap: onTap,
       decoration: InputDecoration(
         isDense: true,
         prefixIcon: prefixIcon,

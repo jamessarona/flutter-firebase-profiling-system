@@ -2,7 +2,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:tanod_apprehension/screens/detailReportScreen.dart';
-import 'package:tanod_apprehension/screens/notificationScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/globals.dart';
 import 'package:tanod_apprehension/shared/myBottomSheet.dart';
