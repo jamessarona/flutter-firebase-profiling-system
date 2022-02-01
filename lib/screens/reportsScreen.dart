@@ -15,6 +15,7 @@ class ReportsScreen extends StatefulWidget {
   final BaseAuth auth;
   final VoidCallback onSignOut;
   final String userUID;
+  final String tanodId;
   final String name;
   final String email;
   final String profileImage;
@@ -22,6 +23,7 @@ class ReportsScreen extends StatefulWidget {
     required this.auth,
     required this.onSignOut,
     required this.userUID,
+    required this.tanodId,
     required this.name,
     required this.email,
     required this.profileImage,
@@ -77,6 +79,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 auth: widget.auth,
                 onSignOut: widget.onSignOut,
                 userUID: widget.userUID,
+                tanodId: widget.tanodId,
                 name: widget.name,
                 email: widget.email,
                 profileImage: widget.profileImage,

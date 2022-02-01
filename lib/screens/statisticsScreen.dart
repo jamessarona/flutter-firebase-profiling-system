@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:tanod_apprehension/net/authenticationService.dart';
+import 'package:tanod_apprehension/screens/loginScreen.dart';
 import 'package:tanod_apprehension/screens/notificationScreen.dart';
 import 'package:tanod_apprehension/screens/reportsScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
@@ -22,7 +23,7 @@ class StatisticsScreen extends StatefulWidget {
   final BaseAuth auth;
   final VoidCallback onSignOut;
   final String userUID;
-
+  final String tanodId;
   final String name;
   final String email;
   final String profileImage;
@@ -30,6 +31,7 @@ class StatisticsScreen extends StatefulWidget {
     required this.auth,
     required this.onSignOut,
     required this.userUID,
+    required this.tanodId,
     required this.name,
     required this.email,
     required this.profileImage,
@@ -603,6 +605,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 auth: widget.auth,
                 onSignOut: widget.onSignOut,
                 userUID: widget.userUID,
+                tanodId: widget.tanodId,
                 name: widget.name,
                 email: widget.email,
                 profileImage: widget.profileImage,
@@ -1453,6 +1456,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                           auth: widget.auth,
                                           onSignOut: widget.onSignOut,
                                           userUID: widget.userUID,
+                                          tanodId: widget.tanodId,
                                           email: widget.email,
                                           name: widget.name,
                                           profileImage: widget.profileImage,

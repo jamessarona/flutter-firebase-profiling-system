@@ -330,3 +330,47 @@ List filterCurrentUserInformation(List<dynamic> list, String tanodUID) {
   }
   return filterCurrentUser[0];
 }
+
+List filterViolators(List<dynamic> list, String search) {
+  if (search != '') {
+    int count = 0;
+    for (int i = 0; i < list.length; i++) {
+      if (list[i]['Name'].toLowerCase().contains(search.toLowerCase())) {
+        count++;
+      }
+    }
+
+    var filteredViolators = new List.filled(count, []);
+    int x = 0;
+    for (int i = 0; i < list.length; i++) {
+      if (list[i]['Name'].toLowerCase().contains(search.toLowerCase())) {
+        filteredViolators[x++].add(list[i]);
+      }
+    }
+
+    return filteredViolators.isNotEmpty
+        ? (filteredViolators[0]..sort((a, b) => a['Name'].compareTo(b['Name'])))
+        : [];
+  } else {
+    return list..sort((a, b) => a['Name'].compareTo(b['Name']));
+  }
+}
+
+int calculateAge(String birthday) {
+  DateTime currentDate = DateTime.now();
+
+  DateTime birthDate = DateTime.parse(birthday);
+  int age = currentDate.year - birthDate.year;
+  int month1 = currentDate.month;
+  int month2 = birthDate.month;
+  if (month2 > month1) {
+    age--;
+  } else if (month1 == month2) {
+    int day1 = currentDate.day;
+    int day2 = birthDate.day;
+    if (day2 > day1) {
+      age--;
+    }
+  }
+  return age;
+}

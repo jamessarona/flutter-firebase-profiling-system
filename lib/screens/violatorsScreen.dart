@@ -1,9 +1,10 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tanod_apprehension/screens/detailViolatorScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
+import 'package:tanod_apprehension/shared/myCards.dart';
 import 'package:tanod_apprehension/shared/mySpinKits.dart';
-import 'package:tanod_apprehension/shared/myTextFormFields.dart';
 
 class ViolatorsScreen extends StatefulWidget {
   const ViolatorsScreen({Key? key}) : super(key: key);
@@ -17,25 +18,6 @@ class _ViolatorsScreenState extends State<ViolatorsScreen> {
   final dbRef = FirebaseDatabase.instance.reference();
   var violators;
   TextEditingController _searchTextEditingController = TextEditingController();
-
-  int calculateAge(String birthday) {
-    DateTime currentDate = DateTime.now();
-
-    DateTime birthDate = DateTime.parse(birthday);
-    int age = currentDate.year - birthDate.year;
-    int month1 = currentDate.month;
-    int month2 = birthDate.month;
-    if (month2 > month1) {
-      age--;
-    } else if (month1 == month2) {
-      int day1 = currentDate.day;
-      int day2 = birthDate.day;
-      if (day2 > day1) {
-        age--;
-      }
-    }
-    return age;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,32 +53,55 @@ class _ViolatorsScreenState extends State<ViolatorsScreen> {
               } else {
                 return MySpinKitLoadingScreen();
               }
+              var filteredViolators =
+                  filterViolators(violators, _searchTextEditingController.text);
+
               return Container(
                 height: screenSize.height,
                 width: screenSize.width,
+                margin: EdgeInsets.only(
+                  top: 15,
+                  bottom: 15,
+                  left: screenSize.width * .01,
+                  right: screenSize.width * .01,
+                ),
                 child: ListView(
                   children: [
                     Container(
                       margin: EdgeInsets.only(
                         top: 15,
-                        left: screenSize.width * .1,
-                        right: screenSize.width * .1,
+                        bottom: 15,
+                        left: screenSize.width * .05,
+                        right: screenSize.width * .05,
                       ),
                       child: TextFormField(
                         controller: _searchTextEditingController,
                         keyboardType: TextInputType.text,
                         validator: (value) {},
-                        onChanged: (value) {},
+                        onChanged: (value) {
+                          setState(() {});
+                        },
                         decoration: InputDecoration(
                           isDense: true,
                           labelText: 'Search',
-                          hintText: 'Search',
                           hintStyle: tertiaryText.copyWith(
                             fontSize: 13,
                             color: Colors.black,
                           ),
-                          //TODO: Make a search input box. Last Edit
-                          suffixIcon: Icon(FontAwesomeIcons.walking),
+                          suffix: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _searchTextEditingController.clear();
+                              });
+                            },
+                            child: Text(
+                              'X',
+                              style: tertiaryText.copyWith(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
                             borderSide: BorderSide(
@@ -111,34 +116,22 @@ class _ViolatorsScreenState extends State<ViolatorsScreen> {
                         ),
                       ),
                     ),
-                    for (var item in violators)
-                      Card(
-                        child: ListTile(
-                          dense: true,
-                          leading: Container(
-                            height: 40,
-                            width: 40,
-                            child: Image.asset(
-                              "assets/images/${item['Gender'] == 'Female' ? 'woman' : 'man'}.png",
-                              width: 20,
-                              height: 20,
-                              fit: BoxFit.fitHeight,
+                    for (var item in filteredViolators)
+                      MyViolatorCard(
+                        name: item['Name'],
+                        gender: item['Gender'],
+                        age: calculateAge(item['Birthday']),
+                        onTap: () {
+                          print('Load Specific Violator');
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (ctx) => DetailViolatorScreen(
+                                id: item['ViolatorId'].toString(),
+                              ),
                             ),
-                          ),
-                          title: Text(
-                            item['Name'],
-                            style: tertiaryText.copyWith(
-                              fontSize: 15,
-                            ),
-                          ),
-                          subtitle: Text(
-                            "${calculateAge(item['Birthday'])} year's old",
-                            style: tertiaryText.copyWith(
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      )
+                          );
+                        },
+                      ),
                   ],
                 ),
               );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 
 class MyReportAvailabilityTile extends StatelessWidget {
@@ -49,6 +50,53 @@ class MyReportAvailabilityTile extends StatelessWidget {
           ],
         )
       ],
+    );
+  }
+}
+
+class MyDocumentationListTile extends StatelessWidget {
+  final VoidCallback onTap;
+  final String location;
+  final String date;
+  final String fine;
+  const MyDocumentationListTile({
+    required this.onTap,
+    required this.location,
+    required this.date,
+    required this.fine,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: onTap,
+      leading: Container(
+        margin: EdgeInsets.only(
+          top: 10,
+        ),
+        height: 25,
+        width: 25,
+        decoration: BoxDecoration(shape: BoxShape.circle),
+        child: Icon(
+          FontAwesomeIcons.checkCircle,
+          size: 20,
+          color: Colors.black,
+        ),
+      ),
+      title: Text(
+        location,
+        style: tertiaryText.copyWith(
+          fontSize: 15,
+        ),
+      ),
+      subtitle: Text(
+        date,
+        style: tertiaryText.copyWith(
+          fontSize: 13,
+          color: Colors.grey[700],
+        ),
+      ),
+      trailing: Text('₱$fine'),
     );
   }
 }

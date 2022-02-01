@@ -1,8 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:tanod_apprehension/net/authenticationService.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/myButtons.dart';
+import 'package:tanod_apprehension/shared/mySpinKits.dart';
 import 'package:tanod_apprehension/shared/myTextFormFields.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -15,6 +18,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 late Size screenSize;
+final dbRef = FirebaseDatabase.instance.reference();
 String email = "", password = "";
 bool isobscureText = true, _isLoading = false, _authIsNotValid = false;
 String authMessage = '';
@@ -23,8 +27,38 @@ String regEx =
 
 final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+var tanods;
 
 class _LoginScreenState extends State<LoginScreen> {
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+
+  void firebaseCloudMessaginglisteners(String userUID) async {
+    await _firebaseMessaging.getToken().then((token) {
+      if (token != null) {
+        getUserID(userUID).then((userId) {
+          print('user id: $userId');
+          saveToken(token, userId);
+        });
+      }
+    });
+  }
+
+  Future<String> getUserID(String userUID) async {
+    String userId = '';
+    for (int i = 0; i < tanods.length; i++) {
+      if (tanods[i]['TanodUID'] == userUID) {
+        userId = tanods[i]['TanodId'];
+      }
+    }
+    return userId;
+  }
+
+  Future<void> saveToken(String token, String userId) async {
+    await dbRef.child('Tanods').child(userId).update({
+      'Token': token,
+    });
+  }
+
   void validation() async {
     String userId;
     if (_formKey.currentState!.validate()) {
@@ -37,6 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
         });
 
         userId = await widget.auth.signInWithEmailAndPassword(email, password);
+        firebaseCloudMessaginglisteners(userId);
         // ignore: unnecessary_null_comparison
         if (userId != null) {
           widget.onSignIn!();
@@ -327,31 +362,43 @@ class _LoginScreenState extends State<LoginScreen> {
         key: _scaffoldKey,
         resizeToAvoidBottomInset: false,
         backgroundColor: Color(0xfff2f3f7),
-        body: Stack(
-          children: [
-            Container(
-              height: screenSize.height * .7,
-              width: screenSize.width,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: customColor[130],
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: const Radius.circular(70),
-                    bottomRight: const Radius.circular(70),
+        body: StreamBuilder(
+            stream: dbRef.child('Tanods').onValue,
+            builder: (context, tanodSnapshot) {
+              if (tanodSnapshot.hasData &&
+                  !tanodSnapshot.hasError &&
+                  (tanodSnapshot.data! as Event).snapshot.value != null) {
+                tanods = (tanodSnapshot.data! as Event).snapshot.value;
+              } else {
+                return MySpinKitLoadingScreen();
+              }
+
+              return Stack(
+                children: [
+                  Container(
+                    height: screenSize.height * .7,
+                    width: screenSize.width,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: customColor[130],
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: const Radius.circular(70),
+                          bottomRight: const Radius.circular(70),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildLogo(),
-                _buildContainer(),
-                _buildSignUpButton(),
-              ],
-            )
-          ],
-        ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildLogo(),
+                      _buildContainer(),
+                      _buildSignUpButton(),
+                    ],
+                  )
+                ],
+              );
+            }),
       ),
     );
   }

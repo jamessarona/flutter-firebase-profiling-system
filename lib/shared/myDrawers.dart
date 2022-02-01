@@ -12,6 +12,7 @@ class BuildDrawer extends StatelessWidget {
   final BaseAuth auth;
   final VoidCallback onSignOut;
   final String userUID;
+  final String tanodId;
   final String name;
   final String email;
   final String profileImage;
@@ -21,11 +22,18 @@ class BuildDrawer extends StatelessWidget {
     required this.auth,
     required this.onSignOut,
     required this.userUID,
+    required this.tanodId,
     required this.name,
     required this.email,
     required this.profileImage,
     required this.backgroundImage,
   });
+
+  Future<void> resetUserToken() async {
+    await dbRef.child('Tanods').child(tanodId).update({
+      'Token': '?',
+    });
+  }
 
   showAlertDialog(BuildContext context) {
     // set up the buttons
@@ -38,7 +46,11 @@ class BuildDrawer extends StatelessWidget {
     Widget continueButton = TextButton(
       child: Text("Logout"),
       onPressed: () {
-        auth.signOut().then((value) async => await FlutterRestart.restartApp());
+        resetUserToken().then((value) {
+          auth
+              .signOut()
+              .then((value) async => await FlutterRestart.restartApp());
+        });
       },
     );
 
@@ -108,6 +120,7 @@ class BuildDrawer extends StatelessWidget {
                           auth: auth,
                           onSignOut: onSignOut,
                           userUID: userUID,
+                          tanodId: tanodId,
                           email: email,
                           name: name,
                           profileImage: profileImage,
@@ -131,6 +144,7 @@ class BuildDrawer extends StatelessWidget {
                           auth: auth,
                           onSignOut: onSignOut,
                           userUID: userUID,
+                          tanodId: tanodId,
                           email: email,
                           name: name,
                           profileImage: profileImage,

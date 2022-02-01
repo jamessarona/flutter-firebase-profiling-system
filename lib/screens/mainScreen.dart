@@ -278,6 +278,7 @@ class _MainScreenState extends State<MainScreen> {
                           auth: widget.auth,
                           onSignOut: widget.onSignOut,
                           userUID: userUID,
+                          tanodId: userData['TanodId'],
                           name:
                               "${userData['Firstname']} ${userData['Lastname']}",
                           email: userData['Email'],
@@ -343,6 +344,7 @@ class _MainScreenState extends State<MainScreen> {
                                           onSignOut: widget.onSignOut,
                                           email: userData['Email'],
                                           userUID: userUID,
+                                          tanodId: userData['TanodId'],
                                           name:
                                               "${userData['Firstname']} ${userData['Lastname']}",
                                           profileImage: userData['Image'],

@@ -49,6 +49,7 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
     "Duplicate",
     "Others",
   ];
+
   late String _selectedReason = "Violator Escaped";
 
   _buildCreateAssignConfirmaModal(BuildContext context, String title) {

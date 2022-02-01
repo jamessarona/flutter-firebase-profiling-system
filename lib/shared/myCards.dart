@@ -468,3 +468,48 @@ class MyApprehenssionHistoryCard extends StatelessWidget {
     );
   }
 }
+
+class MyViolatorCard extends StatelessWidget {
+  final String name;
+  final String gender;
+  final int age;
+  final VoidCallback onTap;
+  const MyViolatorCard({
+    required this.name,
+    required this.gender,
+    required this.age,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        onTap: onTap,
+        dense: true,
+        leading: Container(
+          height: 40,
+          width: 40,
+          child: Image.asset(
+            "assets/images/${gender == 'Female' ? 'woman' : 'man'}.png",
+            width: 20,
+            height: 20,
+            fit: BoxFit.fitHeight,
+          ),
+        ),
+        title: Text(
+          name,
+          style: tertiaryText.copyWith(
+            fontSize: 15,
+          ),
+        ),
+        subtitle: Text(
+          "$age year's old",
+          style: tertiaryText.copyWith(
+            fontSize: 12,
+          ),
+        ),
+      ),
+    );
+  }
+}
