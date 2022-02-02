@@ -258,8 +258,6 @@ List filterReport(String category, List reports) {
       } else {
         filterReport[x++].add(reports[i]);
       }
-
-      //   reports.remove(reports[i]);
     }
   }
 
@@ -354,6 +352,46 @@ List filterViolators(List<dynamic> list, String search) {
   } else {
     return list..sort((a, b) => a['Name'].compareTo(b['Name']));
   }
+}
+
+List filterReportByViolator(List<dynamic> list, String id) {
+  int count = 0;
+  for (int i = 0; i < list.length; i++) {
+    if (list[i]['AssignedTanod'] != null) {
+      for (int x = 0; x < list[i]['AssignedTanod'].length; x++) {
+        if (list[i]['AssignedTanod'][x]['Documentation'] != null) {
+          for (int y = 0;
+              y < list[i]['AssignedTanod'][x]['Documentation'].length;
+              y++) {
+            if (list[i]['AssignedTanod'][x]['Documentation'][y]['ViolatorId'] ==
+                id) {
+              count++;
+            }
+          }
+        }
+      }
+    }
+  }
+  var filteredReport = new List.filled(count, []);
+  int z = 0;
+  for (int i = 0; i < list.length; i++) {
+    if (list[i]['AssignedTanod'] != null) {
+      for (int x = 0; x < list[i]['AssignedTanod'].length; x++) {
+        if (list[i]['AssignedTanod'][x]['Documentation'] != null) {
+          for (int y = 0;
+              y < list[i]['AssignedTanod'][x]['Documentation'].length;
+              y++) {
+            if (list[i]['AssignedTanod'][x]['Documentation'][y]['ViolatorId'] ==
+                id) {
+              filteredReport[z++].add(list[i]);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return filteredReport;
 }
 
 int calculateAge(String birthday) {

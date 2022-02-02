@@ -31,15 +31,6 @@ class _DetailAssignedTanodsReportState
     return tanodName;
   }
 
-  String _setDateTime(String date, String method) {
-    late DateTime dateTimeAssigned = DateTime.parse(date);
-    if (method == 'Date') {
-      return "${convertMonth(dateTimeAssigned.month)} ${dateTimeAssigned.day}, ${dateTimeAssigned.year}";
-    } else {
-      return "${convertHour(dateTimeAssigned.hour, 0)}:${dateTimeAssigned.minute}:${dateTimeAssigned.second} ${convertHour(dateTimeAssigned.hour, 1)}";
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     screenSize = MediaQuery.of(context).size;
@@ -98,41 +89,66 @@ class _DetailAssignedTanodsReportState
                                   children: [
                                     Container(
                                       child: Text(
-                                          "Tanod: ${_getTanodName(item['TanodId'])}"),
-                                    ),
-                                    Container(
-                                      margin: EdgeInsets.only(
-                                        top: 5,
-                                      ),
-                                      child: Text(
-                                          "Date: ${_setDateTime(item['DateAssign'], 'Date')}"),
-                                    ),
-                                    Container(
-                                      margin: EdgeInsets.only(
-                                        top: 5,
-                                      ),
-                                      child: Text(
-                                          "Time: ${_setDateTime(item['DateAssign'], 'Time')}"),
-                                    ),
-                                    Container(
-                                      margin: EdgeInsets.only(
-                                        top: 5,
-                                      ),
-                                      child: Text(
-                                          "Caught Violator: ${item['Documentation'] != null ? item['Documentation'].length : 0}"),
-                                    ),
-                                    Container(
-                                        margin: EdgeInsets.only(
-                                          top: 5,
+                                        "Tanod: ${_getTanodName(item['TanodId'])}",
+                                        style: tertiaryText.copyWith(
+                                          fontSize: 15,
                                         ),
-                                        child:
-                                            Text("Status: ${item['Status']}")),
+                                      ),
+                                    ),
                                     Container(
                                       margin: EdgeInsets.only(
                                         top: 5,
                                       ),
                                       child: Text(
-                                          "Remarks: ${item['Reason'] != null ? item['Reason'] : ''}"),
+                                        "Date: ${setDateTime(item['DateAssign'], 'Date')}",
+                                        style: tertiaryText.copyWith(
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                        top: 5,
+                                      ),
+                                      child: Text(
+                                        "Time: ${setDateTime(item['DateAssign'], 'Time')}",
+                                        style: tertiaryText.copyWith(
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                        top: 5,
+                                      ),
+                                      child: Text(
+                                        "Caught Violator: ${item['Documentation'] != null ? item['Documentation'].length : 0}",
+                                        style: tertiaryText.copyWith(
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                        top: 5,
+                                      ),
+                                      child: Text(
+                                        "Status: ${item['Status']}",
+                                        style: tertiaryText.copyWith(
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                        top: 5,
+                                      ),
+                                      child: Text(
+                                        "Remarks: ${item['Reason'] != null ? item['Reason'] : ''}",
+                                        style: tertiaryText.copyWith(
+                                          fontSize: 15,
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),

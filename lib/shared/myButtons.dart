@@ -135,3 +135,43 @@ class MyFloatingButton extends StatelessWidget {
     );
   }
 }
+
+class MySortButton extends StatelessWidget {
+  final VoidCallback onTap;
+  final String title;
+  final Icon icon;
+  const MySortButton({
+    required this.onTap,
+    required this.title,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 25,
+        padding: EdgeInsets.symmetric(horizontal: 8),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black),
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          color: customColor[110],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Container(
+              margin: EdgeInsets.only(right: 5),
+              child: Text(
+                title,
+                style: tertiaryText.copyWith(fontSize: 13),
+              ),
+            ),
+            icon,
+          ],
+        ),
+      ),
+    );
+  }
+}

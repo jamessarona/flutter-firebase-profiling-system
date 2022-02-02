@@ -436,9 +436,19 @@ class MyNotificationReportCard extends StatelessWidget {
 class MyApprehenssionHistoryCard extends StatelessWidget {
   final String id;
   final String image;
+  final String location;
+  final String date;
+  final String caughtCount;
+  final String status;
+  final String remarks;
   const MyApprehenssionHistoryCard({
     required this.id,
     required this.image,
+    required this.location,
+    required this.date,
+    required this.caughtCount,
+    required this.status,
+    required this.remarks,
   });
 
   @override
@@ -447,12 +457,12 @@ class MyApprehenssionHistoryCard extends StatelessWidget {
       elevation: 3,
       child: ListTile(
         title: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              height: 110,
+              height: 100,
               width: 140,
-              margin: EdgeInsets.only(bottom: 8),
+              margin: EdgeInsets.symmetric(vertical: 3),
               decoration: BoxDecoration(
                 image: DecorationImage(
                   fit: BoxFit.fill,
@@ -460,6 +470,57 @@ class MyApprehenssionHistoryCard extends StatelessWidget {
                     image,
                   ),
                 ),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(left: 10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    location,
+                    style: tertiaryText.copyWith(
+                      fontSize: 15,
+                    ),
+                  ),
+                  Container(
+                    height: 5,
+                  ),
+                  Text(
+                    setDateTime(date, 'Date'),
+                    style: tertiaryText.copyWith(
+                      fontSize: 13,
+                    ),
+                  ),
+                  Container(
+                    height: 1,
+                  ),
+                  Text(
+                    'Caught($caughtCount)',
+                    style: tertiaryText.copyWith(
+                      fontSize: 13,
+                    ),
+                  ),
+                  Container(
+                    height: 1,
+                  ),
+                  Text(
+                    status,
+                    style: tertiaryText.copyWith(
+                      fontSize: 13,
+                    ),
+                  ),
+                  Container(
+                    height: 1,
+                  ),
+                  Text(
+                    remarks,
+                    style: tertiaryText.copyWith(
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:tanod_apprehension/net/authenticationService.dart';
-import 'package:tanod_apprehension/screens/loginScreen.dart';
 import 'package:tanod_apprehension/screens/notificationScreen.dart';
 import 'package:tanod_apprehension/screens/reportsScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
@@ -1460,6 +1459,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                           email: widget.email,
                                           name: widget.name,
                                           profileImage: widget.profileImage,
+                                          defaultIndex: 0,
                                         ),
                                       ),
                                     );

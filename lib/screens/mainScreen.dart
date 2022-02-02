@@ -348,6 +348,7 @@ class _MainScreenState extends State<MainScreen> {
                                           name:
                                               "${userData['Firstname']} ${userData['Lastname']}",
                                           profileImage: userData['Image'],
+                                          defaultIndex: 0,
                                         ),
                                       ),
                                     );

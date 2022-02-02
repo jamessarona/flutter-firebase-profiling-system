@@ -24,6 +24,12 @@ class _AssignmentHistoryScreenState extends State<AssignmentHistoryScreen> {
   var userData;
   var assignedReports;
 
+  int tempReportId = -1;
+  int tempDuplicateCount = 0;
+  int tempAssignedTanodNum = -1;
+  int tempCountDuplicate = 0;
+  String tempDocumentationId = '-1';
+
   List filterReportHistory() {
     int len = 0;
     for (int i = 0; i < reports.length; i++) {
@@ -49,6 +55,41 @@ class _AssignmentHistoryScreenState extends State<AssignmentHistoryScreen> {
       }
     }
     return filterReportHistoryList[0];
+  }
+
+  String getDocumentationInfo(String reportId, String tanodId, String info) {
+    String value = '';
+    int temp = 0;
+    int rId = int.parse(reportId);
+    if (tempReportId == rId && info == 'DateAssign') {
+      tempDuplicateCount++;
+    } else if (tempReportId != rId) {
+      tempDuplicateCount = 0;
+    }
+
+    for (int i = 0; i < reports[rId]['AssignedTanod'].length; i++) {
+      if (reports[rId]['AssignedTanod'][i]['TanodId'] == tanodId) {
+        if (tempDuplicateCount - temp == 0) {
+          if (info != 'CaughtViolator') {
+            value = reports[rId]['AssignedTanod'][i][info] != null
+                ? reports[rId]['AssignedTanod'][i][info]
+                : '';
+          } else {
+            value = reports[rId]['AssignedTanod'][i]['Documentation'] != null
+                ? reports[rId]['AssignedTanod'][i]['Documentation']
+                    .length
+                    .toString()
+                : '0';
+          }
+        }
+        temp++;
+        // for(int x =0; x< reports[rId]['AssignedTanod'][i]['Documentation'].length;x++){
+
+        // }
+      }
+    }
+    tempReportId = rId;
+    return value;
   }
 
   @override
@@ -115,6 +156,21 @@ class _AssignmentHistoryScreenState extends State<AssignmentHistoryScreen> {
                             child: MyApprehenssionHistoryCard(
                               id: item['Id'].toString(),
                               image: item['Image'],
+                              location: item['Location'],
+                              date: getDocumentationInfo(item['Id'].toString(),
+                                  userData['TanodId'].toString(), 'DateAssign'),
+                              caughtCount: getDocumentationInfo(
+                                  item['Id'].toString(),
+                                  userData['TanodId'].toString(),
+                                  'CaughtViolator'),
+                              status: getDocumentationInfo(
+                                  item['Id'].toString(),
+                                  userData['TanodId'].toString(),
+                                  'Status'),
+                              remarks: getDocumentationInfo(
+                                  item['Id'].toString(),
+                                  userData['TanodId'].toString(),
+                                  'Reason'),
                             ),
                           ),
                       ],

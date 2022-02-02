@@ -59,11 +59,13 @@ class MyDocumentationListTile extends StatelessWidget {
   final String location;
   final String date;
   final String fine;
+  final bool isTagged;
   const MyDocumentationListTile({
     required this.onTap,
     required this.location,
     required this.date,
     required this.fine,
+    required this.isTagged,
   });
 
   @override
@@ -78,7 +80,9 @@ class MyDocumentationListTile extends StatelessWidget {
         width: 25,
         decoration: BoxDecoration(shape: BoxShape.circle),
         child: Icon(
-          FontAwesomeIcons.checkCircle,
+          isTagged
+              ? FontAwesomeIcons.checkCircle
+              : FontAwesomeIcons.timesCircle,
           size: 20,
           color: Colors.black,
         ),
@@ -90,7 +94,7 @@ class MyDocumentationListTile extends StatelessWidget {
         ),
       ),
       subtitle: Text(
-        date,
+        "${setDateTime(date, 'Time')} / ${setDateTime(date, 'Date')}",
         style: tertiaryText.copyWith(
           fontSize: 13,
           color: Colors.grey[700],

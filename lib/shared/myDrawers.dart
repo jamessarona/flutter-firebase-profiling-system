@@ -148,6 +148,7 @@ class BuildDrawer extends StatelessWidget {
                           email: email,
                           name: name,
                           profileImage: profileImage,
+                          defaultIndex: 0,
                         ),
                       ),
                     );

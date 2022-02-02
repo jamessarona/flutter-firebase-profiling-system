@@ -19,6 +19,7 @@ class ReportsScreen extends StatefulWidget {
   final String name;
   final String email;
   final String profileImage;
+  final int defaultIndex;
   const ReportsScreen({
     required this.auth,
     required this.onSignOut,
@@ -27,6 +28,7 @@ class ReportsScreen extends StatefulWidget {
     required this.name,
     required this.email,
     required this.profileImage,
+    required this.defaultIndex,
   });
 
   @override
@@ -37,8 +39,8 @@ var reports;
 late Size screenSize;
 final dbRef = FirebaseDatabase.instance.reference();
 int notifCount = 0;
+int currentIndex = 0;
 GlobalKey<ScaffoldState> _scaffoldKeyReports = GlobalKey<ScaffoldState>();
-int currentIndext = 0;
 String userUID = '';
 List<StatefulWidget> screens = [
   ActiveScreen(
@@ -53,6 +55,12 @@ List<StatefulWidget> screens = [
 ];
 
 class _ReportsScreenState extends State<ReportsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    currentIndex = widget.defaultIndex;
+  }
+
   @override
   Widget build(BuildContext context) {
     userUID = widget.userUID;
@@ -118,15 +126,15 @@ class _ReportsScreenState extends State<ReportsScreen> {
                   Container(
                     color: Colors.grey[110],
                     width: screenSize.width,
-                    child: screens[currentIndext],
+                    child: screens[currentIndex],
                   ),
                 ],
               ),
               bottomNavigationBar: BottomNavigationBar(
-                currentIndex: currentIndext,
+                currentIndex: currentIndex,
                 onTap: (index) {
                   setState(() {
-                    currentIndext = index;
+                    currentIndex = index;
                   });
                 },
                 type: BottomNavigationBarType.fixed,
@@ -141,9 +149,8 @@ class _ReportsScreenState extends State<ReportsScreen> {
                       width: 25,
                       height: 25,
                       fit: BoxFit.cover,
-                      color: currentIndext == 0
-                          ? customColor[130]
-                          : Colors.black38,
+                      color:
+                          currentIndex == 0 ? customColor[130] : Colors.black38,
                     ),
                     //Icon(FontAwesomeIcons.fire),
                     label: "Latest",
@@ -155,9 +162,8 @@ class _ReportsScreenState extends State<ReportsScreen> {
                       width: 30,
                       height: 30,
                       fit: BoxFit.cover,
-                      color: currentIndext == 1
-                          ? customColor[130]
-                          : Colors.black38,
+                      color:
+                          currentIndex == 1 ? customColor[130] : Colors.black38,
                     ),
                     //Icon(FontAwesomeIcons.archive),
                     label: "Dropped",
@@ -169,9 +175,8 @@ class _ReportsScreenState extends State<ReportsScreen> {
                       width: 28,
                       height: 28,
                       fit: BoxFit.cover,
-                      color: currentIndext == 2
-                          ? customColor[130]
-                          : Colors.black38,
+                      color:
+                          currentIndex == 2 ? customColor[130] : Colors.black38,
                     ),
                     //Icon(FontAwesomeIcons.userTag),
                     label: "Tagged",

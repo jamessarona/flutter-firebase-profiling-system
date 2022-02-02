@@ -105,6 +105,44 @@ class _DroppedScreenState extends State<DroppedScreen> {
                           Container(
                             height: 30,
                             width: screenSize.width * .8,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                // MySortButton(
+                                //   onTap: () {
+                                //     setState(() {
+                                //       sort['Location'] = !sort['Location'];
+                                //     });
+                                //   },
+                                //   title: 'Area',
+                                //   icon: Icon(
+                                //     sort['Location']
+                                //         ? FontAwesomeIcons.sortAlphaDown
+                                //         : FontAwesomeIcons.sortAlphaUp,
+                                //     size: 15,
+                                //     color: Colors.grey[700],
+                                //   ),
+                                // ),
+                                // Container(
+                                //   width: 5,
+                                // ),
+                                // MySortButton(
+                                //   onTap: () {
+                                //     setState(() {
+                                //       sort['Date'] = !sort['Date'];
+                                //     });
+                                //   },
+                                //   title: 'Date',
+                                //   icon: Icon(
+                                //     sort['Date']
+                                //         ? FontAwesomeIcons.sortNumericDown
+                                //         : FontAwesomeIcons.sortNumericUp,
+                                //     size: 15,
+                                //     color: Colors.grey[700],
+                                //   ),
+                                // ),
+                              ],
+                            ),
                           ),
                           GestureDetector(
                             onTap: () {
@@ -132,7 +170,7 @@ class _DroppedScreenState extends State<DroppedScreen> {
                                       filters['Area']['ShopStrutt.ph'] ||
                                       filters['Area']['Melchor\'s Store']
                                   ? customColor[170]
-                                  : Colors.grey[700],
+                                  : Colors.black,
                             ),
                           ),
                         ],

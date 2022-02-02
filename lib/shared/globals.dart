@@ -1,5 +1,10 @@
 library tanod_apprehenssion.globals;
 
+Map sort = {
+  'Location': false,
+  'Date': true,
+};
+
 Map filters = {
   'Category': {
     'Latest': false,
@@ -16,6 +21,7 @@ Map filters = {
     'Melchor\'s Store': false,
   }
 };
+
 DateTime? start;
 DateTime? end;
 String selectedArea = "Tarape\'s Store";

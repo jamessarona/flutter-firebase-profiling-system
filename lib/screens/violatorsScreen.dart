@@ -60,12 +60,10 @@ class _ViolatorsScreenState extends State<ViolatorsScreen> {
                 height: screenSize.height,
                 width: screenSize.width,
                 margin: EdgeInsets.only(
-                  top: 15,
-                  bottom: 15,
                   left: screenSize.width * .01,
                   right: screenSize.width * .01,
                 ),
-                child: ListView(
+                child: Column(
                   children: [
                     Container(
                       margin: EdgeInsets.only(
@@ -116,22 +114,28 @@ class _ViolatorsScreenState extends State<ViolatorsScreen> {
                         ),
                       ),
                     ),
-                    for (var item in filteredViolators)
-                      MyViolatorCard(
-                        name: item['Name'],
-                        gender: item['Gender'],
-                        age: calculateAge(item['Birthday']),
-                        onTap: () {
-                          print('Load Specific Violator');
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (ctx) => DetailViolatorScreen(
-                                id: item['ViolatorId'].toString(),
-                              ),
+                    Expanded(
+                      child: ListView(
+                        children: [
+                          for (var item in filteredViolators)
+                            MyViolatorCard(
+                              name: item['Name'],
+                              gender: item['Gender'],
+                              age: calculateAge(item['Birthday']),
+                              onTap: () {
+                                print('Load Specific Violator');
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (ctx) => DetailViolatorScreen(
+                                      id: item['ViolatorId'].toString(),
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
-                          );
-                        },
+                        ],
                       ),
+                    ),
                   ],
                 ),
               );

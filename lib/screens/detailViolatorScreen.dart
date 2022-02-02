@@ -2,7 +2,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tanod_apprehension/screens/detailReportScreen.dart';
-import 'package:tanod_apprehension/screens/loginScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/myListTile.dart';
 import 'package:tanod_apprehension/shared/mySpinKits.dart';
@@ -21,14 +20,33 @@ class _DetailViolatorScreenState extends State<DetailViolatorScreen> {
   var violatorData;
   var filteredReportByViolator;
 
-  String _getReportId(
-    String violatorId,
-  ) {
-    return '20';
+  late Size screenSize;
+  int calculateTotalTagged() {
+    if (filteredReportByViolator.isNotEmpty) {
+      return filteredReportByViolator[0].length;
+    }
+    return 0;
+  }
+
+  String getApprehensionInfo(
+      String documentField, int reportId, String violatorId) {
+    String value = '';
+    for (int i = 0; i < reports[reportId]['AssignedTanod'].length; i++) {
+      if (reports[reportId]['AssignedTanod'][i]['Documentation'] != null) {
+        for (int x = 0;
+            x < reports[reportId]['AssignedTanod'][i]['Documentation'].length;
+            x++) {
+          value = reports[reportId]['AssignedTanod'][i]['Documentation'][x]
+              [documentField];
+        }
+      }
+    }
+    return value;
   }
 
   @override
   Widget build(BuildContext context) {
+    screenSize = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -79,6 +97,8 @@ class _DetailViolatorScreenState extends State<DetailViolatorScreen> {
                         child: MySpinKitLoadingScreen(),
                       );
                     }
+                    filteredReportByViolator =
+                        filterReportByViolator(reports, widget.id);
                     return Container(
                       height: screenSize.height,
                       width: screenSize.width,
@@ -104,26 +124,35 @@ class _DetailViolatorScreenState extends State<DetailViolatorScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            "Name: ${violatorData['Name']}",
-                                            style: tertiaryText.copyWith(
-                                              fontSize: 13,
+                                          Container(
+                                            margin: EdgeInsets.only(bottom: 5),
+                                            child: Text(
+                                              "Name: ${violatorData['Name']}",
+                                              style: tertiaryText.copyWith(
+                                                fontSize: 15,
+                                              ),
+                                              maxLines: 2,
                                             ),
-                                            maxLines: 2,
                                           ),
-                                          Text(
-                                            "Birthday: ${violatorData['Birthday']}",
-                                            style: tertiaryText.copyWith(
-                                              fontSize: 13,
+                                          Container(
+                                            margin: EdgeInsets.only(bottom: 5),
+                                            child: Text(
+                                              "Birthday: ${setDateTime(violatorData['Birthday'], 'Date')}",
+                                              style: tertiaryText.copyWith(
+                                                fontSize: 15,
+                                              ),
+                                              maxLines: 1,
                                             ),
-                                            maxLines: 1,
                                           ),
-                                          Text(
-                                            "Contact: ${violatorData['Contact']}",
-                                            style: tertiaryText.copyWith(
-                                              fontSize: 13,
+                                          Container(
+                                            margin: EdgeInsets.only(bottom: 5),
+                                            child: Text(
+                                              "Contact: ${violatorData['Contact']}",
+                                              style: tertiaryText.copyWith(
+                                                fontSize: 15,
+                                              ),
+                                              maxLines: 1,
                                             ),
-                                            maxLines: 1,
                                           ),
                                         ],
                                       ),
@@ -134,26 +163,35 @@ class _DetailViolatorScreenState extends State<DetailViolatorScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            "Gender: ${violatorData['Gender']}",
-                                            style: tertiaryText.copyWith(
-                                              fontSize: 13,
+                                          Container(
+                                            margin: EdgeInsets.only(bottom: 5),
+                                            child: Text(
+                                              "Gender: ${violatorData['Gender']}",
+                                              style: tertiaryText.copyWith(
+                                                fontSize: 15,
+                                              ),
+                                              maxLines: 1,
                                             ),
-                                            maxLines: 1,
                                           ),
-                                          Text(
-                                            "Age: ${calculateAge(violatorData['Birthday'])}",
-                                            style: tertiaryText.copyWith(
-                                              fontSize: 13,
+                                          Container(
+                                            margin: EdgeInsets.only(bottom: 5),
+                                            child: Text(
+                                              "Age: ${calculateAge(violatorData['Birthday'])}",
+                                              style: tertiaryText.copyWith(
+                                                fontSize: 15,
+                                              ),
+                                              maxLines: 1,
                                             ),
-                                            maxLines: 1,
                                           ),
-                                          Text(
-                                            "Tagged: 3",
-                                            style: tertiaryText.copyWith(
-                                              fontSize: 13,
+                                          Container(
+                                            margin: EdgeInsets.only(bottom: 5),
+                                            child: Text(
+                                              "Tagged: ${calculateTotalTagged()}",
+                                              style: tertiaryText.copyWith(
+                                                fontSize: 15,
+                                              ),
+                                              maxLines: 1,
                                             ),
-                                            maxLines: 1,
                                           ),
                                         ],
                                       ),
@@ -166,7 +204,7 @@ class _DetailViolatorScreenState extends State<DetailViolatorScreen> {
                                   child: Text(
                                     "Address: ${violatorData['Address']}",
                                     style: tertiaryText.copyWith(
-                                      fontSize: 13,
+                                      fontSize: 15,
                                     ),
                                     maxLines: 2,
                                   ),
@@ -174,40 +212,39 @@ class _DetailViolatorScreenState extends State<DetailViolatorScreen> {
                               ],
                             ),
                           ),
-                          Expanded(
-                            child: Container(
-                              child: ListView(
-                                children: [
-                                  MyDocumentationListTile(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (ctx) => DetailReportScreen(
-                                            id: _getReportId('3'.toString()),
+                          filteredReportByViolator.isNotEmpty
+                              ? Expanded(
+                                  child: Container(
+                                    child: ListView(
+                                      children: [
+                                        for (var item
+                                            in filteredReportByViolator[0])
+                                          MyDocumentationListTile(
+                                            onTap: () {
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (ctx) =>
+                                                      DetailReportScreen(
+                                                    id: item['Id'].toString(),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            location: item['Location'],
+                                            date: getApprehensionInfo(
+                                                'DateApprehended',
+                                                item['Id'].toInt(),
+                                                widget.id),
+                                            fine: getApprehensionInfo('Fine',
+                                                item['Id'].toInt(), widget.id),
+                                            isTagged:
+                                                item['Category'] == 'Tagged',
                                           ),
-                                        ),
-                                      );
-                                    },
-                                    location: 'Shopstrat.ph',
-                                    date: 'Jan 26, 2022',
-                                    fine: '1000.00',
+                                      ],
+                                    ),
                                   ),
-                                  MyDocumentationListTile(
-                                    onTap: () {},
-                                    location: 'Shopstrat.ph',
-                                    date: 'Feb 1, 2022',
-                                    fine: '500.00',
-                                  ),
-                                  MyDocumentationListTile(
-                                    onTap: () {},
-                                    location: 'Shopstrat.ph',
-                                    date: 'Feb 1, 2022',
-                                    fine: '300.00',
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
+                                )
+                              : Container(),
                         ],
                       ),
                     );
