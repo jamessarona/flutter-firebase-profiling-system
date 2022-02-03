@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tanod_apprehension/screens/detailReportScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/myCards.dart';
+import 'package:tanod_apprehension/shared/myContainers.dart';
 import 'package:tanod_apprehension/shared/mySpinKits.dart';
 
 class AssignmentHistoryScreen extends StatefulWidget {
@@ -140,41 +141,50 @@ class _AssignmentHistoryScreenState extends State<AssignmentHistoryScreen> {
                     userData =
                         filterCurrentUserInformation(tanods, widget.userUID)[0];
                     assignedReports = filterReportHistory();
-                    return ListView(
-                      children: [
-                        for (var item in assignedReports.reversed.toList())
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (ctx) => DetailReportScreen(
+                    return assignedReports.isNotEmpty
+                        ? ListView(
+                            children: [
+                              for (var item
+                                  in assignedReports.reversed.toList())
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (ctx) => DetailReportScreen(
+                                          id: item['Id'].toString(),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: MyApprehenssionHistoryCard(
                                     id: item['Id'].toString(),
+                                    image: item['Image'],
+                                    location: item['Location'],
+                                    date: getDocumentationInfo(
+                                        item['Id'].toString(),
+                                        userData['TanodId'].toString(),
+                                        'DateAssign'),
+                                    caughtCount: getDocumentationInfo(
+                                        item['Id'].toString(),
+                                        userData['TanodId'].toString(),
+                                        'CaughtViolator'),
+                                    status: getDocumentationInfo(
+                                        item['Id'].toString(),
+                                        userData['TanodId'].toString(),
+                                        'Status'),
+                                    remarks: getDocumentationInfo(
+                                        item['Id'].toString(),
+                                        userData['TanodId'].toString(),
+                                        'Reason'),
                                   ),
                                 ),
-                              );
-                            },
-                            child: MyApprehenssionHistoryCard(
-                              id: item['Id'].toString(),
-                              image: item['Image'],
-                              location: item['Location'],
-                              date: getDocumentationInfo(item['Id'].toString(),
-                                  userData['TanodId'].toString(), 'DateAssign'),
-                              caughtCount: getDocumentationInfo(
-                                  item['Id'].toString(),
-                                  userData['TanodId'].toString(),
-                                  'CaughtViolator'),
-                              status: getDocumentationInfo(
-                                  item['Id'].toString(),
-                                  userData['TanodId'].toString(),
-                                  'Status'),
-                              remarks: getDocumentationInfo(
-                                  item['Id'].toString(),
-                                  userData['TanodId'].toString(),
-                                  'Reason'),
-                            ),
-                          ),
-                      ],
-                    );
+                            ],
+                          )
+                        : PageResultMessage(
+                            height: 100,
+                            width: screenSize.width,
+                            message: 'No reports',
+                          );
                   });
             }),
       ),

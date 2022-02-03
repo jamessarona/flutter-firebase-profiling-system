@@ -354,6 +354,39 @@ List filterViolators(List<dynamic> list, String search) {
   }
 }
 
+List filterTanods(List<dynamic> list, String search) {
+  if (search != '') {
+    int count = 0;
+    for (int i = 0; i < list.length; i++) {
+      if (("${list[i]['Firstname']} ${list[i]['Lastname']}")
+          .toLowerCase()
+          .contains(search.toLowerCase())) {
+        count++;
+      }
+    }
+
+    var filteredViolators = new List.filled(count, []);
+    int x = 0;
+    for (int i = 0; i < list.length; i++) {
+      if (("${list[i]['Firstname']} ${list[i]['Lastname']}")
+          .toLowerCase()
+          .contains(search.toLowerCase())) {
+        filteredViolators[x++].add(list[i]);
+      }
+    }
+
+    return filteredViolators.isNotEmpty
+        ? (filteredViolators[0]
+          ..sort((a, b) => "${a['Firstname']} ${a['Lastname']}"
+              .compareTo("${b['Firstname']} ${b['Lastname']}")))
+        : [];
+  } else {
+    return list
+      ..sort((a, b) => "${a['Firstname']} ${a['Lastname']}"
+          .compareTo("${b['Firstname']} ${b['Lastname']}"));
+  }
+}
+
 List filterReportByViolator(List<dynamic> list, String id) {
   int count = 0;
   for (int i = 0; i < list.length; i++) {
@@ -411,4 +444,11 @@ int calculateAge(String birthday) {
     }
   }
   return age;
+}
+
+String numberFormat(int number) {
+  if (number >= 0 && number < 10) {
+    return '0$number';
+  }
+  return number.toString();
 }

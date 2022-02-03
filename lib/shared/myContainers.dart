@@ -35,21 +35,37 @@ class MyUserDetail extends StatelessWidget {
                   color: Color(0xffbbcdfb),
                 ),
               ),
-              Container(
-                margin: EdgeInsets.only(left: 16),
-                height: 100,
-                width: 100,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: customColor[130],
-                  image: new DecorationImage(
-                    fit: BoxFit.cover,
-                    image: NetworkImage(
-                      image,
+              image == 'default'
+                  ? Container(
+                      margin: EdgeInsets.only(left: 16),
+                      height: 100,
+                      width: 100,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: customColor[130],
+                      ),
+                      child: Image.asset(
+                        "assets/images/default.png",
+                        width: 10,
+                        height: 10,
+                        fit: BoxFit.fitHeight,
+                      ),
+                    )
+                  : Container(
+                      margin: EdgeInsets.only(left: 16),
+                      height: 100,
+                      width: 100,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: customColor[130],
+                        image: new DecorationImage(
+                          fit: BoxFit.cover,
+                          image: NetworkImage(
+                            image,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
             ],
           ),
         ),

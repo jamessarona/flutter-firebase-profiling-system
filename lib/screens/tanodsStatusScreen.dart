@@ -1,24 +1,22 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:tanod_apprehension/screens/detailViolatorScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/myCards.dart';
 import 'package:tanod_apprehension/shared/mySpinKits.dart';
 
-class ViolatorsScreen extends StatefulWidget {
-  const ViolatorsScreen({Key? key}) : super(key: key);
+class TanodsStatusScreen extends StatefulWidget {
+  const TanodsStatusScreen();
 
   @override
-  _ViolatorsScreenState createState() => _ViolatorsScreenState();
+  _TanodsStatusScreenState createState() => _TanodsStatusScreenState();
 }
 
-class _ViolatorsScreenState extends State<ViolatorsScreen> {
+class _TanodsStatusScreenState extends State<TanodsStatusScreen> {
   late Size screenSize;
   final dbRef = FirebaseDatabase.instance.reference();
-  var violators;
+  var tanods;
   TextEditingController _searchTextEditingController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     screenSize = MediaQuery.of(context).size;
@@ -39,22 +37,22 @@ class _ViolatorsScreenState extends State<ViolatorsScreen> {
           ),
           centerTitle: true,
           title: Text(
-            'Violators',
+            'Tanods Activity',
             style: primaryText.copyWith(fontSize: 18, letterSpacing: 1),
           ),
         ),
         body: StreamBuilder(
-            stream: dbRef.child('Violators').onValue,
-            builder: (context, violatorsSnapshot) {
-              if (violatorsSnapshot.hasData &&
-                  !violatorsSnapshot.hasError &&
-                  (violatorsSnapshot.data! as Event).snapshot.value != null) {
-                violators = (violatorsSnapshot.data! as Event).snapshot.value;
+            stream: dbRef.child('Tanods').onValue,
+            builder: (context, tanodsSnapshot) {
+              if (tanodsSnapshot.hasData &&
+                  !tanodsSnapshot.hasError &&
+                  (tanodsSnapshot.data! as Event).snapshot.value != null) {
+                tanods = (tanodsSnapshot.data! as Event).snapshot.value;
               } else {
                 return MySpinKitLoadingScreen();
               }
               var filteredViolators =
-                  filterViolators(violators, _searchTextEditingController.text);
+                  filterTanods(tanods, _searchTextEditingController.text);
 
               return Container(
                 height: screenSize.height,
@@ -118,20 +116,10 @@ class _ViolatorsScreenState extends State<ViolatorsScreen> {
                       child: ListView(
                         children: [
                           for (var item in filteredViolators)
-                            MyViolatorCard(
-                              name: item['Name'],
+                            MyTanodCard(
+                              name: "${item['Firstname']} ${item['Lastname']}",
                               gender: item['Gender'],
-                              age: calculateAge(item['Birthday']),
-                              onTap: () {
-                                print('Load Specific Violator');
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (ctx) => DetailViolatorScreen(
-                                      id: item['ViolatorId'].toString(),
-                                    ),
-                                  ),
-                                );
-                              },
+                              status: item['Status'],
                             ),
                         ],
                       ),

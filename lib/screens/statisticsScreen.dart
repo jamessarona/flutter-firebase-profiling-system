@@ -26,6 +26,7 @@ class StatisticsScreen extends StatefulWidget {
   final String name;
   final String email;
   final String profileImage;
+  final String role;
   const StatisticsScreen({
     required this.auth,
     required this.onSignOut,
@@ -34,6 +35,7 @@ class StatisticsScreen extends StatefulWidget {
     required this.name,
     required this.email,
     required this.profileImage,
+    required this.role,
   });
 
   @override
@@ -609,6 +611,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 email: widget.email,
                 profileImage: widget.profileImage,
                 backgroundImage: "https://wallpaperaccess.com/full/1397098.jpg",
+                role: widget.role,
               ),
               appBar: AppBar(
                 backgroundColor: Colors.transparent,
@@ -1460,6 +1463,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                           name: widget.name,
                                           profileImage: widget.profileImage,
                                           defaultIndex: 0,
+                                          role: widget.role,
                                         ),
                                       ),
                                     );

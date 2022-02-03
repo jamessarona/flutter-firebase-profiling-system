@@ -86,13 +86,6 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
     }
   }
 
-  String numberFormat(int number) {
-    if (number >= 0 && number < 10) {
-      return '0$number';
-    }
-    return number.toString();
-  }
-
   int _calculateViolatorViolationHistory(String selectedName) {
     int count = 0;
     violatorId = "";
@@ -768,13 +761,13 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                                 prefixIcon: GestureDetector(
                                   onTap: () {},
                                   child: Icon(
-                                    FontAwesomeIcons.calendarAlt,
+                                    FontAwesomeIcons.solidCalendarAlt,
                                     size: 20,
                                     color: customColor[130],
                                   ),
                                 ),
                                 labelText: "Birthday",
-                                hintText: "12/31/2022",
+                                hintText: "2022-12-31",
                                 isReadOnly: true,
                                 controller: _birthdayTextEditingController,
                               ),

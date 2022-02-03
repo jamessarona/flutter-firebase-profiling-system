@@ -204,6 +204,58 @@ class MyInformationCard extends StatelessWidget {
   }
 }
 
+class MyAccountInformationCard extends StatelessWidget {
+  final String icon;
+  final String title;
+  final String value;
+  final VoidCallback onTap;
+  const MyAccountInformationCard(
+      {required this.icon,
+      required this.title,
+      required this.value,
+      required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+        color: customColor[110],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        elevation: 4,
+        child: ListTile(
+          leading: Image.asset(
+            'assets/images/$icon',
+            width: 25,
+            height: 25,
+            fit: BoxFit.cover,
+            color: customColor[130],
+          ),
+          // icon,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: tertiaryText.copyWith(fontSize: 16),
+              ),
+              Text(
+                value,
+                style: tertiaryText.copyWith(fontSize: 14, color: Colors.grey),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+
+          trailing: Icon(
+            FontAwesomeIcons.chevronRight,
+          ),
+          onTap: onTap,
+        ));
+  }
+}
+
 class MyStatusCard extends StatelessWidget {
   final String status;
   final String location;
@@ -566,6 +618,49 @@ class MyViolatorCard extends StatelessWidget {
         ),
         subtitle: Text(
           "$age year's old",
+          style: tertiaryText.copyWith(
+            fontSize: 12,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class MyTanodCard extends StatelessWidget {
+  final String name;
+  final String gender;
+  final String status;
+
+  const MyTanodCard({
+    required this.name,
+    required this.gender,
+    required this.status,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        dense: true,
+        leading: Container(
+          height: 40,
+          width: 40,
+          child: Image.asset(
+            "assets/images/${gender == 'Female' ? 'woman' : 'man'}.png",
+            width: 20,
+            height: 20,
+            fit: BoxFit.fitHeight,
+          ),
+        ),
+        title: Text(
+          name,
+          style: tertiaryText.copyWith(
+            fontSize: 15,
+          ),
+        ),
+        subtitle: Text(
+          status,
           style: tertiaryText.copyWith(
             fontSize: 12,
           ),

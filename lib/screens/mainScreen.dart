@@ -285,6 +285,7 @@ class _MainScreenState extends State<MainScreen> {
                           profileImage: userData['Image'],
                           backgroundImage:
                               "https://wallpaperaccess.com/full/1397098.jpg",
+                          role: userData['Role'],
                         ),
                         appBar: AppBar(
                           backgroundColor: Colors.transparent,
@@ -349,6 +350,7 @@ class _MainScreenState extends State<MainScreen> {
                                               "${userData['Firstname']} ${userData['Lastname']}",
                                           profileImage: userData['Image'],
                                           defaultIndex: 0,
+                                          role: userData['Role'],
                                         ),
                                       ),
                                     );

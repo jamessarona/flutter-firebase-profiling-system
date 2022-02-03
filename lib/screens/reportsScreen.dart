@@ -20,6 +20,7 @@ class ReportsScreen extends StatefulWidget {
   final String email;
   final String profileImage;
   final int defaultIndex;
+  final String role;
   const ReportsScreen({
     required this.auth,
     required this.onSignOut,
@@ -29,6 +30,7 @@ class ReportsScreen extends StatefulWidget {
     required this.email,
     required this.profileImage,
     required this.defaultIndex,
+    required this.role,
   });
 
   @override
@@ -92,6 +94,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 email: widget.email,
                 profileImage: widget.profileImage,
                 backgroundImage: "https://wallpaperaccess.com/full/1397098.jpg",
+                role: widget.role,
               ),
               appBar: AppBar(
                 backgroundColor: Colors.transparent,

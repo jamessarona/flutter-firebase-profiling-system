@@ -3,6 +3,7 @@ import 'package:flutter_app_restart/flutter_app_restart.dart';
 import 'package:tanod_apprehension/net/authenticationService.dart';
 import 'package:tanod_apprehension/screens/mainScreen.dart';
 import 'package:tanod_apprehension/screens/reportsScreen.dart';
+import 'package:tanod_apprehension/screens/settingsScreen.dart';
 import 'package:tanod_apprehension/screens/statisticsScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/myBottomSheet.dart';
@@ -17,6 +18,7 @@ class BuildDrawer extends StatelessWidget {
   final String email;
   final String profileImage;
   final String backgroundImage;
+  final String role;
   const BuildDrawer({
     required this.leading,
     required this.auth,
@@ -27,6 +29,7 @@ class BuildDrawer extends StatelessWidget {
     required this.email,
     required this.profileImage,
     required this.backgroundImage,
+    required this.role,
   });
 
   Future<void> resetUserToken() async {
@@ -124,6 +127,7 @@ class BuildDrawer extends StatelessWidget {
                           email: email,
                           name: name,
                           profileImage: profileImage,
+                          role: role,
                         ),
                       ),
                     );
@@ -149,12 +153,34 @@ class BuildDrawer extends StatelessWidget {
                           name: name,
                           profileImage: profileImage,
                           defaultIndex: 0,
+                          role: role,
                         ),
                       ),
                     );
                   }
                 },
               ),
+              role == '0'
+                  ? BuildDrawerMenuItem(
+                      leading: leading,
+                      text: "Settings",
+                      icon: 'settings.png',
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        if (leading != "Settings") {
+                          Reset.filter();
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (ctx) => SettingsScreen(
+                                onSignIn: onSignOut,
+                                auth: auth,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                    )
+                  : Container(),
               Divider(
                 endIndent: screenSize.height / 70,
                 indent: screenSize.height / 70,
@@ -195,12 +221,19 @@ class BuildDrawerMenuHeader extends StatelessWidget {
       currentAccountPicture: CircleAvatar(
         backgroundColor: customColor[140],
         child: ClipOval(
-          child: Image.network(
-            profileImage,
-            height: 90,
-            width: 90,
-            fit: BoxFit.cover,
-          ),
+          child: profileImage == 'default'
+              ? Image.asset(
+                  "assets/images/default.png",
+                  width: 90,
+                  height: 90,
+                  fit: BoxFit.cover,
+                )
+              : Image.network(
+                  profileImage,
+                  height: 90,
+                  width: 90,
+                  fit: BoxFit.cover,
+                ),
         ),
       ),
       decoration: BoxDecoration(
