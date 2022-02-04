@@ -241,6 +241,24 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                               // );
                             },
                           ),
+                          MyAccountInformationCard(
+                            icon: 'group.png',
+                            //  Icon(
+                            //   FontAwesomeIcons.folderOpen,
+                            //   color: customColor[130],
+                            // ),
+                            title: "Role",
+                            value: userData['Role'] == '0'
+                                ? 'Chief Tanod'
+                                : 'Responder',
+                            onTap: () {
+                              // Navigator.of(context).push(
+                              //   MaterialPageRoute(
+                              //     builder: (ctx) => TanodsStatusScreen(),
+                              //   ),
+                              // );
+                            },
+                          ),
                         ],
                       ),
                     ),

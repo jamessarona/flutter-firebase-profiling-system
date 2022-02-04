@@ -224,14 +224,6 @@ class MyAccountInformationCard extends StatelessWidget {
         ),
         elevation: 4,
         child: ListTile(
-          leading: Image.asset(
-            'assets/images/$icon',
-            width: 25,
-            height: 25,
-            fit: BoxFit.cover,
-            color: customColor[130],
-          ),
-          // icon,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -247,7 +239,6 @@ class MyAccountInformationCard extends StatelessWidget {
               ),
             ],
           ),
-
           trailing: Icon(
             FontAwesomeIcons.chevronRight,
           ),
