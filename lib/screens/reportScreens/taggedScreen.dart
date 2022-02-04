@@ -159,6 +159,7 @@ class _TaggedScreenState extends State<TaggedScreen> {
                                       child: MyReportCard(
                                         id: item['Id'].toString(),
                                         image: item['Image'],
+                                        violator: item['ViolatorCount'],
                                         location: item['Location'],
                                         category: item['Category'],
                                         date: item['Date'],

@@ -77,7 +77,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       shrinkWrap: true,
                       dragStartBehavior: DragStartBehavior.start,
                       children: [
-                        for (var item in filterPreferenceReports[0])
+                        for (var item
+                            in filterPreferenceReports[0].reversed.toList())
                           GestureDetector(
                             onTap: () {
                               Navigator.of(context).push(
@@ -91,6 +92,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             child: MyNotificationReportCard(
                               id: item['Id'].toString(),
                               image: item['Image'],
+                              violators: item['ViolatorCount'],
                               location: item['Location'],
                               category: item['Category'],
                               date: item['Date'],

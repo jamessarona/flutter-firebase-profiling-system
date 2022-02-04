@@ -28,8 +28,6 @@ class _AssignmentHistoryScreenState extends State<AssignmentHistoryScreen> {
   int tempReportId = -1;
   int tempDuplicateCount = 0;
   int tempAssignedTanodNum = -1;
-  int tempCountDuplicate = 0;
-  String tempDocumentationId = '-1';
 
   List filterReportHistory() {
     int len = 0;
@@ -55,7 +53,7 @@ class _AssignmentHistoryScreenState extends State<AssignmentHistoryScreen> {
         }
       }
     }
-    return filterReportHistoryList[0];
+    return filterReportHistoryList;
   }
 
   String getDocumentationInfo(String reportId, String tanodId, String info) {
@@ -145,7 +143,7 @@ class _AssignmentHistoryScreenState extends State<AssignmentHistoryScreen> {
                         ? ListView(
                             children: [
                               for (var item
-                                  in assignedReports.reversed.toList())
+                                  in assignedReports[0].reversed.toList())
                                 GestureDetector(
                                   onTap: () {
                                     Navigator.of(context).push(
@@ -161,9 +159,10 @@ class _AssignmentHistoryScreenState extends State<AssignmentHistoryScreen> {
                                     image: item['Image'],
                                     location: item['Location'],
                                     date: getDocumentationInfo(
-                                        item['Id'].toString(),
-                                        userData['TanodId'].toString(),
-                                        'DateAssign'),
+                                      item['Id'].toString(),
+                                      userData['TanodId'].toString(),
+                                      'DateAssign',
+                                    ),
                                     caughtCount: getDocumentationInfo(
                                         item['Id'].toString(),
                                         userData['TanodId'].toString(),
@@ -183,7 +182,7 @@ class _AssignmentHistoryScreenState extends State<AssignmentHistoryScreen> {
                         : PageResultMessage(
                             height: 100,
                             width: screenSize.width,
-                            message: 'No reports',
+                            message: 'No Activity',
                           );
                   });
             }),

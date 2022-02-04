@@ -7,6 +7,7 @@ import 'package:tanod_apprehension/shared/myContainers.dart';
 class MyReportCard extends StatelessWidget {
   final String id;
   final String image;
+  final int violator;
   final String location;
   final String date;
   final String category;
@@ -15,6 +16,7 @@ class MyReportCard extends StatelessWidget {
   const MyReportCard({
     required this.id,
     required this.image,
+    required this.violator,
     required this.location,
     required this.date,
     required this.category,
@@ -205,15 +207,11 @@ class MyInformationCard extends StatelessWidget {
 }
 
 class MyAccountInformationCard extends StatelessWidget {
-  final String icon;
   final String title;
   final String value;
   final VoidCallback onTap;
   const MyAccountInformationCard(
-      {required this.icon,
-      required this.title,
-      required this.value,
-      required this.onTap});
+      {required this.title, required this.value, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -387,6 +385,7 @@ class MyStatusCard extends StatelessWidget {
 class MyNotificationReportCard extends StatelessWidget {
   final String id;
   final String image;
+  final int violators;
   final String location;
   final String date;
   final String category;
@@ -394,6 +393,7 @@ class MyNotificationReportCard extends StatelessWidget {
   const MyNotificationReportCard({
     required this.id,
     required this.image,
+    required this.violators,
     required this.location,
     required this.date,
     required this.category,
@@ -439,6 +439,14 @@ class MyNotificationReportCard extends StatelessWidget {
                       style: tertiaryText.copyWith(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      '$violators ${violators > 1 ? 'violators' : 'violator'}',
+                      style: tertiaryText.copyWith(
+                        fontSize: 13,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,

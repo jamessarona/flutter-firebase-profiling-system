@@ -43,9 +43,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     "Female",
     "Others",
   ];
-  String selectedRole = "Responder";
+  String selectedRole = "Barangay Tanod";
   static const _DropRole = [
-    "Responder",
+    "Barangay Tanod",
     "Chief Tanod",
   ];
   bool isLoading = false;
@@ -160,7 +160,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           selectedGender = 'Male';
                           _contactNumberTextEditingController.clear();
                           _addressTextEditingController.clear();
-                          selectedRole = 'Responder';
+                          selectedRole = 'Barangay Tanod';
                           Navigator.pop(context);
 
                           _buildModalSuccessMessage(context);
@@ -196,7 +196,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             "Lastname":
                 titleCase(_lastnameTextEditingController.text.toString()),
             "Status": 'Standby',
-            "Role": selectedRole == 'Responder' ? '1' : '0',
+            "Role": selectedRole == 'Barangay Tanod' ? '1' : '0',
             "TanodId": tanods.length.toString(),
             "TanodUID": value,
             "Token": "?",

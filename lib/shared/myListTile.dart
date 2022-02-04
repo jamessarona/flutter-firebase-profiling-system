@@ -104,3 +104,32 @@ class MyDocumentationListTile extends StatelessWidget {
     );
   }
 }
+
+class MyPhotoOptionListTile extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final VoidCallback onTap;
+  const MyPhotoOptionListTile({
+    required this.icon,
+    required this.title,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: onTap,
+      leading: Icon(
+        icon,
+        color: customColor[130],
+        size: 20,
+      ),
+      title: Text(
+        title,
+        style: tertiaryText.copyWith(
+          fontSize: 15,
+        ),
+      ),
+    );
+  }
+}

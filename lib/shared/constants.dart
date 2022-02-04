@@ -300,12 +300,14 @@ List getSelectedReportInformation(List<dynamic> list, String id) {
 
 String setDateTime(String date, String method) {
   late DateTime dateTimeAssigned = DateTime.parse(date);
-
-  if (method == 'Date') {
-    return "${convertMonth(dateTimeAssigned.month)} ${dateTimeAssigned.day}, ${dateTimeAssigned.year}";
-  } else {
-    return "${convertHour(dateTimeAssigned.hour, 0)}:${dateTimeAssigned.minute}:${dateTimeAssigned.second} ${convertHour(dateTimeAssigned.hour, 1)}";
+  if (date != '') {
+    if (method == 'Date') {
+      return "${convertMonth(dateTimeAssigned.month)} ${dateTimeAssigned.day}, ${dateTimeAssigned.year}";
+    } else {
+      return "${convertHour(dateTimeAssigned.hour, 0)}:${dateTimeAssigned.minute}:${dateTimeAssigned.second} ${convertHour(dateTimeAssigned.hour, 1)}";
+    }
   }
+  return '';
 }
 
 String getViolatorSpecifiedInformation(
