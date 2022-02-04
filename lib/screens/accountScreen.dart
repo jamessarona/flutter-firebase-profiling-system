@@ -41,23 +41,23 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
             return AlertDialog(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(20))),
-              title: Text(
-                'Select abc',
-                style: tertiaryText.copyWith(fontSize: 18),
-              ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   MyPhotoOptionListTile(
                     onTap: () {
-                      pickImage(ImageSource.camera);
+                      pickImage(ImageSource.camera).then((value) {
+                        setState(() {});
+                      });
                     },
                     icon: FontAwesomeIcons.cameraRetro,
                     title: 'Camera',
                   ),
                   MyPhotoOptionListTile(
                     onTap: () {
-                      pickImage(ImageSource.gallery);
+                      pickImage(ImageSource.gallery).then((value) {
+                        setState(() {});
+                      });
                     },
                     icon: FontAwesomeIcons.images,
                     title: 'Gallery',
@@ -78,8 +78,8 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
         setState(() {
           final imageTemporary = File(image.path);
           this.image = imageTemporary;
-          Navigator.pop(context);
         });
+        Navigator.pop(context);
       }
     } on PlatformException catch (e) {
       print(e);
@@ -213,12 +213,21 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: customColor[130],
-                                    image: new DecorationImage(
-                                      fit: BoxFit.cover,
-                                      image: NetworkImage(
-                                        userData['Image'],
-                                      ),
-                                    ),
+                                  ),
+                                  child: ClipOval(
+                                    child: image != null
+                                        ? Image.file(
+                                            image!,
+                                            width: 10,
+                                            height: 10,
+                                            fit: BoxFit.fill,
+                                          )
+                                        : Image.network(
+                                            userData['Image'],
+                                            width: 10,
+                                            height: 10,
+                                            fit: BoxFit.cover,
+                                          ),
                                   ),
                                 ),
                           Container(

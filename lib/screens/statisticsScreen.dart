@@ -926,7 +926,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                               right: screenSize.width * 0.05,
                             ),
                           ),
-                    //NOT YET DONE
                     Container(
                       child: Text(
                         chartTitle,
@@ -982,7 +981,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                     getTextStyles: (context, value) =>
                                         const TextStyle(fontSize: 10),
                                     margin: 10,
-                                    rotateAngle: 20,
+                                    rotateAngle: 0,
                                     getTitles: (double value) {
                                       if (selectedLabel == 'Hour') {
                                         if (selectedCategory == 1) {
@@ -1207,7 +1206,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                     getTextStyles: (context, value) =>
                                         const TextStyle(fontSize: 10),
                                     margin: 10,
-                                    rotateAngle: 20,
+                                    rotateAngle: 0,
                                     getTitles: (double value) {
                                       if (selectedCategory == 1) {
                                         switch (value.toInt()) {
