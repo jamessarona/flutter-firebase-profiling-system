@@ -229,11 +229,15 @@ class MyAccountInformationCard extends StatelessWidget {
                 title,
                 style: tertiaryText.copyWith(fontSize: 16),
               ),
-              Text(
-                value,
-                style: tertiaryText.copyWith(fontSize: 14, color: Colors.grey),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+              Expanded(
+                child: Text(
+                  value,
+                  style:
+                      tertiaryText.copyWith(fontSize: 14, color: Colors.grey),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.right,
+                ),
               ),
             ],
           ),

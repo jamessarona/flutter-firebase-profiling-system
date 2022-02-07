@@ -73,6 +73,7 @@ class _TanodsStatusScreenState extends State<TanodsStatusScreen> {
                       child: TextFormField(
                         controller: _searchTextEditingController,
                         keyboardType: TextInputType.text,
+                        textInputAction: TextInputAction.search,
                         validator: (value) {},
                         onChanged: (value) {
                           setState(() {});

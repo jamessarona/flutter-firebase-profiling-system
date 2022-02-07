@@ -75,6 +75,7 @@ class _ViolatorsScreenState extends State<ViolatorsScreen> {
                       child: TextFormField(
                         controller: _searchTextEditingController,
                         keyboardType: TextInputType.text,
+                        textInputAction: TextInputAction.search,
                         validator: (value) {},
                         onChanged: (value) {
                           setState(() {});

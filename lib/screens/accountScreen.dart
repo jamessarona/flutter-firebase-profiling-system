@@ -285,6 +285,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                         builder: (ctx) => DetailAccountScreen(
                                           userUID: widget.userUID,
                                           method: 'Firstname',
+                                          defaultValue: userData['Firstname'],
                                           isEditable: true,
                                         ),
                                       ),
@@ -302,6 +303,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                         builder: (ctx) => DetailAccountScreen(
                                           userUID: widget.userUID,
                                           method: 'Lastname',
+                                          defaultValue: userData['Lastname'],
                                           isEditable: true,
                                         ),
                                       ),
@@ -319,6 +321,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                         builder: (ctx) => DetailAccountScreen(
                                           userUID: widget.userUID,
                                           method: 'Email',
+                                          defaultValue: userData['Email'],
                                           isEditable: false,
                                         ),
                                       ),
@@ -336,6 +339,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                         builder: (ctx) => DetailAccountScreen(
                                           userUID: widget.userUID,
                                           method: 'Password',
+                                          defaultValue: '',
                                           isEditable: true,
                                         ),
                                       ),
@@ -354,6 +358,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                         builder: (ctx) => DetailAccountScreen(
                                           userUID: widget.userUID,
                                           method: 'Birthday',
+                                          defaultValue: userData['Birthday'],
                                           isEditable: true,
                                         ),
                                       ),
@@ -371,6 +376,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                         builder: (ctx) => DetailAccountScreen(
                                           userUID: widget.userUID,
                                           method: 'Gender',
+                                          defaultValue: userData['Gender'],
                                           isEditable: true,
                                         ),
                                       ),
@@ -388,6 +394,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                         builder: (ctx) => DetailAccountScreen(
                                           userUID: widget.userUID,
                                           method: 'Contact',
+                                          defaultValue: userData['Contact'],
                                           isEditable: true,
                                         ),
                                       ),
@@ -405,6 +412,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                         builder: (ctx) => DetailAccountScreen(
                                           userUID: widget.userUID,
                                           method: 'Address',
+                                          defaultValue: userData['Address'],
                                           isEditable: true,
                                         ),
                                       ),
@@ -424,6 +432,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                         builder: (ctx) => DetailAccountScreen(
                                           userUID: widget.userUID,
                                           method: 'Role',
+                                          defaultValue: userData['Role'],
                                           isEditable: false,
                                         ),
                                       ),

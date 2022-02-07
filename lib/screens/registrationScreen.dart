@@ -318,6 +318,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         child: MyDocumentationTextFormField(
                           inputType: TextInputType.name,
                           isObscureText: false,
+                          textAction: TextInputAction.next,
                           validation: (value) {
                             if (value == "") {
                               return "Firstname is empty";
@@ -348,6 +349,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         child: MyDocumentationTextFormField(
                           inputType: TextInputType.name,
                           isObscureText: false,
+                          textAction: TextInputAction.next,
                           validation: (value) {
                             if (value == "") {
                               return "Lastname is empty";
@@ -378,6 +380,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         child: MyDocumentationTextFormField(
                           inputType: TextInputType.emailAddress,
                           isObscureText: false,
+                          textAction: TextInputAction.next,
                           validation: (value) {
                             if (value == "") {
                               return "Email is empty";
@@ -417,6 +420,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         child: MyDocumentationTextFormField(
                           inputType: TextInputType.datetime,
                           isObscureText: false,
+                          textAction: TextInputAction.next,
                           validation: (value) {
                             if (value == "") {
                               return "Birthday is empty";
@@ -526,6 +530,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         child: MyDocumentationTextFormField(
                           inputType: TextInputType.phone,
                           isObscureText: false,
+                          textAction: TextInputAction.next,
                           validation: (value) {
                             if (value == "") {
                               return "Contact Number is empty";
@@ -558,6 +563,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         child: MyDocumentationTextFormField(
                           inputType: TextInputType.streetAddress,
                           isObscureText: false,
+                          textAction: TextInputAction.next,
                           validation: (value) {
                             if (value == "") {
                               return "Address is empty";

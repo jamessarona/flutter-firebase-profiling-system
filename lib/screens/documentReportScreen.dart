@@ -675,6 +675,7 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                                   child: Text('No Existing Violators Found'),
                                 ),
                                 textFieldConfiguration: TextFieldConfiguration(
+                                  textInputAction: TextInputAction.next,
                                   onChanged: (value) {
                                     setState(() {
                                       _birthdayTextEditingController.clear();
@@ -736,6 +737,7 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                               child: MyDocumentationTextFormField(
                                 inputType: TextInputType.datetime,
                                 isObscureText: false,
+                                textAction: TextInputAction.next,
                                 validation: (value) {
                                   if (value == "") {
                                     return "Birthday is empty";
@@ -753,7 +755,7 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                                     setState(() {
                                       if (selectedDate != null) {
                                         _birthdayTextEditingController.text =
-                                            "${numberFormat(selectedDate.year)}-${numberFormat(selectedDate.month)}-${selectedDate.month}";
+                                            "${numberFormat(selectedDate.year)}-${numberFormat(selectedDate.month)}-${numberFormat(selectedDate.day)}";
                                       }
                                     });
                                   });
@@ -847,6 +849,7 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                               child: MyDocumentationTextFormField(
                                 inputType: TextInputType.phone,
                                 isObscureText: false,
+                                textAction: TextInputAction.next,
                                 validation: (value) {
                                   if (value == "") {
                                     return "Contact Number is empty";
@@ -879,6 +882,7 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                               child: MyDocumentationTextFormField(
                                 inputType: TextInputType.streetAddress,
                                 isObscureText: false,
+                                textAction: TextInputAction.next,
                                 validation: (value) {
                                   if (value == "") {
                                     return "Address is empty";
@@ -916,6 +920,7 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                                     child: MyDocumentationTextFormField(
                                       inputType: TextInputType.streetAddress,
                                       isObscureText: false,
+                                      textAction: TextInputAction.next,
                                       validation: (value) {},
                                       onChanged: (value) {},
                                       onTap: () {},
@@ -939,6 +944,7 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                                     child: MyDocumentationTextFormField(
                                       inputType: TextInputType.streetAddress,
                                       isObscureText: false,
+                                      textAction: TextInputAction.next,
                                       validation: (value) {},
                                       onChanged: (value) {},
                                       onTap: () {},
