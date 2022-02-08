@@ -174,6 +174,7 @@ class BuildDrawer extends StatelessWidget {
                               builder: (ctx) => SettingsScreen(
                                 onSignIn: onSignOut,
                                 auth: auth,
+                                userUID: userUID,
                               ),
                             ),
                           );

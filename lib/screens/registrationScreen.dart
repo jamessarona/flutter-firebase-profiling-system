@@ -49,6 +49,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     "Chief Tanod",
   ];
   bool isLoading = false;
+  bool isSaveable = false;
+
   late Timer _timer;
   void _validateRegistration() {
     if (_formKey.currentState!.validate()) {
@@ -89,11 +91,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ),
                     TextSpan(
                       text:
-                          'Firstname: ${titleCase(_firstnameTextEditingController.text)}\n',
+                          'Firstname: ${titleCase(_firstnameTextEditingController.text.toLowerCase())}\n',
                     ),
                     TextSpan(
                       text:
-                          'Lastname: ${titleCase(_lastnameTextEditingController.text)}\n',
+                          'Lastname: ${titleCase(_lastnameTextEditingController.text.toLowerCase())}\n',
                     ),
                     TextSpan(
                       text: 'Email: ${_emailTextEditingController.text}\n',
@@ -111,7 +113,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ),
                     TextSpan(
                       text:
-                          'Address: ${titleCase(_addressTextEditingController.text)}\n',
+                          'Address: ${titleCase(_addressTextEditingController.text.toLowerCase())}\n',
                     ),
                     TextSpan(
                       text: 'Role: $selectedRole\n',
@@ -185,16 +187,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         await dbRef.child('Tanods').update({
           tanods.length.toString(): {
             "Area": 'ShopStrutt.ph',
-            "Address": titleCase(_addressTextEditingController.text.toString()),
+            "Address": titleCase(
+                _addressTextEditingController.text.toString().toLowerCase()),
             "Contact": _contactNumberTextEditingController.text.toString(),
             "Email": _emailTextEditingController.text.toString(),
-            "Firstname":
-                titleCase(_firstnameTextEditingController.text.toString()),
+            "Firstname": titleCase(
+                _firstnameTextEditingController.text.toString().toLowerCase()),
             "Gender": selectedGender.toString(),
             "Birthday": _birthdayTextEditingController.text.toString(),
             "Image": "default",
-            "Lastname":
-                titleCase(_lastnameTextEditingController.text.toString()),
+            "Lastname": titleCase(
+                _lastnameTextEditingController.text.toString().toLowerCase()),
             "Status": 'Standby',
             "Role": selectedRole == 'Barangay Tanod' ? '1' : '0',
             "TanodId": tanods.length.toString(),
@@ -253,6 +256,105 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     });
   }
 
+  void _checkValidToSave() {
+    bool isValid = false;
+    if (_firstnameTextEditingController.text != '') {
+      isValid = true;
+    }
+    if (_lastnameTextEditingController.text != '') {
+      isValid = true;
+    }
+    if (_emailTextEditingController.text != '') {
+      isValid = true;
+    }
+    if (_birthdayTextEditingController.text != '') {
+      isValid = true;
+    }
+
+    if (_contactNumberTextEditingController.text != '') {
+      isValid = true;
+    }
+    if (_addressTextEditingController.text != '') {
+      isValid = true;
+    }
+    isSaveable = isValid;
+  }
+
+  void _checkValidToSaveDropDown() {
+    if (selectedGender != '') {
+      isSaveable = true;
+    }
+  }
+
+  _buildCreateCancelDocumentationConfirmaModal(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20))),
+              title: Text(
+                'Discard unsaved changes?',
+                style: tertiaryText.copyWith(fontSize: 18),
+              ),
+              content: Text.rich(
+                TextSpan(
+                  style: secandaryText.copyWith(fontSize: 13, letterSpacing: 0),
+                  children: [
+                    TextSpan(
+                      text:
+                          'You have unsaved changes, are sure you want to discard them?',
+                      style: secandaryText.copyWith(
+                          fontSize: 14, letterSpacing: 0),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                Container(
+                  width: 100,
+                  child: MyOutlineButton(
+                    color: Color(0xff1640ac),
+                    elavation: 5,
+                    isLoading: false,
+                    radius: 10,
+                    text: Text(
+                      'Cancel',
+                      style: tertiaryText.copyWith(
+                          fontSize: 14, color: customColor[140]),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+                Container(
+                  width: 100,
+                  child: MyRaisedButton(
+                    color: Color(0xff1640ac),
+                    elavation: 5,
+                    isLoading: isLoading,
+                    radius: 10,
+                    text: Text(
+                      'Discard',
+                      style: tertiaryText.copyWith(
+                          fontSize: 14, color: Colors.white),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      });
+                    },
+                  ),
+                ),
+              ],
+            );
+          });
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     screenSize = MediaQuery.of(context).size;
@@ -268,7 +370,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               size: 18,
             ),
             onPressed: () {
-              Navigator.of(context).pop();
+              isSaveable
+                  ? _buildCreateCancelDocumentationConfirmaModal(context)
+                  : Navigator.of(context).pop();
             },
           ),
           centerTitle: true,
@@ -324,7 +428,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               return "Firstname is empty";
                             }
                           },
-                          onChanged: (value) {},
+                          onChanged: (value) {
+                            setState(() {
+                              _checkValidToSave();
+                            });
+                          },
                           onTap: () {},
                           prefixIcon: GestureDetector(
                             onTap: () {},
@@ -355,7 +463,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               return "Lastname is empty";
                             }
                           },
-                          onChanged: (value) {},
+                          onChanged: (value) {
+                            setState(() {
+                              _checkValidToSave();
+                            });
+                          },
                           onTap: () {},
                           prefixIcon: GestureDetector(
                             onTap: () {},
@@ -395,7 +507,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               return "Email already registed";
                             }
                           },
-                          onChanged: (value) {},
+                          onChanged: (value) {
+                            setState(() {
+                              _checkValidToSave();
+                            });
+                          },
                           onTap: () {},
                           prefixIcon: GestureDetector(
                             onTap: () {},
@@ -437,7 +553,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               setState(() {
                                 if (selectedDate != null) {
                                   _birthdayTextEditingController.text =
-                                      "${numberFormat(selectedDate.year)}-${numberFormat(selectedDate.month)}-${numberFormat(selectedDate.month)}";
+                                      "${numberFormat(selectedDate.year)}-${numberFormat(selectedDate.month)}-${numberFormat(selectedDate.day)}";
+
+                                  _checkValidToSave();
                                 }
                               });
                             });
@@ -502,6 +620,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                     setState(() {
                                       selectedGender = newValue!;
                                       state.didChange(newValue);
+                                      _checkValidToSaveDropDown();
                                     });
                                   },
                                   items: _DropGender.map((String value) {
@@ -538,7 +657,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             if (value!.length != 11)
                               return 'Contact Number must be of 11 digit';
                           },
-                          onChanged: (value) {},
+                          onChanged: (value) {
+                            setState(() {
+                              _checkValidToSave();
+                            });
+                          },
                           onTap: () {},
                           prefixIcon: GestureDetector(
                             onTap: () {},
@@ -569,7 +692,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               return "Address is empty";
                             }
                           },
-                          onChanged: (value) {},
+                          onChanged: (value) {
+                            setState(() {
+                              _checkValidToSave();
+                            });
+                          },
                           onTap: () {},
                           prefixIcon: GestureDetector(
                             onTap: () {},
@@ -627,6 +754,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                     setState(() {
                                       selectedRole = newValue!;
                                       state.didChange(newValue);
+                                      _checkValidToSaveDropDown();
                                     });
                                   },
                                   items: _DropRole.map((String value) {

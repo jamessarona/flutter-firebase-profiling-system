@@ -50,6 +50,7 @@ class FireBaseAuth implements BaseAuth {
 
   Future<String> currentUser() async {
     User? user = _firebaseAuth.currentUser;
+
     return user!.uid;
   }
 

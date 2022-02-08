@@ -44,6 +44,7 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
   double violationFine = 0.00;
 
   bool isLoading = false;
+  bool isSaveable = false;
   late Timer _timer;
   bool isTagged = false;
   TextEditingController _nameTextEditingController = TextEditingController();
@@ -64,6 +65,30 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
     "Female",
     "Others",
   ];
+
+  void _checkValidToSave() {
+    bool isValid = false;
+    if (_nameTextEditingController.text != '') {
+      isValid = true;
+    }
+    if (_birthdayTextEditingController.text != '') {
+      isValid = true;
+    }
+
+    if (_contactNumberTextEditingController.text != '') {
+      isValid = true;
+    }
+    if (_addressTextEditingController.text != '') {
+      isValid = true;
+    }
+    isSaveable = isValid;
+  }
+
+  void _checkValidToSaveDropDown() {
+    if (selectedGender != '') {
+      isSaveable = true;
+    }
+  }
 
   void _setViolatorInformation() {
     if (updateProcess < 1) {
@@ -539,6 +564,76 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
     }
   }
 
+  _buildCreateCancelDocumentationConfirmaModal(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20))),
+              title: Text(
+                'Discard unsaved changes?',
+                style: tertiaryText.copyWith(fontSize: 18),
+              ),
+              content: Text.rich(
+                TextSpan(
+                  style: secandaryText.copyWith(fontSize: 13, letterSpacing: 0),
+                  children: [
+                    TextSpan(
+                      text:
+                          'You have unsaved changes, are sure you want to discard them?',
+                      style: secandaryText.copyWith(
+                          fontSize: 14, letterSpacing: 0),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                Container(
+                  width: 100,
+                  child: MyOutlineButton(
+                    color: Color(0xff1640ac),
+                    elavation: 5,
+                    isLoading: false,
+                    radius: 10,
+                    text: Text(
+                      'Cancel',
+                      style: tertiaryText.copyWith(
+                          fontSize: 14, color: customColor[140]),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+                Container(
+                  width: 100,
+                  child: MyRaisedButton(
+                    color: Color(0xff1640ac),
+                    elavation: 5,
+                    isLoading: isLoading,
+                    radius: 10,
+                    text: Text(
+                      'Discard',
+                      style: tertiaryText.copyWith(
+                          fontSize: 14, color: Colors.white),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        violatorNames.clear();
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      });
+                    },
+                  ),
+                ),
+              ],
+            );
+          });
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     screenSize = MediaQuery.of(context).size;
@@ -580,8 +675,13 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                         color: Colors.black,
                         iconSize: 20,
                         onPressed: () {
-                          violatorNames.clear();
-                          Navigator.pop(context);
+                          if (isSaveable) {
+                            _buildCreateCancelDocumentationConfirmaModal(
+                                context);
+                          } else {
+                            violatorNames.clear();
+                            Navigator.pop(context);
+                          }
                         },
                       ),
                       centerTitle: true,
@@ -665,6 +765,7 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                                     _autoSetViolationDocumentation(
                                         _calculateViolatorViolationHistory(
                                             val));
+                                    _checkValidToSave();
                                   });
                                 },
                                 getImmediateSuggestions: true,
@@ -688,10 +789,12 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                                       _violationCountTextEditingController
                                           .clear();
                                       _fineTextEditingController.clear();
+
+                                      _autoSetViolationDocumentation(
+                                          _calculateViolatorViolationHistory(
+                                              value));
+                                      _checkValidToSave();
                                     });
-                                    _autoSetViolationDocumentation(
-                                        _calculateViolatorViolationHistory(
-                                            value));
                                   },
                                   decoration: InputDecoration(
                                     isDense: true,
@@ -756,6 +859,8 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                                       if (selectedDate != null) {
                                         _birthdayTextEditingController.text =
                                             "${numberFormat(selectedDate.year)}-${numberFormat(selectedDate.month)}-${numberFormat(selectedDate.day)}";
+
+                                        _checkValidToSave();
                                       }
                                     });
                                   });
@@ -769,7 +874,7 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                                   ),
                                 ),
                                 labelText: "Birthday",
-                                hintText: "2022-12-31",
+                                hintText: "",
                                 isReadOnly: true,
                                 controller: _birthdayTextEditingController,
                               ),
@@ -821,6 +926,8 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                                           setState(() {
                                             selectedGender = newValue!;
                                             state.didChange(newValue);
+
+                                            _checkValidToSaveDropDown();
                                           });
                                         },
                                         items: _DropGender.map((String value) {
@@ -857,7 +964,11 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                                   if (value!.length != 11)
                                     return 'Contact Number must be of 11 digit';
                                 },
-                                onChanged: (value) {},
+                                onChanged: (value) {
+                                  setState(() {
+                                    _checkValidToSave();
+                                  });
+                                },
                                 onTap: () {},
                                 prefixIcon: GestureDetector(
                                   onTap: () {},
@@ -888,7 +999,11 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                                     return "Address is empty";
                                   }
                                 },
-                                onChanged: (value) {},
+                                onChanged: (value) {
+                                  setState(() {
+                                    _checkValidToSave();
+                                  });
+                                },
                                 onTap: () {},
                                 prefixIcon: GestureDetector(
                                   onTap: () {},

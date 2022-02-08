@@ -6,7 +6,10 @@ import 'package:tanod_apprehension/shared/myCards.dart';
 import 'package:tanod_apprehension/shared/mySpinKits.dart';
 
 class TanodsStatusScreen extends StatefulWidget {
-  const TanodsStatusScreen();
+  final String userUID;
+  const TanodsStatusScreen({
+    required this.userUID,
+  });
 
   @override
   _TanodsStatusScreenState createState() => _TanodsStatusScreenState();
@@ -16,7 +19,17 @@ class _TanodsStatusScreenState extends State<TanodsStatusScreen> {
   late Size screenSize;
   final dbRef = FirebaseDatabase.instance.reference();
   var tanods;
+  var filteredViolators;
   TextEditingController _searchTextEditingController = TextEditingController();
+
+  String checkIsUser(String uid) {
+    String value = '';
+    if (widget.userUID == uid) {
+      value = '(You)';
+    }
+    return value;
+  }
+
   @override
   Widget build(BuildContext context) {
     screenSize = MediaQuery.of(context).size;
@@ -51,7 +64,7 @@ class _TanodsStatusScreenState extends State<TanodsStatusScreen> {
               } else {
                 return MySpinKitLoadingScreen();
               }
-              var filteredViolators =
+              filteredViolators =
                   filterTanods(tanods, _searchTextEditingController.text);
 
               return Container(
@@ -118,7 +131,8 @@ class _TanodsStatusScreenState extends State<TanodsStatusScreen> {
                         children: [
                           for (var item in filteredViolators)
                             MyTanodCard(
-                              name: "${item['Firstname']} ${item['Lastname']}",
+                              name:
+                                  "${item['Firstname']} ${item['Lastname']} ${checkIsUser(item['TanodUID'])}",
                               gender: item['Gender'],
                               status: item['Status'],
                             ),

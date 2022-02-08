@@ -288,7 +288,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         for (int i = 0; i < taggedReports[0].length; i++) {
           DateTime date = DateTime.parse(taggedReports[0][i]['Date']);
           if (date.hour == position + defaultTime) {
-            value += droppedReports[0][i]['ViolatorCount'];
+            value += taggedReports[0][i]['ViolatorCount'];
           }
         }
       }

@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tanod_apprehension/net/authenticationService.dart';
 import 'package:tanod_apprehension/screens/detailAccountScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/myCards.dart';
@@ -15,8 +16,12 @@ import 'package:tanod_apprehension/shared/mySpinKits.dart';
 
 class MyAccountScreen extends StatefulWidget {
   final String userUID;
+  final BaseAuth auth;
+  final VoidCallback onSignOut;
   const MyAccountScreen({
     required this.userUID,
+    required this.auth,
+    required this.onSignOut,
   });
 
   @override
@@ -287,6 +292,8 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                           method: 'Firstname',
                                           defaultValue: userData['Firstname'],
                                           isEditable: true,
+                                          auth: widget.auth,
+                                          onSignOut: widget.onSignOut,
                                         ),
                                       ),
                                     );
@@ -305,6 +312,8 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                           method: 'Lastname',
                                           defaultValue: userData['Lastname'],
                                           isEditable: true,
+                                          auth: widget.auth,
+                                          onSignOut: widget.onSignOut,
                                         ),
                                       ),
                                     );
@@ -323,6 +332,8 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                           method: 'Email',
                                           defaultValue: userData['Email'],
                                           isEditable: false,
+                                          auth: widget.auth,
+                                          onSignOut: widget.onSignOut,
                                         ),
                                       ),
                                     );
@@ -341,6 +352,8 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                           method: 'Password',
                                           defaultValue: '',
                                           isEditable: true,
+                                          auth: widget.auth,
+                                          onSignOut: widget.onSignOut,
                                         ),
                                       ),
                                     );
@@ -360,6 +373,8 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                           method: 'Birthday',
                                           defaultValue: userData['Birthday'],
                                           isEditable: true,
+                                          auth: widget.auth,
+                                          onSignOut: widget.onSignOut,
                                         ),
                                       ),
                                     );
@@ -378,6 +393,8 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                           method: 'Gender',
                                           defaultValue: userData['Gender'],
                                           isEditable: true,
+                                          auth: widget.auth,
+                                          onSignOut: widget.onSignOut,
                                         ),
                                       ),
                                     );
@@ -396,6 +413,8 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                           method: 'Contact',
                                           defaultValue: userData['Contact'],
                                           isEditable: true,
+                                          auth: widget.auth,
+                                          onSignOut: widget.onSignOut,
                                         ),
                                       ),
                                     );
@@ -414,6 +433,8 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                           method: 'Address',
                                           defaultValue: userData['Address'],
                                           isEditable: true,
+                                          auth: widget.auth,
+                                          onSignOut: widget.onSignOut,
                                         ),
                                       ),
                                     );
@@ -434,6 +455,8 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                           method: 'Role',
                                           defaultValue: userData['Role'],
                                           isEditable: false,
+                                          auth: widget.auth,
+                                          onSignOut: widget.onSignOut,
                                         ),
                                       ),
                                     );

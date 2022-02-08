@@ -9,7 +9,12 @@ import 'package:tanod_apprehension/shared/myCards.dart';
 class SettingsScreen extends StatefulWidget {
   final VoidCallback? onSignIn;
   final BaseAuth auth;
-  const SettingsScreen({required this.auth, this.onSignIn});
+  final String userUID;
+  const SettingsScreen({
+    required this.auth,
+    this.onSignIn,
+    required this.userUID,
+  });
 
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
@@ -92,7 +97,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (ctx) => TanodsStatusScreen(),
+                            builder: (ctx) => TanodsStatusScreen(
+                              userUID: widget.userUID,
+                            ),
                           ),
                         );
                       },

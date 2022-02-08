@@ -421,7 +421,10 @@ class _MainScreenState extends State<MainScreen> {
                                         Navigator.of(context).push(
                                           MaterialPageRoute(
                                             builder: (ctx) => MyAccountScreen(
-                                                userUID: userUID),
+                                              userUID: userUID,
+                                              auth: widget.auth,
+                                              onSignOut: widget.onSignOut,
+                                            ),
                                           ),
                                         );
                                       },
