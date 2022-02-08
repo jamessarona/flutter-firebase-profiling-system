@@ -150,6 +150,7 @@ class _TanodMainState extends State<TanodMain> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        primaryColor: Color(0xff1c52dd),
       ),
       home: Root(
         auth: new FireBaseAuth(),

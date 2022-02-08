@@ -2,7 +2,7 @@
     package="com.example.tanod_apprehension">
    <application
         android:label="Tanood"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
