@@ -4,10 +4,10 @@ import 'package:tanod_apprehension/net/authenticationService.dart';
 import 'package:tanod_apprehension/screens/notificationScreen.dart';
 import 'package:tanod_apprehension/screens/reportScreens/activeScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
+import 'package:tanod_apprehension/shared/loadingWidgets.dart';
 import 'package:tanod_apprehension/shared/myAppbar.dart';
 import 'package:tanod_apprehension/shared/myBottomSheet.dart';
 import 'package:tanod_apprehension/shared/myDrawers.dart';
-import 'package:tanod_apprehension/shared/mySpinKits.dart';
 import 'reportScreens/droppedScreen.dart';
 import 'reportScreens/taggedScreen.dart';
 
@@ -76,9 +76,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 (reportsSnapshot.data! as Event).snapshot.value != null) {
               reports = (reportsSnapshot.data! as Event).snapshot.value;
             } else {
-              return Center(
-                child: MySpinKitLoadingScreen(),
-              );
+              return MyLoadingScreenReportScreen();
             }
             int notifCount = countReportsByLocation(reports);
 

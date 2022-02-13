@@ -3,7 +3,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:tanod_apprehension/net/authenticationService.dart';
 import 'package:tanod_apprehension/root_page.dart';
-import 'package:tanod_apprehension/screens/detailReportScreen.dart';
 import 'package:tanod_apprehension/services/localNotificationServices.dart';
 
 // const AndroidNotificationChannel channel = AndroidNotificationChannel(
@@ -49,7 +48,7 @@ class TanodMain extends StatefulWidget {
 }
 
 class _TanodMainState extends State<TanodMain> {
-  String routeMessage = '';
+  String reportId = '';
   // @override
   // void initState() {
   //   super.initState();
@@ -107,15 +106,15 @@ class _TanodMainState extends State<TanodMain> {
     // and it opened the app from terminated state
     FirebaseMessaging.instance.getInitialMessage().then((message) {
       if (message != null) {
-        routeMessage = message.data['report_id'];
-        print('message: ${routeMessage.runtimeType}');
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (ctx) => DetailReportScreen(
-              id: routeMessage.toString(),
-            ),
-          ),
-        );
+        reportId = message.data['report_id'];
+        print('message: ${reportId.runtimeType}');
+        // Navigator.of(context).pushReplacement(
+        //   MaterialPageRoute(
+        //     builder: (ctx) => DetailReportScreen(
+        //       id: reportId.toString(),
+        //     ),
+        //   ),
+        // );
       }
     });
 
@@ -130,15 +129,15 @@ class _TanodMainState extends State<TanodMain> {
 
     //Works when app is on background but opened and user taps on the notification
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      routeMessage = message.data['report_id'];
+      reportId = message.data['report_id'];
 
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (ctx) => DetailReportScreen(
-            id: routeMessage.toString(),
-          ),
-        ),
-      );
+      // Navigator.of(context).pushReplacement(
+      //   MaterialPageRoute(
+      //     builder: (ctx) => DetailReportScreen(
+      //       id: reportId.toString(),
+      //     ),
+      //   ),
+      // );
     });
 
     //
@@ -154,6 +153,7 @@ class _TanodMainState extends State<TanodMain> {
       ),
       home: Root(
         auth: new FireBaseAuth(),
+        reportId: reportId,
       ),
     );
   }

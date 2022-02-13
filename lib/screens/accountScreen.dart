@@ -37,6 +37,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
   File? image;
 
   bool isLoading = false;
+  bool isDeletePhoto = false;
 
   _buildCreateChooseModal(BuildContext context) {
     return showDialog(
@@ -51,27 +52,37 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                 children: [
                   MyPhotoOptionListTile(
                     onTap: () {
-                      pickImage(ImageSource.camera).then((value) {
-                        setState(() {});
-                      });
+                      pickImage(ImageSource.camera);
                     },
                     icon: FontAwesomeIcons.cameraRetro,
                     title: 'Camera',
                   ),
                   MyPhotoOptionListTile(
                     onTap: () {
-                      pickImage(ImageSource.gallery).then((value) {
-                        setState(() {});
-                      });
+                      pickImage(ImageSource.gallery);
                     },
                     icon: FontAwesomeIcons.images,
                     title: 'Gallery',
+                  ),
+                  MyPhotoOptionListTile(
+                    onTap: () {
+                      isDeletePhoto = true;
+                      deletePhoto();
+                      Navigator.pop(context);
+                    },
+                    icon: FontAwesomeIcons.trashAlt,
+                    title: 'Delete Photo',
                   ),
                 ],
               ),
             );
           });
         });
+  }
+
+  String deletePhoto() {
+    setState(() {});
+    return '';
   }
 
   Future pickImage(ImageSource choice) async {
@@ -131,7 +142,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
             style: primaryText.copyWith(fontSize: 18, letterSpacing: 1),
           ),
           actions: [
-            image != null
+            image != null || isDeletePhoto
                 ? isLoading
                     ? Container(
                         margin: EdgeInsets.only(right: screenSize.width * .04),
@@ -148,12 +159,21 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                 setState(() {
                                   isLoading = true;
                                 });
-                                uploadImage().then((value) {
+                                if (isDeletePhoto) {
                                   setState(() {
+                                    saveToRealtimeDatabase('default');
+                                    isDeletePhoto = false;
+                                    //TODO: delete photo in storage
                                     isLoading = false;
-                                    image = null;
                                   });
-                                });
+                                } else {
+                                  uploadImage().then((value) {
+                                    setState(() {
+                                      isLoading = false;
+                                      image = null;
+                                    });
+                                  });
+                                }
                               },
                         icon: Icon(
                           FontAwesomeIcons.save,
@@ -188,7 +208,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          userData['Image'] == 'default'
+                          userData['Image'] == 'default' || isDeletePhoto
                               ? Container(
                                   height: 100,
                                   width: 100,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tanod_apprehension/net/authenticationService.dart';
+import 'package:tanod_apprehension/screens/locationsScreen.dart';
 import 'package:tanod_apprehension/screens/registrationScreen.dart';
 import 'package:tanod_apprehension/screens/tanodsStatusScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
@@ -100,6 +101,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             builder: (ctx) => TanodsStatusScreen(
                               userUID: widget.userUID,
                             ),
+                          ),
+                        );
+                      },
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(
+                        top: 15,
+                        left: 4,
+                        bottom: 5,
+                      ),
+                      child: Text(
+                        'Location Settings',
+                        style: tertiaryText.copyWith(
+                            fontSize: 16,
+                            letterSpacing: 0,
+                            color: Colors.grey[800]),
+                      ),
+                    ),
+                    MyInformationCard(
+                      icon: 'map-location.png',
+                      //  Icon(
+                      //   FontAwesomeIcons.folderOpen,
+                      //   color: customColor[130],
+                      // ),
+                      text: "Locations",
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (ctx) => LocationScreen(),
                           ),
                         );
                       },

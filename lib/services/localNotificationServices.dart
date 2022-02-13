@@ -1,7 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:tanod_apprehension/screens/detailReportScreen.dart';
 
 class LocalNotificationServices {
   static final FlutterLocalNotificationsPlugin _notificationsPlugin =
@@ -22,10 +21,10 @@ class LocalNotificationServices {
         //     ),
         //   ),
         // );
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => DetailReportScreen(id: reportId)));
+        // Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (context) => DetailReportScreen(id: reportId)));
       }
     });
   }

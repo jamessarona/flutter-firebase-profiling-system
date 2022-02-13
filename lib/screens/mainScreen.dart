@@ -10,13 +10,13 @@ import 'package:tanod_apprehension/screens/notificationScreen.dart';
 import 'package:tanod_apprehension/screens/reportsScreen.dart';
 import 'package:tanod_apprehension/screens/violatorsScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
+import 'package:tanod_apprehension/shared/loadingWidgets.dart';
 import 'package:tanod_apprehension/shared/myAppbar.dart';
 import 'package:tanod_apprehension/shared/myBottomSheet.dart';
 import 'package:tanod_apprehension/shared/myButtons.dart';
 import 'package:tanod_apprehension/shared/myCards.dart';
 import 'package:tanod_apprehension/shared/myContainers.dart';
 import 'package:tanod_apprehension/shared/myDrawers.dart';
-import 'package:tanod_apprehension/shared/mySpinKits.dart';
 import 'package:tanod_apprehension/shared/globals.dart';
 
 class MainScreen extends StatefulWidget {
@@ -36,9 +36,19 @@ class _MainScreenState extends State<MainScreen> {
   var tanods;
   var reports;
   var userData;
+  var locations;
+  final List<String> locationsAdded = [];
+  int addLocationCycle = 0;
   String userUID = '';
   late Timer _timer;
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  void addLocationToList() {
+    for (int i = 0; i < locations.length; i++) {
+      locationsAdded.insert(0, locations[i]['Name'].toString());
+    }
+    locationsAdded.sort();
+  }
 
   void saveSelectedArea() async {
     await dbRef.child('Tanods').child(userData['TanodId']).update({
@@ -61,11 +71,8 @@ class _MainScreenState extends State<MainScreen> {
               ),
               content: DropdownButton<String>(
                 value: tempSelectedArea,
-                items: <String>[
-                  "Tarape\'s Store",
-                  "ShopStrutt.ph",
-                  "Melchor\'s Store",
-                ].map<DropdownMenuItem<String>>((String value) {
+                items: locationsAdded
+                    .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
@@ -242,11 +249,7 @@ class _MainScreenState extends State<MainScreen> {
                     (tanodSnapshot.data! as Event).snapshot.value != null) {
                   tanods = (tanodSnapshot.data! as Event).snapshot.value;
                 } else {
-                  return Scaffold(
-                    body: Center(
-                      child: MySpinKitLoadingScreen(),
-                    ),
-                  );
+                  return MyLoadingScreenHomeScreen();
                 }
                 userData = filterCurrentUserInformation(tanods, userUID)[0];
                 if (userData['Area'] != null) {
@@ -262,186 +265,206 @@ class _MainScreenState extends State<MainScreen> {
                         reports =
                             (reportsSnapshot.data! as Event).snapshot.value;
                       } else {
-                        return Scaffold(
-                          body: Center(
-                            child: MySpinKitLoadingScreen(),
-                          ),
-                        );
+                        return MyLoadingScreenHomeScreen();
                       }
                       int notifCount = countReportsByLocation(reports);
-                      return Scaffold(
-                        key: _scaffoldKey,
-                        extendBodyBehindAppBar: true,
-                        resizeToAvoidBottomInset: false,
-                        drawer: BuildDrawer(
-                          leading: "Home",
-                          auth: widget.auth,
-                          onSignOut: widget.onSignOut,
-                          userUID: userUID,
-                          tanodId: userData['TanodId'],
-                          name:
-                              "${userData['Firstname']} ${userData['Lastname']}",
-                          email: userData['Email'],
-                          profileImage: userData['Image'],
-                          backgroundImage:
-                              "https://wallpaperaccess.com/full/1397098.jpg",
-                          role: userData['Role'],
-                        ),
-                        appBar: AppBar(
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                          leading: MyAppBarLeading(
-                            onPressendDrawer: () {
-                              _scaffoldKey.currentState!.openDrawer();
-                            },
-                          ),
-                          actions: [
-                            MyAppBarAction(
-                              notifCount: notifCount,
-                              color: Colors.black,
-                              onPressed: () {
-                                Reset.filter();
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (ctx) => NotificationScreen(),
-                                  ),
-                                );
-                              },
-                            )
-                          ],
-                        ),
-                        body: Container(
-                          height: screenSize.height,
-                          width: screenSize.width,
-                          color: customColor[110],
-                          child: ListView(
-                            children: [
-                              MyUserDetail(
-                                  image: userData['Image'],
-                                  firstname: userData['Firstname'],
-                                  onTap: () {
-                                    _buildCreateChooseModal(context);
-                                  }),
-                              MyStatusCard(
-                                status: userData['Status'],
-                                location: _getAssignedReportLocation(),
-                                date: _getAssignedReportDate(),
-                                onTap: () {
-                                  if (userData['Status'] != "Standby") {
-                                    print("Load Specific Report");
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (ctx) => DetailReportScreen(
-                                          id: _getAssignedReportId(),
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    print("Load Reports");
-                                    Navigator.of(context).pushReplacement(
-                                      MaterialPageRoute(
-                                        builder: (ctx) => ReportsScreen(
-                                          auth: widget.auth,
-                                          onSignOut: widget.onSignOut,
-                                          email: userData['Email'],
-                                          userUID: userUID,
-                                          tanodId: userData['TanodId'],
-                                          name:
-                                              "${userData['Firstname']} ${userData['Lastname']}",
-                                          profileImage: userData['Image'],
-                                          defaultIndex: 0,
-                                          role: userData['Role'],
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                },
+                      return StreamBuilder(
+                          stream: dbRef.child('Locations').onValue,
+                          builder: (context, locationsSnapshot) {
+                            if (locationsSnapshot.hasData &&
+                                !locationsSnapshot.hasError &&
+                                (locationsSnapshot.data! as Event)
+                                        .snapshot
+                                        .value !=
+                                    null) {
+                              locations = (locationsSnapshot.data! as Event)
+                                  .snapshot
+                                  .value;
+                            } else {
+                              return MyLoadingScreenHomeScreen();
+                            }
+                            if (addLocationCycle < 1) {
+                              addLocationCycle++;
+                              addLocationToList();
+                            }
+                            return Scaffold(
+                              key: _scaffoldKey,
+                              extendBodyBehindAppBar: true,
+                              resizeToAvoidBottomInset: false,
+                              drawer: BuildDrawer(
+                                leading: "Home",
+                                auth: widget.auth,
+                                onSignOut: widget.onSignOut,
+                                userUID: userUID,
+                                tanodId: userData['TanodId'],
+                                name:
+                                    "${userData['Firstname']} ${userData['Lastname']}",
+                                email: userData['Email'],
+                                profileImage: userData['Image'],
+                                backgroundImage:
+                                    "https://wallpaperaccess.com/full/1397098.jpg",
+                                role: userData['Role'],
                               ),
-                              Container(
-                                margin: EdgeInsets.only(
-                                  top: 30,
-                                  left: 20,
-                                  right: 20,
+                              appBar: AppBar(
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                leading: MyAppBarLeading(
+                                  onPressendDrawer: () {
+                                    _scaffoldKey.currentState!.openDrawer();
+                                  },
                                 ),
+                                actions: [
+                                  MyAppBarAction(
+                                    notifCount: notifCount,
+                                    color: Colors.black,
+                                    onPressed: () {
+                                      Reset.filter();
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (ctx) =>
+                                              NotificationScreen(),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                ],
+                              ),
+                              body: Container(
+                                height: screenSize.height,
                                 width: screenSize.width,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                color: customColor[110],
+                                child: ListView(
                                   children: [
+                                    MyUserDetail(
+                                        image: userData['Image'],
+                                        firstname: userData['Firstname'],
+                                        onTap: () {
+                                          _buildCreateChooseModal(context);
+                                        }),
+                                    MyStatusCard(
+                                      status: userData['Status'],
+                                      location: _getAssignedReportLocation(),
+                                      date: _getAssignedReportDate(),
+                                      onTap: () {
+                                        if (userData['Status'] != "Standby") {
+                                          print("Load Specific Report");
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (ctx) =>
+                                                  DetailReportScreen(
+                                                id: _getAssignedReportId(),
+                                              ),
+                                            ),
+                                          );
+                                        } else {
+                                          print("Load Reports");
+                                          Navigator.of(context).pushReplacement(
+                                            MaterialPageRoute(
+                                              builder: (ctx) => ReportsScreen(
+                                                auth: widget.auth,
+                                                onSignOut: widget.onSignOut,
+                                                email: userData['Email'],
+                                                userUID: userUID,
+                                                tanodId: userData['TanodId'],
+                                                name:
+                                                    "${userData['Firstname']} ${userData['Lastname']}",
+                                                profileImage: userData['Image'],
+                                                defaultIndex: 0,
+                                                role: userData['Role'],
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    ),
                                     Container(
                                       margin: EdgeInsets.only(
-                                        left: 4,
-                                        bottom: 15,
+                                        top: 30,
+                                        left: 20,
+                                        right: 20,
                                       ),
-                                      child: Text(
-                                        "Information",
-                                        style: tertiaryText.copyWith(
-                                            fontSize: 16, letterSpacing: 0),
-                                      ),
-                                    ),
-                                    MyInformationCard(
-                                      icon: 'folder.png',
-                                      //  Icon(
-                                      //   FontAwesomeIcons.folderOpen,
-                                      //   color: customColor[130],
-                                      // ),
-                                      text: "Assignment History",
-                                      onTap: () {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (ctx) =>
-                                                AssignmentHistoryScreen(
-                                                    userUID: userUID),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                    MyInformationCard(
-                                      icon: 'suspect.png',
-                                      //  Icon(
-                                      //   FontAwesomeIcons.addressBook,
-                                      //   color: customColor[130],
-                                      // ),
-                                      text: "Violators",
-                                      onTap: () {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (ctx) => ViolatorsScreen(),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                    MyInformationCard(
-                                      icon: 'user.png',
-                                      //  Icon(
-                                      //   FontAwesomeIcons.user,
-                                      //   color: customColor[130],
-                                      // ),
-                                      text: "My Account",
-                                      onTap: () {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (ctx) => MyAccountScreen(
-                                              userUID: userUID,
-                                              auth: widget.auth,
-                                              onSignOut: widget.onSignOut,
+                                      width: screenSize.width,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            margin: EdgeInsets.only(
+                                              left: 4,
+                                              bottom: 15,
+                                            ),
+                                            child: Text(
+                                              "Information",
+                                              style: tertiaryText.copyWith(
+                                                  fontSize: 16,
+                                                  letterSpacing: 0),
                                             ),
                                           ),
-                                        );
-                                      },
+                                          MyInformationCard(
+                                            icon: 'folder.png',
+                                            //  Icon(
+                                            //   FontAwesomeIcons.folderOpen,
+                                            //   color: customColor[130],
+                                            // ),
+                                            text: "Assignment History",
+                                            onTap: () {
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (ctx) =>
+                                                      AssignmentHistoryScreen(
+                                                          userUID: userUID),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                          MyInformationCard(
+                                            icon: 'suspect.png',
+                                            //  Icon(
+                                            //   FontAwesomeIcons.addressBook,
+                                            //   color: customColor[130],
+                                            // ),
+                                            text: "Violators",
+                                            onTap: () {
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (ctx) =>
+                                                      ViolatorsScreen(),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                          MyInformationCard(
+                                            icon: 'user.png',
+                                            //  Icon(
+                                            //   FontAwesomeIcons.user,
+                                            //   color: customColor[130],
+                                            // ),
+                                            text: "My Account",
+                                            onTap: () {
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (ctx) =>
+                                                      MyAccountScreen(
+                                                    userUID: userUID,
+                                                    auth: widget.auth,
+                                                    onSignOut: widget.onSignOut,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                          Container(height: 10),
+                                        ],
+                                      ),
                                     ),
-                                    Container(height: 10),
                                   ],
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                      );
+                            );
+                          });
                     });
               })
-          : Scaffold(
-              body: MySpinKitLoadingScreen(),
-            ),
+          : MyLoadingScreenHomeScreen(),
     );
   }
 }

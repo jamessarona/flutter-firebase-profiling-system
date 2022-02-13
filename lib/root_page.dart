@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:tanod_apprehension/net/authenticationService.dart';
+import 'package:tanod_apprehension/screens/detailReportScreen.dart';
 import 'package:tanod_apprehension/screens/loginScreen.dart';
 import 'package:tanod_apprehension/screens/mainScreen.dart';
 
 class Root extends StatefulWidget {
   final BaseAuth auth;
-  Root({required this.auth});
+  final String reportId;
+  Root({
+    required this.auth,
+    required this.reportId,
+  });
   @override
   _RootState createState() => _RootState();
 }
@@ -50,10 +55,14 @@ class _RootState extends State<Root> {
           onSignIn: _signedIn,
         );
       case AuthSatus.signedIn:
-        return new MainScreen(
-          auth: widget.auth,
-          onSignOut: _signedOut,
-        );
+        return widget.reportId != ''
+            ? new DetailReportScreen(
+                id: widget.reportId,
+              )
+            : new MainScreen(
+                auth: widget.auth,
+                onSignOut: _signedOut,
+              );
     }
   }
 }

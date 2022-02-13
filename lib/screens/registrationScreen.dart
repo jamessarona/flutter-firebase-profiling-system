@@ -186,7 +186,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       if (value != '') {
         await dbRef.child('Tanods').update({
           tanods.length.toString(): {
-            "Area": 'ShopStrutt.ph',
+            "Area": 'N/A',
             "Address": titleCase(
                 _addressTextEditingController.text.toString().toLowerCase()),
             "Contact": _contactNumberTextEditingController.text.toString(),

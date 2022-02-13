@@ -672,3 +672,55 @@ class MyTanodCard extends StatelessWidget {
     );
   }
 }
+
+class MyLocationCard extends StatelessWidget {
+  final String name;
+  final int assignCount;
+  final VoidCallback onTap;
+
+  const MyLocationCard({
+    required this.name,
+    required this.assignCount,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        dense: true,
+        leading: Container(
+          height: 30,
+          width: 30,
+          child: Image.asset(
+            "assets/images/map-location.png",
+            width: 20,
+            height: 20,
+            color: customColor[130],
+            fit: BoxFit.fitHeight,
+          ),
+        ),
+        title: Text(
+          name,
+          style: tertiaryText.copyWith(
+            fontSize: 15,
+          ),
+        ),
+        subtitle: Text(
+          "$assignCount tanod${assignCount != 1 ? 's' : ''}",
+          style: tertiaryText.copyWith(
+            fontSize: 12,
+          ),
+        ),
+        trailing: GestureDetector(
+          onTap: onTap,
+          child: Icon(
+            FontAwesomeIcons.trashAlt,
+            color: Colors.red,
+            size: 15,
+          ),
+        ),
+      ),
+    );
+  }
+}

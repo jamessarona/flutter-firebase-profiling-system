@@ -212,7 +212,8 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                           fontSize: 14, letterSpacing: 0),
                     ),
                     TextSpan(
-                      text: 'Name: ${_nameTextEditingController.text}\n',
+                      text:
+                          'Name: ${titleCase(_nameTextEditingController.text)}\n',
                     ),
                     TextSpan(
                       text:
@@ -226,7 +227,8 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                           'Contact Number: ${_contactNumberTextEditingController.text}\n',
                     ),
                     TextSpan(
-                      text: 'Address: ${_addressTextEditingController.text}\n',
+                      text:
+                          'Address: ${titleCase(_addressTextEditingController.text)}\n',
                     ),
                     TextSpan(
                       text: 'Fine: ₱${_fineTextEditingController.text}\n',
@@ -280,12 +282,14 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
 
                             _buildModalSuccessMessage(context);
                             isLoading = false;
+                            isSaveable = false;
                           });
                         } else {
                           _updateDocumentSubmission().then((value) {
                             Navigator.pop(context);
                             _buildModalSuccessMessage(context);
                             isLoading = false;
+                            isSaveable = false;
                           });
                         }
                       });
@@ -432,11 +436,11 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
       await dbRef.child('Violators').update({
         violators.length.toString(): {
           "ViolatorId": violators.length.toString(),
-          "Name": _nameTextEditingController.text,
+          "Name": titleCase(_nameTextEditingController.text),
           "Birthday": _birthdayTextEditingController.text,
           "Gender": selectedGender,
           "Contact": _contactNumberTextEditingController.text,
-          "Address": _addressTextEditingController.text,
+          "Address": titleCase(_addressTextEditingController.text),
         }
       });
     } else {
@@ -473,7 +477,7 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                 .child('Violators')
                 .child(violators[i]['ViolatorId'].toString())
                 .update({
-              "Address": _addressTextEditingController.text,
+              "Address": titleCase(_addressTextEditingController.text),
             });
           }
         }

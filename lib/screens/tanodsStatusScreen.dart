@@ -70,18 +70,14 @@ class _TanodsStatusScreenState extends State<TanodsStatusScreen> {
               return Container(
                 height: screenSize.height,
                 width: screenSize.width,
-                margin: EdgeInsets.only(
-                  left: screenSize.width * .01,
-                  right: screenSize.width * .01,
-                ),
                 child: Column(
                   children: [
                     Container(
                       margin: EdgeInsets.only(
                         top: 15,
                         bottom: 15,
-                        left: screenSize.width * .05,
-                        right: screenSize.width * .05,
+                        left: screenSize.width * .06,
+                        right: screenSize.width * .06,
                       ),
                       child: TextFormField(
                         controller: _searchTextEditingController,
@@ -134,7 +130,7 @@ class _TanodsStatusScreenState extends State<TanodsStatusScreen> {
                               name:
                                   "${item['Firstname']} ${item['Lastname']} ${checkIsUser(item['TanodUID'])}",
                               gender: item['Gender'],
-                              status: item['Status'],
+                              status: '${item['Area']} > ${item['Status']}',
                             ),
                         ],
                       ),

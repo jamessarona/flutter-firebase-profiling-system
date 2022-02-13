@@ -74,21 +74,21 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
                       children: [
                         TextSpan(
                             text: title == 'Assign'
-                                ? 'Do you want to apprehend the violator in '
+                                ? 'Do you want to apprehend the violator ${selectedReport[0]['ViolatorCount'] != 1 ? 's' : ''} in '
                                 : 'Do you want to '),
                         title == 'Assign'
                             ? TextSpan(
                                 text: selectedReport[0]['Location'],
                                 style: TextStyle(
-                                  decoration: TextDecoration.underline,
                                   color: Colors.red,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               )
                             : TextSpan(
                                 text: 'Drop',
                                 style: TextStyle(
-                                  decoration: TextDecoration.underline,
                                   color: Colors.red,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                         title == 'Assign'

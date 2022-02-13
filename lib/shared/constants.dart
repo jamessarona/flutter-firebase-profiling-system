@@ -367,18 +367,18 @@ List filterTanods(List<dynamic> list, String search) {
       }
     }
 
-    var filteredViolators = new List.filled(count, []);
+    var filteredTanods = new List.filled(count, []);
     int x = 0;
     for (int i = 0; i < list.length; i++) {
       if (("${list[i]['Firstname']} ${list[i]['Lastname']}")
           .toLowerCase()
           .contains(search.toLowerCase())) {
-        filteredViolators[x++].add(list[i]);
+        filteredTanods[x++].add(list[i]);
       }
     }
 
-    return filteredViolators.isNotEmpty
-        ? (filteredViolators[0]
+    return filteredTanods.isNotEmpty
+        ? (filteredTanods[0]
           ..sort((a, b) => "${a['Firstname']} ${a['Lastname']}"
               .compareTo("${b['Firstname']} ${b['Lastname']}")))
         : [];
@@ -386,6 +386,31 @@ List filterTanods(List<dynamic> list, String search) {
     return list
       ..sort((a, b) => "${a['Firstname']} ${a['Lastname']}"
           .compareTo("${b['Firstname']} ${b['Lastname']}"));
+  }
+}
+
+List filterLocations(List<dynamic> list, String search) {
+  if (search != '') {
+    int count = 0;
+    for (int i = 0; i < list.length; i++) {
+      if (list[i]['Name'].toLowerCase().contains(search.toLowerCase())) {
+        count++;
+      }
+    }
+
+    var filteredLocations = new List.filled(count, []);
+    int x = 0;
+    for (int i = 0; i < list.length; i++) {
+      if (list[i]['Name'].toLowerCase().contains(search.toLowerCase())) {
+        filteredLocations[x++].add(list[i]);
+      }
+    }
+
+    return filteredLocations.isNotEmpty
+        ? (filteredLocations[0]..sort((a, b) => a['Name'].compareTo(a['Name'])))
+        : [];
+  } else {
+    return list..sort((a, b) => a['Name'].compareTo(b['Name']));
   }
 }
 
