@@ -58,6 +58,9 @@ class _RootState extends State<Root> {
         return widget.reportId != ''
             ? new DetailReportScreen(
                 id: widget.reportId,
+                isFromNotification: true,
+                auth: widget.auth,
+                onSignOut: _signedOut,
               )
             : new MainScreen(
                 auth: widget.auth,

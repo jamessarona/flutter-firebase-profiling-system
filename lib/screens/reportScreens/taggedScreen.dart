@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:tanod_apprehension/net/authenticationService.dart';
 import 'package:tanod_apprehension/screens/detailReportScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/globals.dart';
@@ -11,8 +12,12 @@ import 'package:tanod_apprehension/shared/mySpinKits.dart';
 
 class TaggedScreen extends StatefulWidget {
   final String userUID;
+  final BaseAuth auth;
+  final VoidCallback onSignOut;
   const TaggedScreen({
     required this.userUID,
+    required this.auth,
+    required this.onSignOut,
   });
 
   @override
@@ -152,6 +157,9 @@ class _TaggedScreenState extends State<TaggedScreen> {
                                             builder: (ctx) =>
                                                 DetailReportScreen(
                                               id: item['Id'].toString(),
+                                              isFromNotification: false,
+                                              onSignOut: widget.onSignOut,
+                                              auth: widget.auth,
                                             ),
                                           ),
                                         );

@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_restart/flutter_app_restart.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tanod_apprehension/net/authenticationService.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
@@ -13,6 +15,7 @@ class DetailAccountScreen extends StatefulWidget {
   final String userUID;
   final String method;
   final String defaultValue;
+  final String email;
   final bool isEditable;
   final BaseAuth auth;
   final VoidCallback onSignOut;
@@ -20,6 +23,7 @@ class DetailAccountScreen extends StatefulWidget {
     required this.userUID,
     required this.method,
     required this.defaultValue,
+    required this.email,
     required this.isEditable,
     required this.auth,
     required this.onSignOut,
@@ -33,6 +37,7 @@ class _DetailAccountScreenState extends State<DetailAccountScreen> {
   late Size screenSize;
   final dbRef = FirebaseDatabase.instance.reference();
 
+  final currentUser = FirebaseAuth.instance.currentUser;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController _fieldTextEditingController = TextEditingController();
   TextEditingController _oldPasswordTextEditingController =
@@ -63,7 +68,7 @@ class _DetailAccountScreenState extends State<DetailAccountScreen> {
 
   bool isLoading = false;
   bool isSaveable = false;
-
+  bool isCurrentPasswordCorrect = true;
   String patttern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
 
   bool _checkIfReadOnly() {
@@ -82,20 +87,6 @@ class _DetailAccountScreenState extends State<DetailAccountScreen> {
     return isValid;
   }
 
-  bool validatePassword(String value) {
-    bool isValid = false;
-//     if (value != '') {
-//       var currentUser =   FirebaseAuth.instance.currentUser;
-//        try{
-// await currentUser.updatePassword(newPassword)
-//        }catch(e){
-
-//        }
-//     }
-
-    return isValid;
-  }
-
   String getValidation(String value) {
     RegExp regExp = new RegExp(patttern);
     String message = '';
@@ -110,10 +101,34 @@ class _DetailAccountScreenState extends State<DetailAccountScreen> {
     return message;
   }
 
-  void _validateUpdate() {
+  Future<void> _validateUpdate() async {
+    if (widget.method == 'Password') {
+      isCurrentPasswordCorrect = await validateCurrentPassword();
+      setState(() {});
+      print(isCurrentPasswordCorrect);
+    }
     if (_formKey.currentState!.validate()) {
       _buildCreateUpdateConfirmaModal(context);
     }
+  }
+
+  Future<bool> validateCurrentPassword() async {
+    User? firebaseUser = currentUser;
+
+    if (firebaseUser != null) {
+      var authCredential = EmailAuthProvider.credential(
+        email: widget.email,
+        password: _oldPasswordTextEditingController.text,
+      );
+      try {
+        var authResult =
+            await firebaseUser.reauthenticateWithCredential(authCredential);
+        return authResult.user != null;
+      } catch (e) {
+        return false;
+      }
+    }
+    return false;
   }
 
   _buildCreateUpdateConfirmaModal(BuildContext context) {
@@ -129,24 +144,45 @@ class _DetailAccountScreenState extends State<DetailAccountScreen> {
                 style: tertiaryText.copyWith(fontSize: 18),
               ),
               content: Text.rich(
-                TextSpan(
-                  style: secandaryText.copyWith(fontSize: 13, letterSpacing: 0),
-                  children: [
-                    TextSpan(
-                      text: '${widget.method}\n',
-                      style: secandaryText.copyWith(
-                          fontSize: 14, letterSpacing: 0),
-                    ),
-                    TextSpan(
-                      text:
-                          'Old: ${widget.method != 'Role' ? widget.defaultValue : widget.defaultValue == '0' ? 'Chief Tanod' : 'Barangay Tanod'}\n',
-                    ),
-                    TextSpan(
-                      text:
-                          'New: ${widget.method == 'Gender' ? selectedGender : widget.method == 'Role' ? selectedRole : titleCase(_fieldTextEditingController.text)}\n',
-                    ),
-                  ],
-                ),
+                widget.method != 'Password'
+                    ? TextSpan(
+                        style: secandaryText.copyWith(
+                            fontSize: 13, letterSpacing: 0),
+                        children: [
+                          TextSpan(
+                            text: '${widget.method}\n',
+                            style: secandaryText.copyWith(
+                                fontSize: 14, letterSpacing: 0),
+                          ),
+                          TextSpan(
+                            text:
+                                'Old: ${widget.method != 'Role' ? widget.defaultValue : widget.defaultValue == '0' ? 'Chief Tanod' : 'Barangay Tanod'}\n',
+                          ),
+                          TextSpan(
+                            text:
+                                'New: ${widget.method == 'Gender' ? selectedGender : widget.method == 'Role' ? selectedRole : titleCase(_fieldTextEditingController.text)}\n',
+                          ),
+                        ],
+                      )
+                    : TextSpan(
+                        text: 'You will be ',
+                        style: secandaryText.copyWith(
+                            fontSize: 13, letterSpacing: 0),
+                        children: [
+                          TextSpan(
+                            text: 'redirected ',
+                            style: secandaryText.copyWith(
+                              fontSize: 13,
+                              letterSpacing: 0,
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          TextSpan(
+                            text: 'in the login page after this process.',
+                          ),
+                        ],
+                      ),
               ),
               actions: [
                 Container(
@@ -181,13 +217,24 @@ class _DetailAccountScreenState extends State<DetailAccountScreen> {
                     onPressed: () {
                       setState(() {
                         isLoading = true;
-                        _saveUpdate().then((value) {
-                          _fieldTextEditingController.clear();
-                          Navigator.pop(context);
+                        if (widget.method != 'Password') {
+                          _saveUpdate().then((value) {
+                            _fieldTextEditingController.clear();
+                            Navigator.pop(context);
 
-                          _buildModalSuccessMessage(context);
-                          isLoading = false;
-                        });
+                            _buildModalSuccessMessage(context);
+                            isLoading = false;
+                          });
+                        } else {
+                          _updatePassword().then((value) {
+                            _oldPasswordTextEditingController.clear();
+                            _newPasswordTextEditingController.clear();
+                            _confirmPasswordTextEditingController.clear();
+                            Navigator.pop(context);
+                            _buildModalSuccessMessage(context);
+                            isLoading = false;
+                          });
+                        }
                       });
                     },
                   ),
@@ -276,6 +323,19 @@ class _DetailAccountScreenState extends State<DetailAccountScreen> {
     return '';
   }
 
+  Future<String> _updatePassword() async {
+    User? firebaseUser = currentUser;
+    firebaseUser!
+        .updatePassword(_newPasswordTextEditingController.text)
+        .then((_) {
+      print("Successfully changed password");
+    }).catchError((error) {
+      print("Password can't be changed" + error.toString());
+      //This might happen, when the wrong password is in, the user isn't found, or if the user hasn't logged in recently.
+    });
+    return '';
+  }
+
   Future<void> _buildModalSuccessMessage(BuildContext context) async {
     return await showDialog(
       context: context,
@@ -284,6 +344,11 @@ class _DetailAccountScreenState extends State<DetailAccountScreen> {
         _timer = Timer(Duration(seconds: 1), () {
           Navigator.of(context).pop();
           Navigator.of(context).pop();
+          if (widget.method == 'Password') {
+            widget.auth
+                .signOut()
+                .then((value) async => await FlutterRestart.restartApp());
+          }
         });
         return AlertDialog(
           backgroundColor: customColor[130],
@@ -300,7 +365,9 @@ class _DetailAccountScreenState extends State<DetailAccountScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "Modification has been saved",
+                    widget.method != 'Password'
+                        ? "Modification has been saved."
+                        : "Password has been changed.",
                     style: tertiaryText.copyWith(
                       fontSize: 25,
                       color: Colors.white,
@@ -439,9 +506,16 @@ class _DetailAccountScreenState extends State<DetailAccountScreen> {
                                       validation: (value) {
                                         if (value == '') {
                                           return 'Password is Empty';
-                                        } else if (validatePassword(value!)) {
-                                          return 'Incorrect Password';
                                         }
+
+                                        if (!isCurrentPasswordCorrect) {
+                                          return 'Password is incorrect';
+                                        }
+                                        // validatePassword(value!);
+                                        // print('Answer: $isInCorrectPassword');
+                                        // if (isInCorrectPassword) {
+                                        //   return 'Incorrect Password';
+                                        // }
                                       },
                                       onChanged: (value) {
                                         setState(() {
@@ -460,7 +534,7 @@ class _DetailAccountScreenState extends State<DetailAccountScreen> {
                                       },
                                       onTap: () {},
                                       prefixIcon: null,
-                                      labelText: 'Old ${widget.method}',
+                                      labelText: 'Current ${widget.method}',
                                       hintText: "",
                                       isReadOnly: _checkIfReadOnly(),
                                       controller:
@@ -488,6 +562,10 @@ class _DetailAccountScreenState extends State<DetailAccountScreen> {
                                           return 'Password is Empty';
                                         } else if (value!.length < 6) {
                                           return 'Password is to short';
+                                        } else if (value ==
+                                            _oldPasswordTextEditingController
+                                                .text) {
+                                          return 'Password is the same from current password';
                                         }
                                       },
                                       onChanged: (value) {

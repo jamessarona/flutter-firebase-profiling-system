@@ -634,11 +634,15 @@ class MyTanodCard extends StatelessWidget {
   final String name;
   final String gender;
   final String status;
+  final VoidCallback onTap;
+  final bool isDisabled;
 
   const MyTanodCard({
     required this.name,
     required this.gender,
     required this.status,
+    required this.onTap,
+    required this.isDisabled,
   });
 
   @override
@@ -663,9 +667,19 @@ class MyTanodCard extends StatelessWidget {
           ),
         ),
         subtitle: Text(
-          status,
+          isDisabled ? '' : status,
           style: tertiaryText.copyWith(
             fontSize: 12,
+          ),
+        ),
+        trailing: GestureDetector(
+          onTap: onTap,
+          child: Icon(
+            isDisabled
+                ? FontAwesomeIcons.timesCircle
+                : FontAwesomeIcons.checkCircle,
+            color: isDisabled ? Colors.red : Colors.green,
+            size: 15,
           ),
         ),
       ),

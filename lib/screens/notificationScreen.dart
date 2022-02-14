@@ -2,6 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tanod_apprehension/net/authenticationService.dart';
 import 'package:tanod_apprehension/screens/detailReportScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/myCards.dart';
@@ -9,7 +10,12 @@ import 'package:tanod_apprehension/shared/myContainers.dart';
 import 'package:tanod_apprehension/shared/mySpinKits.dart';
 
 class NotificationScreen extends StatefulWidget {
-  const NotificationScreen();
+  final BaseAuth auth;
+  final VoidCallback onSignOut;
+  const NotificationScreen({
+    required this.auth,
+    required this.onSignOut,
+  });
 
   @override
   _NotificationScreenState createState() => _NotificationScreenState();
@@ -85,6 +91,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                 MaterialPageRoute(
                                   builder: (ctx) => DetailReportScreen(
                                     id: item['Id'].toString(),
+                                    isFromNotification: false,
+                                    auth: widget.auth,
+                                    onSignOut: widget.onSignOut,
                                   ),
                                 ),
                               );

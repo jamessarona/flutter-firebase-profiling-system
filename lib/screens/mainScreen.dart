@@ -321,8 +321,10 @@ class _MainScreenState extends State<MainScreen> {
                                       Reset.filter();
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
-                                          builder: (ctx) =>
-                                              NotificationScreen(),
+                                          builder: (ctx) => NotificationScreen(
+                                            auth: widget.auth,
+                                            onSignOut: widget.onSignOut,
+                                          ),
                                         ),
                                       );
                                     },
@@ -353,6 +355,9 @@ class _MainScreenState extends State<MainScreen> {
                                               builder: (ctx) =>
                                                   DetailReportScreen(
                                                 id: _getAssignedReportId(),
+                                                isFromNotification: false,
+                                                auth: widget.auth,
+                                                onSignOut: widget.onSignOut,
                                               ),
                                             ),
                                           );
@@ -412,7 +417,10 @@ class _MainScreenState extends State<MainScreen> {
                                                 MaterialPageRoute(
                                                   builder: (ctx) =>
                                                       AssignmentHistoryScreen(
-                                                          userUID: userUID),
+                                                    userUID: userUID,
+                                                    auth: widget.auth,
+                                                    onSignOut: widget.onSignOut,
+                                                  ),
                                                 ),
                                               );
                                             },
@@ -428,7 +436,10 @@ class _MainScreenState extends State<MainScreen> {
                                               Navigator.of(context).push(
                                                 MaterialPageRoute(
                                                   builder: (ctx) =>
-                                                      ViolatorsScreen(),
+                                                      ViolatorsScreen(
+                                                    auth: widget.auth,
+                                                    onSignOut: widget.onSignOut,
+                                                  ),
                                                 ),
                                               );
                                             },

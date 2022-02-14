@@ -1,13 +1,19 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tanod_apprehension/net/authenticationService.dart';
 import 'package:tanod_apprehension/screens/detailViolatorScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/myCards.dart';
 import 'package:tanod_apprehension/shared/mySpinKits.dart';
 
 class ViolatorsScreen extends StatefulWidget {
-  const ViolatorsScreen({Key? key}) : super(key: key);
+  final BaseAuth auth;
+  final VoidCallback onSignOut;
+  const ViolatorsScreen({
+    required this.auth,
+    required this.onSignOut,
+  });
 
   @override
   _ViolatorsScreenState createState() => _ViolatorsScreenState();
@@ -129,6 +135,8 @@ class _ViolatorsScreenState extends State<ViolatorsScreen> {
                                   MaterialPageRoute(
                                     builder: (ctx) => DetailViolatorScreen(
                                       id: item['ViolatorId'].toString(),
+                                      auth: widget.auth,
+                                      onSignOut: widget.onSignOut,
                                     ),
                                   ),
                                 );

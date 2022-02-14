@@ -100,6 +100,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           MaterialPageRoute(
                             builder: (ctx) => TanodsStatusScreen(
                               userUID: widget.userUID,
+                              onSignIn: widget.onSignIn,
+                              auth: widget.auth,
                             ),
                           ),
                         );
@@ -132,54 +134,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             builder: (ctx) => LocationScreen(),
                           ),
                         );
-                      },
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(
-                        top: 15,
-                        left: 4,
-                        bottom: 5,
-                      ),
-                      child: Text(
-                        'App Settings',
-                        style: tertiaryText.copyWith(
-                            fontSize: 16,
-                            letterSpacing: 0,
-                            color: Colors.grey[800]),
-                      ),
-                    ),
-                    MyInformationCard(
-                      icon: 'about.png',
-                      //  Icon(
-                      //   FontAwesomeIcons.folderOpen,
-                      //   color: customColor[130],
-                      // ),
-                      text: "About",
-                      onTap: () {
-                        // Navigator.of(context).push(
-                        //   MaterialPageRoute(
-                        //     builder: (ctx) =>
-                        //         AssignmentHistoryScreen(
-                        //             userUID: userUID),
-                        //   ),
-                        // );
-                      },
-                    ),
-                    MyInformationCard(
-                      icon: 'help.png',
-                      //  Icon(
-                      //   FontAwesomeIcons.folderOpen,
-                      //   color: customColor[130],
-                      // ),
-                      text: "Help",
-                      onTap: () {
-                        // Navigator.of(context).push(
-                        //   MaterialPageRoute(
-                        //     builder: (ctx) =>
-                        //         AssignmentHistoryScreen(
-                        //             userUID: userUID),
-                        //   ),
-                        // );
                       },
                     ),
                   ],

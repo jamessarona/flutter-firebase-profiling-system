@@ -652,7 +652,10 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             Reset.filter();
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (ctx) => NotificationScreen(),
+                                builder: (ctx) => NotificationScreen(
+                                  auth: widget.auth,
+                                  onSignOut: widget.onSignOut,
+                                ),
                               ),
                             );
                           },

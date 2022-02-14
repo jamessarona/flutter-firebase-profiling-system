@@ -13,19 +13,7 @@ class LocalNotificationServices {
 
     _notificationsPlugin.initialize(initializationSettings,
         onSelectNotification: (String? reportId) async {
-      if (reportId != null) {
-        // Navigator.of(context).pushReplacement(
-        //   MaterialPageRoute(
-        //     builder: (ctx) => DetailReportScreen(
-        //       id: reportId.toString(),
-        //     ),
-        //   ),
-        // );
-        // Navigator.push(
-        //     context,
-        //     MaterialPageRoute(
-        //         builder: (context) => DetailReportScreen(id: reportId)));
-      }
+      if (reportId != null) {}
     });
   }
 

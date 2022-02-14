@@ -37,6 +37,8 @@ class ReportsScreen extends StatefulWidget {
   _ReportsScreenState createState() => _ReportsScreenState();
 }
 
+late BaseAuth auth;
+late VoidCallback onSignOut;
 var reports;
 late Size screenSize;
 final dbRef = FirebaseDatabase.instance.reference();
@@ -47,12 +49,18 @@ String userUID = '';
 List<StatefulWidget> screens = [
   ActiveScreen(
     userUID: userUID,
+    auth: auth,
+    onSignOut: onSignOut,
   ),
   DroppedScreen(
     userUID: userUID,
+    auth: auth,
+    onSignOut: onSignOut,
   ),
   TaggedScreen(
     userUID: userUID,
+    auth: auth,
+    onSignOut: onSignOut,
   ),
 ];
 
@@ -61,6 +69,8 @@ class _ReportsScreenState extends State<ReportsScreen> {
   void initState() {
     super.initState();
     currentIndex = widget.defaultIndex;
+    auth = widget.auth;
+    onSignOut = widget.onSignOut;
   }
 
   @override
@@ -115,7 +125,10 @@ class _ReportsScreenState extends State<ReportsScreen> {
                       Reset.filter();
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (ctx) => NotificationScreen(),
+                          builder: (ctx) => NotificationScreen(
+                            auth: widget.auth,
+                            onSignOut: widget.onSignOut,
+                          ),
                         ),
                       );
                     },

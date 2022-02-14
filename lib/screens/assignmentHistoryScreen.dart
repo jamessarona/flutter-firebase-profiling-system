@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tanod_apprehension/net/authenticationService.dart';
 import 'package:tanod_apprehension/screens/detailReportScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/myCards.dart';
@@ -9,8 +10,13 @@ import 'package:tanod_apprehension/shared/mySpinKits.dart';
 
 class AssignmentHistoryScreen extends StatefulWidget {
   final String userUID;
-
-  const AssignmentHistoryScreen({required this.userUID});
+  final BaseAuth auth;
+  final VoidCallback onSignOut;
+  const AssignmentHistoryScreen({
+    required this.userUID,
+    required this.auth,
+    required this.onSignOut,
+  });
 
   @override
   _AssignmentHistoryScreenState createState() =>
@@ -150,6 +156,9 @@ class _AssignmentHistoryScreenState extends State<AssignmentHistoryScreen> {
                                       MaterialPageRoute(
                                         builder: (ctx) => DetailReportScreen(
                                           id: item['Id'].toString(),
+                                          isFromNotification: false,
+                                          auth: widget.auth,
+                                          onSignOut: widget.onSignOut,
                                         ),
                                       ),
                                     );

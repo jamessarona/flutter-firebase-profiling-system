@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tanod_apprehension/net/authenticationService.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/myButtons.dart';
@@ -17,6 +18,8 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
+FocusNode myPasswordNode = new FocusNode();
+FocusNode myEmailNode = new FocusNode();
 late Size screenSize;
 final dbRef = FirebaseDatabase.instance.reference();
 String email = "", password = "";
@@ -32,12 +35,11 @@ var tanods;
 class _LoginScreenState extends State<LoginScreen> {
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
-  void firebaseCloudMessaginglisteners(String userUID) async {
+  void firebaseCloudMessaginglisteners(String userUID, bool isDisabled) async {
     await _firebaseMessaging.getToken().then((token) {
       if (token != null) {
         getUserID(userUID).then((userId) {
-          print('user id: $userId');
-          saveToken(token, userId);
+          saveToken(token, userId, isDisabled);
         });
       }
     });
@@ -53,14 +55,14 @@ class _LoginScreenState extends State<LoginScreen> {
     return userId;
   }
 
-  Future<void> saveToken(String token, String userId) async {
+  Future<void> saveToken(String token, String userId, bool isDisabled) async {
     await dbRef.child('Tanods').child(userId).update({
-      'Token': token,
+      'Token': isDisabled ? '?' : token,
     });
   }
 
   void validation() async {
-    String userId;
+    String userUID;
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
@@ -70,17 +72,28 @@ class _LoginScreenState extends State<LoginScreen> {
           _authIsNotValid = false;
         });
 
-        userId = await widget.auth.signInWithEmailAndPassword(email, password);
-        firebaseCloudMessaginglisteners(userId);
+        userUID = await widget.auth.signInWithEmailAndPassword(email, password);
         // ignore: unnecessary_null_comparison
-        if (userId != null) {
-          widget.onSignIn!();
+        if (userUID != null) {
+          bool isDisabled = checkAccountIsDisabled(userUID);
+          if (isDisabled) {
+            setState(() {
+              firebaseCloudMessaginglisteners(userUID, isDisabled);
+              authMessage = 'Account is disabled!';
+              widget.auth.signOut();
+              _authIsNotValid = true;
+            });
+          } else {
+            firebaseCloudMessaginglisteners(userUID, isDisabled);
+            widget.onSignIn!();
+          }
         }
       } on FirebaseAuthException catch (e) {
         print(e.code);
         if (e.code == 'wrong-password') {
           setState(() {
             _authIsNotValid = true;
+
             authMessage = 'Password is incorrect!';
           });
         } else {
@@ -96,23 +109,30 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  bool checkAccountIsDisabled(String userUID) {
+    bool isDisabled = false;
+    for (int i = 0; i < tanods.length; i++) {
+      if (tanods[i]['TanodUID'] == userUID) {
+        if (tanods[i]['Status'] == 'Disabled') {
+          isDisabled = true;
+        }
+      }
+    }
+    return isDisabled;
+  }
+
   Widget _buildLogo() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: screenSize.height / 30),
-          child: Text(
-            "Facemask Apprehension",
-            style: secandaryText.copyWith(
-              fontSize: screenSize.height / 35,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1,
-              color: Colors.white,
-            ),
-          ),
+    return Container(
+      padding: EdgeInsets.only(bottom: 30, top: 40),
+      child: Text(
+        "Sign-in and apprehend violators",
+        style: tertiaryText.copyWith(
+          fontSize: 20,
+          letterSpacing: 1,
+          color: Colors.white,
         ),
-      ],
+        maxLines: 2,
+      ),
     );
   }
 
@@ -125,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Radius.circular(29),
           ),
           child: Container(
-            height: screenSize.height * 0.6,
+            height: 480,
             width: screenSize.width * 0.8,
             decoration: BoxDecoration(
               color: Colors.white,
@@ -137,15 +157,23 @@ class _LoginScreenState extends State<LoginScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    height: 40,
+                    margin: EdgeInsets.only(
+                      bottom: 20,
+                      top: 30,
+                    ),
+                    height: 70,
+                    width: 70,
+                    decoration: BoxDecoration(),
+                    child: Image.asset(
+                      'assets/images/app-logo.png',
+                    ),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         "Login",
-                        style: secandaryText.copyWith(
-                            fontSize: screenSize.height / 30),
+                        style: secandaryText.copyWith(fontSize: 20),
                       ),
                     ],
                   ),
@@ -155,7 +183,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   _buildEmailRow(),
                   _buildPasswordRow(),
                   _buildAuthenticationMessage(),
-                  _buildForgetPasswordButton(),
                   _buildLoginButton()
                 ],
               ),
@@ -185,15 +212,13 @@ class _LoginScreenState extends State<LoginScreen> {
             email = value!;
           });
         },
-        prefixIcon: GestureDetector(
-          onTap: () {},
-          child: Icon(
-            Icons.email_outlined,
-            color: customColor[130],
-          ),
+        prefixIcon: Icon(
+          Icons.email_outlined,
+          color: customColor[130],
         ),
         labelText: "E-mail",
         hintText: "something@email.com",
+        focusNode: myEmailNode,
       ),
     );
   }
@@ -214,18 +239,23 @@ class _LoginScreenState extends State<LoginScreen> {
             password = value!;
           });
         },
-        prefixIcon: GestureDetector(
+        prefixIcon: Icon(
+          Icons.lock_outline,
+          color: customColor[130],
+        ),
+        labelText: "Password",
+        suffixIcon: GestureDetector(
           onTap: () {
             setState(() {
               isobscureText = !isobscureText;
             });
           },
           child: Icon(
-            isobscureText == true ? Icons.lock_outline : Icons.lock_open,
-            color: customColor[130],
+            isobscureText ? FontAwesomeIcons.eyeSlash : FontAwesomeIcons.eye,
+            color: myPasswordNode.hasFocus ? customColor[130] : Colors.grey,
           ),
         ),
-        labelText: "Password",
+        focusNode: myPasswordNode,
       ),
     );
   }
@@ -245,30 +275,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 )
               : null,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildForgetPasswordButton() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // ignore: deprecated_member_use
-        FlatButton(
-          onPressed: () {
-            // ignore: deprecated_member_use
-            _scaffoldKey.currentState!.showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Contact Administrator: abc@gmail.com',
-                ),
-                duration: Duration(seconds: 2),
-              ),
-            );
-          },
-          child: Text("Forgot Password"),
         ),
       ],
     );
@@ -307,46 +313,33 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildSignUpButton() {
+  Widget _buildFooterMessage() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Padding(
-          padding: EdgeInsets.only(top: 40),
+          padding: EdgeInsets.only(top: 100),
           // ignore: deprecated_member_use
-          child: FlatButton(
-            onPressed: () {
-              // ignore: deprecated_member_use
-              _scaffoldKey.currentState!.showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Contact Administrator: abc@gmail.com',
+          child: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: "Powered by: ",
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
                   ),
-                  duration: Duration(seconds: 2),
                 ),
-              );
-            },
-            child: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: "Dont have an account? ",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: screenSize.height / 40,
-                      fontWeight: FontWeight.w400,
-                    ),
+                TextSpan(
+                  text: "TDP Corp.",
+                  style: TextStyle(
+                    color: customColor[130]!.withOpacity(.75),
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
                   ),
-                  TextSpan(
-                    text: "Sign up",
-                    style: TextStyle(
-                      color: customColor[130],
-                      fontSize: screenSize.height / 40,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
@@ -373,29 +366,33 @@ class _LoginScreenState extends State<LoginScreen> {
                 return MySpinKitLoadingScreen();
               }
 
-              return Stack(
+              return ListView(
                 children: [
-                  Container(
-                    height: screenSize.height * .7,
-                    width: screenSize.width,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: customColor[130],
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: const Radius.circular(70),
-                          bottomRight: const Radius.circular(70),
+                  Stack(
+                    children: [
+                      Container(
+                        height: 500,
+                        width: screenSize.width,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: customColor[130],
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: const Radius.circular(70),
+                              bottomRight: const Radius.circular(70),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildLogo(),
-                      _buildContainer(),
-                      _buildSignUpButton(),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          _buildLogo(),
+                          _buildContainer(),
+                          _buildFooterMessage(),
+                        ],
+                      )
                     ],
-                  )
+                  ),
                 ],
               );
             }),

@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tanod_apprehension/net/authenticationService.dart';
+import 'package:tanod_apprehension/screens/mainScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/myButtons.dart';
 import 'package:tanod_apprehension/shared/mySpinKits.dart';
@@ -14,10 +16,16 @@ class ReportDocumentation extends StatefulWidget {
   final String id;
   final String tanodId;
   final String? selectedViolatorId;
+  final bool isFromNotification;
+  final BaseAuth auth;
+  final VoidCallback onSignOut;
   const ReportDocumentation({
     required this.id,
     required this.tanodId,
     this.selectedViolatorId,
+    required this.isFromNotification,
+    required this.auth,
+    required this.onSignOut,
   });
 
   @override
@@ -496,7 +504,18 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
           if (isTagged) {
             violatorNames.clear();
             Navigator.of(context).pop();
-            Navigator.of(context).pop();
+            if (widget.isFromNotification) {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (ctx) => MainScreen(
+                      leading: 'Home',
+                      auth: widget.auth,
+                      onSignOut: widget.onSignOut),
+                ),
+              );
+            } else {
+              Navigator.of(context).pop();
+            }
           }
         });
         return AlertDialog(

@@ -3,10 +3,12 @@ import 'package:intl/intl.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tanod_apprehension/net/authenticationService.dart';
 import 'package:tanod_apprehension/screens/detailAssignedTanodsReportScreen.dart';
 import 'package:tanod_apprehension/screens/detailDocumentedViolatorsScreen.dart';
 import 'package:tanod_apprehension/screens/detailImageFullscreen.dart';
 import 'package:tanod_apprehension/screens/documentReportScreen.dart';
+import 'package:tanod_apprehension/screens/mainScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/myButtons.dart';
 import 'package:tanod_apprehension/shared/myContainers.dart';
@@ -15,8 +17,14 @@ import 'package:tanod_apprehension/shared/myText.dart';
 
 class DetailReportScreen extends StatefulWidget {
   final String id;
+  final bool isFromNotification;
+  final BaseAuth auth;
+  final VoidCallback onSignOut;
   const DetailReportScreen({
     required this.id,
+    required this.isFromNotification,
+    required this.auth,
+    required this.onSignOut,
   });
 
   @override
@@ -570,7 +578,18 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
                                       size: 18,
                                     ),
                                     onPressed: () {
-                                      Navigator.of(context).pop();
+                                      if (widget.isFromNotification) {
+                                        Navigator.of(context).pushReplacement(
+                                          MaterialPageRoute(
+                                            builder: (ctx) => MainScreen(
+                                                leading: 'Home',
+                                                auth: widget.auth,
+                                                onSignOut: widget.onSignOut),
+                                          ),
+                                        );
+                                      } else {
+                                        Navigator.of(context).pop();
+                                      }
                                     },
                                   ),
                                   flexibleSpace: Stack(
@@ -949,12 +968,19 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
                                                         MaterialPageRoute(
                                                           builder: (ctx) =>
                                                               ReportDocumentation(
-                                                                  id: widget.id,
-                                                                  tanodId: userData[
-                                                                      'TanodId'],
-                                                                  selectedViolatorId:
-                                                                      item[
-                                                                          "ViolatorId"]),
+                                                            id: widget.id,
+                                                            tanodId: userData[
+                                                                'TanodId'],
+                                                            selectedViolatorId:
+                                                                item[
+                                                                    "ViolatorId"],
+                                                            isFromNotification:
+                                                                widget
+                                                                    .isFromNotification,
+                                                            auth: widget.auth,
+                                                            onSignOut: widget
+                                                                .onSignOut,
+                                                          ),
                                                         ),
                                                       );
                                                     } else {
@@ -1079,6 +1105,11 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
                                                           id: widget.id,
                                                           tanodId: userData[
                                                               'TanodId'],
+                                                          isFromNotification: widget
+                                                              .isFromNotification,
+                                                          auth: widget.auth,
+                                                          onSignOut:
+                                                              widget.onSignOut,
                                                         ),
                                                       ),
                                                     );

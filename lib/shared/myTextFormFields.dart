@@ -1,27 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tanod_apprehension/shared/constants.dart';
 
 class MyTextFormField extends StatelessWidget {
   final TextInputType? inputType;
   final bool isObscureText;
   final FormFieldValidator<String>? validation;
   final FormFieldValidator<String>? onChanged;
-  final GestureDetector? prefixIcon;
+  final Icon prefixIcon;
   final String? labelText;
   final String? hintText;
-  MyTextFormField({
-    this.inputType,
-    required this.isObscureText,
-    this.validation,
-    this.onChanged,
-    this.prefixIcon,
-    this.labelText,
-    this.hintText,
-  });
+  final GestureDetector? suffixIcon;
+  final FocusNode focusNode;
+  MyTextFormField(
+      {this.inputType,
+      required this.isObscureText,
+      this.validation,
+      this.onChanged,
+      required this.prefixIcon,
+      this.labelText,
+      this.hintText,
+      this.suffixIcon,
+      required this.focusNode});
 
   @override
   Widget build(BuildContext context) {
+    print(focusNode.hasFocus);
     return TextFormField(
+      focusNode: focusNode,
       keyboardType: inputType,
       obscureText: isObscureText,
       validator: validation,
@@ -30,6 +36,17 @@ class MyTextFormField extends StatelessWidget {
         prefixIcon: prefixIcon,
         labelText: labelText,
         hintText: hintText,
+        isDense: true,
+        suffixIcon: suffixIcon,
+        filled: true,
+        fillColor: Colors.white70,
+        labelStyle: TextStyle(
+            color: focusNode.hasFocus == true
+                ? customColor[130]
+                : Colors.grey[700]),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Color(0xff1c52dd)),
+        ),
       ),
     );
   }
