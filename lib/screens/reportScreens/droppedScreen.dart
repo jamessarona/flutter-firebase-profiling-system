@@ -31,6 +31,7 @@ class _DroppedScreenState extends State<DroppedScreen> {
   var filteredReports;
   var tanods;
   var userData;
+
   bool checkReportIsAssignedToTanod(String reportId, int method) {
     bool status = false;
     for (int i = 0; i < filteredReports[0].length; i++) {
@@ -96,6 +97,7 @@ class _DroppedScreenState extends State<DroppedScreen> {
                       child: MySpinKitLoadingScreen());
                 }
                 filteredReports = filterReport("Dropped", reports);
+
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [

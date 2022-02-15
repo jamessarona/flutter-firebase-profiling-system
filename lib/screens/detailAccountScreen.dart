@@ -62,6 +62,7 @@ class _DetailAccountScreenState extends State<DetailAccountScreen> {
   var tanods;
   var userData;
   late Timer _timer;
+
   bool isObscureOldPassword = true;
   bool isObscureNewPassword = true;
   bool isObscureConfirmPassword = true;

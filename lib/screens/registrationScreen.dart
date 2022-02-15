@@ -166,6 +166,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           Navigator.pop(context);
 
                           _buildModalSuccessMessage(context);
+                          isSaveable = false;
                           isLoading = false;
                         });
                       });

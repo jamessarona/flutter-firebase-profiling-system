@@ -47,6 +47,7 @@ class _TaggedScreenState extends State<TaggedScreen> {
                 child: MySpinKitLoadingScreen());
           }
           var filteredReports = filterReport("Tagged", reports);
+
           return Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [

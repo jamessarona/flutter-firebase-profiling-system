@@ -96,6 +96,7 @@ class _ActiveScreenState extends State<ActiveScreen> {
                   );
                 }
                 filteredReports = filterReport("Latest", reports);
+
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [

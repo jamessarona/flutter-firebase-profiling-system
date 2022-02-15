@@ -121,13 +121,13 @@ class _LoginScreenState extends State<LoginScreen> {
     return isDisabled;
   }
 
-  Widget _buildLogo() {
+  Widget _buildHeader() {
     return Container(
-      padding: EdgeInsets.only(bottom: 30, top: 40),
+      padding: EdgeInsets.only(bottom: 30, top: 50),
       child: Text(
-        "Sign-in and apprehend violators",
+        "Welcome to Tanood App",
         style: tertiaryText.copyWith(
-          fontSize: 20,
+          fontSize: 16,
           letterSpacing: 1,
           color: Colors.white,
         ),
@@ -145,7 +145,6 @@ class _LoginScreenState extends State<LoginScreen> {
             Radius.circular(29),
           ),
           child: Container(
-            height: 480,
             width: screenSize.width * 0.8,
             decoration: BoxDecoration(
               color: Colors.white,
@@ -168,14 +167,18 @@ class _LoginScreenState extends State<LoginScreen> {
                       'assets/images/app-logo.png',
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Login",
-                        style: secandaryText.copyWith(fontSize: 20),
-                      ),
-                    ],
+                  Text(
+                    "Sign in",
+                    style: secandaryText.copyWith(fontSize: 25),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(
+                      top: 10,
+                    ),
+                    child: Text(
+                      'Get authenticated and apprehend violators!',
+                      style: secandaryText.copyWith(fontSize: 12),
+                    ),
                   ),
                   Container(
                     height: 20,
@@ -183,7 +186,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   _buildEmailRow(),
                   _buildPasswordRow(),
                   _buildAuthenticationMessage(),
-                  _buildLoginButton()
+                  _buildLoginButton(),
                 ],
               ),
             ),
@@ -261,22 +264,18 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildAuthenticationMessage() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(
-          height: screenSize.height * 0.03,
-          child: _authIsNotValid == true
-              ? Text(
-                  authMessage,
-                  style: tertiaryText.copyWith(
-                    fontSize: screenSize.height / 60,
-                    color: Colors.red,
-                  ),
-                )
-              : null,
-        ),
-      ],
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10),
+      height: screenSize.height * 0.03,
+      child: _authIsNotValid == true
+          ? Text(
+              authMessage,
+              style: tertiaryText.copyWith(
+                fontSize: screenSize.height / 60,
+                color: Colors.red,
+              ),
+            )
+          : null,
     );
   }
 
@@ -368,29 +367,34 @@ class _LoginScreenState extends State<LoginScreen> {
 
               return ListView(
                 children: [
-                  Stack(
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        height: 500,
-                        width: screenSize.width,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: customColor[130],
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: const Radius.circular(70),
-                              bottomRight: const Radius.circular(70),
+                      Stack(
+                        children: [
+                          Container(
+                            height: 500,
+                            width: screenSize.width,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: customColor[130],
+                                borderRadius: BorderRadius.only(
+                                  bottomLeft: const Radius.circular(70),
+                                  bottomRight: const Radius.circular(70),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          _buildLogo(),
-                          _buildContainer(),
-                          _buildFooterMessage(),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              _buildHeader(),
+                              _buildContainer(),
+                            ],
+                          ),
                         ],
-                      )
+                      ),
+                      _buildFooterMessage(),
                     ],
                   ),
                 ],

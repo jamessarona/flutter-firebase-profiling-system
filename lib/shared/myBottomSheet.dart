@@ -7,8 +7,9 @@ import 'package:intl/intl.dart';
 
 class BuildBottomSheet extends StatelessWidget {
   final String page;
-  const BuildBottomSheet({required this.page});
-
+  const BuildBottomSheet({
+    required this.page,
+  });
   @override
   Widget build(BuildContext context) {
     return StatefulBuilder(

@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:tanod_apprehension/net/authenticationService.dart';
 import 'package:tanod_apprehension/screens/detailAccountScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
+import 'package:tanod_apprehension/shared/myButtons.dart';
 import 'package:tanod_apprehension/shared/myCards.dart';
 import 'package:tanod_apprehension/shared/myListTile.dart';
 import 'package:tanod_apprehension/shared/mySpinKits.dart';
@@ -81,6 +82,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
   }
 
   String deletePhoto() {
+    image = null;
     setState(() {});
     return '';
   }
@@ -118,6 +120,75 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
     return '';
   }
 
+  _buildCreateCancelUpdateConfirmaModal(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20))),
+              title: Text(
+                'Discard unsaved changes?',
+                style: tertiaryText.copyWith(fontSize: 18),
+              ),
+              content: Text.rich(
+                TextSpan(
+                  style: secandaryText.copyWith(fontSize: 13, letterSpacing: 0),
+                  children: [
+                    TextSpan(
+                      text:
+                          'You have unsaved changes, are sure you want to discard them?',
+                      style: secandaryText.copyWith(
+                          fontSize: 14, letterSpacing: 0),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                Container(
+                  width: 100,
+                  child: MyOutlineButton(
+                    color: Color(0xff1640ac),
+                    elavation: 5,
+                    isLoading: false,
+                    radius: 10,
+                    text: Text(
+                      'Cancel',
+                      style: tertiaryText.copyWith(
+                          fontSize: 14, color: customColor[140]),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+                Container(
+                  width: 100,
+                  child: MyRaisedButton(
+                    color: Color(0xff1640ac),
+                    elavation: 5,
+                    isLoading: isLoading,
+                    radius: 10,
+                    text: Text(
+                      'Discard',
+                      style: tertiaryText.copyWith(
+                          fontSize: 14, color: Colors.white),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      });
+                    },
+                  ),
+                ),
+              ],
+            );
+          });
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     screenSize = MediaQuery.of(context).size;
@@ -133,7 +204,11 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
               size: 18,
             ),
             onPressed: () {
-              isLoading ? print('Please wait') : Navigator.of(context).pop();
+              isLoading
+                  ? print('Please wait')
+                  : isDeletePhoto || image != null
+                      ? _buildCreateCancelUpdateConfirmaModal(context)
+                      : Navigator.of(context).pop();
             },
           ),
           centerTitle: true,
