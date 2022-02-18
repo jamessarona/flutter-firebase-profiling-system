@@ -427,7 +427,7 @@ class _DetailAccountScreenState extends State<DetailAccountScreen> {
           ),
           centerTitle: true,
           title: Text(
-            'Edit ${widget.method}',
+            "Edit ${widget.method == 'Firstname' ? 'First name' : widget.method == 'Lastname' ? 'Last name' : widget.method}",
             style: primaryText.copyWith(fontSize: 18, letterSpacing: 1),
           ),
           actions: [],

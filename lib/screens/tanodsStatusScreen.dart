@@ -30,12 +30,12 @@ class _TanodsStatusScreenState extends State<TanodsStatusScreen> {
 
   bool isLoading = false;
 
-  String checkIsUser(String uid) {
-    String value = '';
+  bool checkIsUser(String uid) {
+    bool isUser = false;
     if (widget.userUID == uid) {
-      value = '(You)';
+      isUser = true;
     }
-    return value;
+    return isUser;
   }
 
   _buildCreateUpdateConfirmaModal(
@@ -151,26 +151,8 @@ class _TanodsStatusScreenState extends State<TanodsStatusScreen> {
     await dbRef.child('Tanods').child(tanodId).update({
       'Status': isDisabled ? 'Standby' : 'Disabled',
     });
-
-    // if (isDisabled) {
-    //   _createAccountForSelectedUser(selectedTanodEmail);
-    // } else {
-    //   _deleteAccountForSelectedUser(tanodUID);
-    // }
     return '';
   }
-
-  // Future<String> _createAccountForSelectedUser(
-  //     String selectedTanodEmail) async {
-  //   await widget.auth
-  //       .registerWithEmailPasswordAdmin(selectedTanodEmail, "tanod123");
-  //   return '';
-  // }
-
-  // Future<String> _deleteAccountForSelectedUser(String tanodUID) async {
-  //   return userCollection.document(uid).delete();
-  //   return '';
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -269,10 +251,11 @@ class _TanodsStatusScreenState extends State<TanodsStatusScreen> {
                         children: [
                           for (var item in filteredViolators)
                             MyTanodCard(
-                              name:
-                                  "${item['Firstname']} ${item['Lastname']} ${checkIsUser(item['TanodUID'])}",
+                              name: "${item['Firstname']} ${item['Lastname']}",
+                              isUser: checkIsUser(item['TanodUID']),
                               gender: item['Gender'],
-                              status: '${item['Area']} > ${item['Status']}',
+                              location: item['Area'],
+                              status: item['Status'],
                               onTap: () {
                                 _buildCreateUpdateConfirmaModal(
                                   context,

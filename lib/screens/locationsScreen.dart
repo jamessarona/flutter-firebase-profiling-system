@@ -24,12 +24,18 @@ class _LocationScreenState extends State<LocationScreen> {
       TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  var tanods;
   var locations;
   var filteredLocations;
   bool isLoading = false;
   late Timer _timer;
-  int _countTanodAssigned() {
+  int _countTanodAssigned(String location) {
     int count = 0;
+    for (int i = 0; i < tanods.length; i++) {
+      if (tanods[i]['Area'] == location) {
+        count++;
+      }
+    }
     return count;
   }
 
@@ -114,7 +120,8 @@ class _LocationScreenState extends State<LocationScreen> {
         });
   }
 
-  _buildCreateDeleteConfirmation(BuildContext context, String loc) {
+  _buildCreateDeleteConfirmation(
+      BuildContext context, String loc, String locId) {
     return showDialog(
         context: context,
         builder: (context) {
@@ -176,13 +183,51 @@ class _LocationScreenState extends State<LocationScreen> {
                       style: tertiaryText.copyWith(
                           fontSize: 14, color: Colors.white),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() {
+                        isLoading = true;
+                        _reAssignTanodWithSelectedLocation(locId).then((value) {
+                          _deleteSelectedLocation(locId).then((value) {
+                            Navigator.pop(context);
+
+                            _buildModalSuccessMessage(
+                                context, "Location has been deleted");
+                            isLoading = false;
+                          });
+                        });
+                      });
+                    },
                   ),
                 ),
               ],
             );
           });
         });
+  }
+
+  Future<String> _reAssignTanodWithSelectedLocation(String locationId) async {
+    for (int i = 0; i < tanods.length; i++) {
+      if (locations[int.parse(locationId)]['Name'] == tanods[i]['Area']) {
+        await dbRef.child('Tanods').child(i.toString()).update({
+          'Area': 'N/A',
+        });
+      }
+    }
+    return '';
+  }
+
+  Future<String> _deleteSelectedLocation(String locId) async {
+    await dbRef.child('Locations').update({
+      locId: {
+        'Name': filteredLocations[filteredLocations.length - 1]['Name'],
+        'LocationId': locId,
+      },
+    });
+    await dbRef
+        .child('Locations')
+        .child((filteredLocations.length - 1).toString())
+        .remove();
+    return '';
   }
 
   bool checkIsLocationExist() {
@@ -203,7 +248,7 @@ class _LocationScreenState extends State<LocationScreen> {
         _saveLocation().then((value) {
           _locationTextEditingController.clear();
           Navigator.pop(context);
-          _buildModalSuccessMessage(context);
+          _buildModalSuccessMessage(context, "Location has been added");
           isLoading = false;
         });
       });
@@ -213,14 +258,16 @@ class _LocationScreenState extends State<LocationScreen> {
   Future<String> _saveLocation() async {
     await dbRef.child('Locations').update({
       locations.length.toString(): {
-        'Name': titleCase(_locationTextEditingController.text.toString())
+        'Name': titleCase(_locationTextEditingController.text.toString()),
+        'LocationId': locations.length.toString(),
       },
     });
     isLoading = false;
     return '';
   }
 
-  Future<void> _buildModalSuccessMessage(BuildContext context) async {
+  Future<void> _buildModalSuccessMessage(
+      BuildContext context, String message) async {
     return await showDialog(
       context: context,
       barrierDismissible: false,
@@ -243,7 +290,7 @@ class _LocationScreenState extends State<LocationScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "Location has been added",
+                    message,
                     style: tertiaryText.copyWith(
                       fontSize: 25,
                       color: Colors.white,
@@ -288,89 +335,104 @@ class _LocationScreenState extends State<LocationScreen> {
           ),
         ),
         body: StreamBuilder(
-            stream: dbRef.child('Locations').onValue,
-            builder: (context, locationsSnapshot) {
-              if (locationsSnapshot.hasData &&
-                  !locationsSnapshot.hasError &&
-                  (locationsSnapshot.data! as Event).snapshot.value != null) {
-                locations = (locationsSnapshot.data! as Event).snapshot.value;
+            stream: dbRef.child('Tanods').onValue,
+            builder: (context, tanodsSnapshot) {
+              if (tanodsSnapshot.hasData &&
+                  !tanodsSnapshot.hasError &&
+                  (tanodsSnapshot.data! as Event).snapshot.value != null) {
+                tanods = (tanodsSnapshot.data! as Event).snapshot.value;
               } else {
                 return MySpinKitLoadingScreen();
               }
-              filteredLocations =
-                  filterLocations(locations, _searchTextEditingController.text);
-              return Container(
-                height: screenSize.height,
-                width: screenSize.width,
-                child: Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(
-                        top: 15,
-                        bottom: 15,
-                        left: screenSize.width * .06,
-                        right: screenSize.width * .06,
-                      ),
-                      child: TextFormField(
-                        controller: _searchTextEditingController,
-                        keyboardType: TextInputType.text,
-                        textInputAction: TextInputAction.search,
-                        validator: (value) {},
-                        onChanged: (value) {
-                          setState(() {});
-                        },
-                        decoration: InputDecoration(
-                          isDense: true,
-                          labelText: 'Search',
-                          hintStyle: tertiaryText.copyWith(
-                            fontSize: 13,
-                            color: Colors.black,
-                          ),
-                          suffix: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _searchTextEditingController.clear();
-                              });
-                            },
-                            child: Text(
-                              'X',
-                              style: tertiaryText.copyWith(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
+              return StreamBuilder(
+                  stream: dbRef.child('Locations').onValue,
+                  builder: (context, locationsSnapshot) {
+                    if (locationsSnapshot.hasData &&
+                        !locationsSnapshot.hasError &&
+                        (locationsSnapshot.data! as Event).snapshot.value !=
+                            null) {
+                      locations =
+                          (locationsSnapshot.data! as Event).snapshot.value;
+                    } else {
+                      return MySpinKitLoadingScreen();
+                    }
+                    filteredLocations = filterLocations(
+                        locations, _searchTextEditingController.text);
+                    return Container(
+                      height: screenSize.height,
+                      width: screenSize.width,
+                      child: Column(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(
+                              top: 15,
+                              bottom: 15,
+                              left: screenSize.width * .06,
+                              right: screenSize.width * .06,
+                            ),
+                            child: TextFormField(
+                              controller: _searchTextEditingController,
+                              keyboardType: TextInputType.text,
+                              textInputAction: TextInputAction.search,
+                              validator: (value) {},
+                              onChanged: (value) {
+                                setState(() {});
+                              },
+                              decoration: InputDecoration(
+                                isDense: true,
+                                labelText: 'Search',
+                                hintStyle: tertiaryText.copyWith(
+                                  fontSize: 13,
+                                  color: Colors.black,
+                                ),
+                                suffix: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _searchTextEditingController.clear();
+                                    });
+                                  },
+                                  child: Text(
+                                    'X',
+                                    style: tertiaryText.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  borderSide: BorderSide(
+                                    color: Color(0xff1c52dd),
+                                  ),
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                filled: true,
+                                fillColor: Colors.white70,
                               ),
                             ),
                           ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide(
-                              color: Color(0xff1c52dd),
+                          Expanded(
+                            child: ListView(
+                              children: [
+                                for (var item in filteredLocations)
+                                  MyLocationCard(
+                                      locId: item['LocationId'],
+                                      name: item['Name'],
+                                      assignCount:
+                                          _countTanodAssigned(item['Name']),
+                                      onTap: () {
+                                        _buildCreateDeleteConfirmation(context,
+                                            item['Name'], item['LocationId']);
+                                      }),
+                              ],
                             ),
                           ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          filled: true,
-                          fillColor: Colors.white70,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: ListView(
-                        children: [
-                          for (var item in filteredLocations)
-                            MyLocationCard(
-                                name: item['Name'],
-                                assignCount: _countTanodAssigned(),
-                                onTap: () {
-                                  _buildCreateDeleteConfirmation(
-                                      context, item['Name']);
-                                }),
                         ],
                       ),
-                    ),
-                  ],
-                ),
-              );
+                    );
+                  });
             }),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         floatingActionButton: FloatingActionButton(

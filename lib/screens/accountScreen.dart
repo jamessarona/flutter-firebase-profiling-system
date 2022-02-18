@@ -238,7 +238,6 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                   setState(() {
                                     saveToRealtimeDatabase('default');
                                     isDeletePhoto = false;
-                                    //TODO: delete photo in storage
                                     isLoading = false;
                                   });
                                 } else {
@@ -375,7 +374,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                             ),
                           ),
                           MyAccountInformationCard(
-                            title: "Firstname",
+                            title: "First name",
                             value: userData['Firstname'],
                             onTap: () {
                               isLoading
@@ -396,7 +395,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                             },
                           ),
                           MyAccountInformationCard(
-                            title: "Lastname",
+                            title: "Last name",
                             value: userData['Lastname'],
                             onTap: () {
                               isLoading

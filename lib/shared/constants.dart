@@ -405,12 +405,13 @@ List filterLocations(List<dynamic> list, String search) {
         filteredLocations[x++].add(list[i]);
       }
     }
-
-    return filteredLocations.isNotEmpty
-        ? (filteredLocations[0]..sort((a, b) => a['Name'].compareTo(a['Name'])))
-        : [];
+    return filteredLocations.isNotEmpty ? filteredLocations[0] : [];
+    // return filteredLocations.isNotEmpty
+    //     ? (filteredLocations[0]..sort((a, b) => a['Name'].compareTo(a['Name'])))
+    //     : [];
   } else {
-    return list..sort((a, b) => a['Name'].compareTo(b['Name']));
+    return list;
+    // return list..sort((a, b) => a['Name'].compareTo(b['Name']));
   }
 }
 

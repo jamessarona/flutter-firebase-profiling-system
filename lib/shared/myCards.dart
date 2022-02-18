@@ -632,14 +632,18 @@ class MyViolatorCard extends StatelessWidget {
 
 class MyTanodCard extends StatelessWidget {
   final String name;
+  final bool isUser;
   final String gender;
+  final String location;
   final String status;
   final VoidCallback onTap;
   final bool isDisabled;
 
   const MyTanodCard({
     required this.name,
+    required this.isUser,
     required this.gender,
+    required this.location,
     required this.status,
     required this.onTap,
     required this.isDisabled,
@@ -661,38 +665,44 @@ class MyTanodCard extends StatelessWidget {
           ),
         ),
         title: Text(
-          name,
+          "$name ${isUser ? '(You)' : ''}",
           style: tertiaryText.copyWith(
             fontSize: 15,
           ),
         ),
         subtitle: Text(
-          isDisabled ? '' : status,
+          isDisabled
+              ? 'Disabled'
+              : "${location != 'N/A' ? location : 'No Location Assigned'} > $status",
           style: tertiaryText.copyWith(
             fontSize: 12,
           ),
         ),
-        trailing: GestureDetector(
-          onTap: onTap,
-          child: Icon(
-            isDisabled
-                ? FontAwesomeIcons.timesCircle
-                : FontAwesomeIcons.checkCircle,
-            color: isDisabled ? Colors.red : Colors.green,
-            size: 15,
-          ),
-        ),
+        trailing: isUser
+            ? Text('')
+            : GestureDetector(
+                onTap: onTap,
+                child: Icon(
+                  isDisabled
+                      ? FontAwesomeIcons.timesCircle
+                      : FontAwesomeIcons.checkCircle,
+                  color: isDisabled ? Colors.red : Colors.green,
+                  size: 15,
+                ),
+              ),
       ),
     );
   }
 }
 
 class MyLocationCard extends StatelessWidget {
+  final String locId;
   final String name;
   final int assignCount;
   final VoidCallback onTap;
 
   const MyLocationCard({
+    required this.locId,
     required this.name,
     required this.assignCount,
     required this.onTap,
@@ -715,7 +725,7 @@ class MyLocationCard extends StatelessWidget {
           ),
         ),
         title: Text(
-          name,
+          locId != '0' ? name : 'No Location Assigned',
           style: tertiaryText.copyWith(
             fontSize: 15,
           ),
@@ -726,14 +736,16 @@ class MyLocationCard extends StatelessWidget {
             fontSize: 12,
           ),
         ),
-        trailing: GestureDetector(
-          onTap: onTap,
-          child: Icon(
-            FontAwesomeIcons.trashAlt,
-            color: Colors.red,
-            size: 15,
-          ),
-        ),
+        trailing: locId != '0'
+            ? GestureDetector(
+                onTap: onTap,
+                child: Icon(
+                  FontAwesomeIcons.trashAlt,
+                  color: Colors.red,
+                  size: 15,
+                ),
+              )
+            : Text(''),
       ),
     );
   }

@@ -25,7 +25,6 @@ class MyTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(focusNode.hasFocus);
     return TextFormField(
       focusNode: focusNode,
       keyboardType: inputType,
