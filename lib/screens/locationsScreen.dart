@@ -220,6 +220,8 @@ class _LocationScreenState extends State<LocationScreen> {
     await dbRef.child('Locations').update({
       locId: {
         'Name': filteredLocations[filteredLocations.length - 1]['Name'],
+        'IpAddress': filteredLocations[filteredLocations.length - 1]
+            ['IpAddress'],
         'LocationId': locId,
       },
     });
@@ -258,6 +260,7 @@ class _LocationScreenState extends State<LocationScreen> {
   Future<String> _saveLocation() async {
     await dbRef.child('Locations').update({
       locations.length.toString(): {
+        'IpAddress': 'None',
         'Name': titleCase(_locationTextEditingController.text.toString()),
         'LocationId': locations.length.toString(),
       },
