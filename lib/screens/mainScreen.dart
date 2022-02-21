@@ -51,13 +51,17 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void saveSelectedArea() async {
-    await dbRef.child('Tanods').child(userData['TanodId']).update({
-      'Area': selectedArea,
-    });
+    for (int i = 0; i < locations.length; i++) {
+      if (locations[i]['Name'] == selectedLocation) {
+        await dbRef.child('Tanods').child(userData['TanodId']).update({
+          'LocationId': locations[i]['LocationId'].toString(),
+        });
+      }
+    }
   }
 
   _buildCreateChooseModal(BuildContext context) {
-    String tempSelectedArea = selectedArea;
+    String tempSelectedArea = selectedLocation;
     return showDialog(
         context: context,
         builder: (context) {
@@ -75,7 +79,11 @@ class _MainScreenState extends State<MainScreen> {
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
-                    child: Text(value),
+                    child: Text(
+                      value,
+                      style: secandaryText.copyWith(fontSize: 14),
+                      maxLines: 1,
+                    ),
                   );
                 }).toList(),
                 onChanged: (String? newValue) {
@@ -115,7 +123,7 @@ class _MainScreenState extends State<MainScreen> {
                           fontSize: 14, color: Colors.white),
                     ),
                     onPressed: () {
-                      selectedArea = tempSelectedArea;
+                      selectedLocation = tempSelectedArea;
                       saveSelectedArea();
                       Navigator.pop(context);
                       _buildModalSuccessMessage(context);
@@ -151,7 +159,7 @@ class _MainScreenState extends State<MainScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    'You have selected $selectedArea',
+                    'You have selected $selectedLocation',
                     style: tertiaryText.copyWith(
                       fontSize: 25,
                       color: Colors.white,
@@ -181,7 +189,8 @@ class _MainScreenState extends State<MainScreen> {
             reports[i]['AssignedTanod'][reports[i]['AssignedTanod'].length - 1]
                     ['Status'] ==
                 'Responding')
-          reportLocation = reports[i]['Location'].toString();
+          reportLocation =
+              getLocationName(locations, reports[i]['LocationId'].toString());
       }
     }
     return reportLocation;
@@ -242,51 +251,54 @@ class _MainScreenState extends State<MainScreen> {
     return SafeArea(
       child: userUID.isNotEmpty
           ? StreamBuilder(
-              stream: dbRef.child('Tanods').onValue,
-              builder: (context, tanodSnapshot) {
-                if (tanodSnapshot.hasData &&
-                    !tanodSnapshot.hasError &&
-                    (tanodSnapshot.data! as Event).snapshot.value != null) {
-                  tanods = (tanodSnapshot.data! as Event).snapshot.value;
+              stream: dbRef.child('Locations').onValue,
+              builder: (context, locationsSnapshot) {
+                if (locationsSnapshot.hasData &&
+                    !locationsSnapshot.hasError &&
+                    (locationsSnapshot.data! as Event).snapshot.value != null) {
+                  locations = (locationsSnapshot.data! as Event).snapshot.value;
                 } else {
                   return MyLoadingScreenHomeScreen();
                 }
-                userData = filterCurrentUserInformation(tanods, userUID)[0];
-                if (userData['Area'] != null) {
-                  selectedArea = userData['Area'];
+                if (addLocationCycle < 1) {
+                  addLocationCycle++;
+                  addLocationToList();
                 }
                 return StreamBuilder(
-                    stream: dbRef.child('Reports').onValue,
-                    builder: (context, reportsSnapshot) {
-                      if (reportsSnapshot.hasData &&
-                          !reportsSnapshot.hasError &&
-                          (reportsSnapshot.data! as Event).snapshot.value !=
+                    stream: dbRef.child('Tanods').onValue,
+                    builder: (context, tanodSnapshot) {
+                      if (tanodSnapshot.hasData &&
+                          !tanodSnapshot.hasError &&
+                          (tanodSnapshot.data! as Event).snapshot.value !=
                               null) {
-                        reports =
-                            (reportsSnapshot.data! as Event).snapshot.value;
+                        tanods = (tanodSnapshot.data! as Event).snapshot.value;
                       } else {
                         return MyLoadingScreenHomeScreen();
                       }
-                      int notifCount = countReportsByLocation(reports);
+                      userData =
+                          filterCurrentUserInformation(tanods, userUID)[0];
+                      if (userData['LocationId'] != null) {
+                        selectedLocation =
+                            locations[int.parse(userData['LocationId'])]
+                                ['Name'];
+                      }
                       return StreamBuilder(
-                          stream: dbRef.child('Locations').onValue,
-                          builder: (context, locationsSnapshot) {
-                            if (locationsSnapshot.hasData &&
-                                !locationsSnapshot.hasError &&
-                                (locationsSnapshot.data! as Event)
+                          stream: dbRef.child('Reports').onValue,
+                          builder: (context, reportsSnapshot) {
+                            if (reportsSnapshot.hasData &&
+                                !reportsSnapshot.hasError &&
+                                (reportsSnapshot.data! as Event)
                                         .snapshot
                                         .value !=
                                     null) {
-                              locations = (locationsSnapshot.data! as Event)
+                              reports = (reportsSnapshot.data! as Event)
                                   .snapshot
                                   .value;
                             } else {
                               return MyLoadingScreenHomeScreen();
                             }
-                            if (addLocationCycle < 1) {
-                              addLocationCycle++;
-                              addLocationToList();
-                            }
+                            int notifCount = countReportsByLocation(
+                                reports, userData['LocationId']);
                             return Scaffold(
                               key: _scaffoldKey,
                               extendBodyBehindAppBar: true,
@@ -322,6 +334,7 @@ class _MainScreenState extends State<MainScreen> {
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (ctx) => NotificationScreen(
+                                            tanodId: userData['TanodId'],
                                             auth: widget.auth,
                                             onSignOut: widget.onSignOut,
                                           ),

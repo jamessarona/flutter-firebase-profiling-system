@@ -32,7 +32,7 @@ class _LocationScreenState extends State<LocationScreen> {
   int _countTanodAssigned(String location) {
     int count = 0;
     for (int i = 0; i < tanods.length; i++) {
-      if (tanods[i]['Area'] == location) {
+      if (tanods[i]['LocationId'] == location) {
         count++;
       }
     }
@@ -207,9 +207,10 @@ class _LocationScreenState extends State<LocationScreen> {
 
   Future<String> _reAssignTanodWithSelectedLocation(String locationId) async {
     for (int i = 0; i < tanods.length; i++) {
-      if (locations[int.parse(locationId)]['Name'] == tanods[i]['Area']) {
+      if (locations[int.parse(locationId)]['LocationId'] ==
+          tanods[i]['LocationId']) {
         await dbRef.child('Tanods').child(i.toString()).update({
-          'Area': 'N/A',
+          'LocationId': '0',
         });
       }
     }
@@ -423,8 +424,8 @@ class _LocationScreenState extends State<LocationScreen> {
                                   MyLocationCard(
                                       locId: item['LocationId'],
                                       name: item['Name'],
-                                      assignCount:
-                                          _countTanodAssigned(item['Name']),
+                                      assignCount: _countTanodAssigned(
+                                          item['LocationId']),
                                       onTap: () {
                                         _buildCreateDeleteConfirmation(context,
                                             item['Name'], item['LocationId']);

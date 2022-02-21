@@ -155,7 +155,7 @@ class MyUserDetail extends StatelessWidget {
                         height: 8,
                       ),
                       Text(
-                        ' $selectedArea ',
+                        ' $selectedLocation ',
                         style: tertiaryText.copyWith(
                             fontSize: 15, color: Colors.black),
                         maxLines: 2,

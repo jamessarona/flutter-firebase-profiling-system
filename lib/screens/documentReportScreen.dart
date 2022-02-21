@@ -560,7 +560,6 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
         totalApprehendedViolator +=
             selectedReport[0]['AssignedTanod'][i]['Documentation'].length;
       }
-      print(totalApprehendedViolator);
     }
     if (selectedReport[0]['ViolatorCount'] - totalApprehendedViolator.toInt() <=
         0) {

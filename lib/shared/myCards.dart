@@ -27,9 +27,9 @@ class MyReportCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      shadowColor: isAssigned ? customColor[80] : customColor[130],
-      color: isAssigned ? customColor[160] : Colors.white,
-      elevation: isAssigned ? 5 : 1,
+      shadowColor: customColor[130],
+      color: isAssigned ? Colors.grey[200] : Colors.white,
+      elevation: 1,
       child: Container(
         padding: EdgeInsets.all(7),
         width: 180,

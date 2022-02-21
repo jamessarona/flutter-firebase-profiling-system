@@ -10,9 +10,9 @@ import 'package:tanod_apprehension/shared/mySpinKits.dart';
 import 'package:tanod_apprehension/shared/myTextFormFields.dart';
 
 class RegistrationScreen extends StatefulWidget {
-  final VoidCallback? onSignIn;
+  final VoidCallback onSignOut;
   final BaseAuth auth;
-  const RegistrationScreen({required this.auth, this.onSignIn});
+  const RegistrationScreen({required this.auth, required this.onSignOut});
 
   @override
   _RegistrationScreenState createState() => _RegistrationScreenState();
@@ -187,7 +187,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       if (value != '') {
         await dbRef.child('Tanods').update({
           tanods.length.toString(): {
-            "Area": 'N/A',
+            "LocationId": '0',
             "Address": titleCase(
                 _addressTextEditingController.text.toString().toLowerCase()),
             "Contact": _contactNumberTextEditingController.text.toString(),

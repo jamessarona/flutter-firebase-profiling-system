@@ -172,7 +172,7 @@ class BuildDrawer extends StatelessWidget {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (ctx) => SettingsScreen(
-                                onSignIn: onSignOut,
+                                onSignOut: onSignOut,
                                 auth: auth,
                                 userUID: userUID,
                               ),

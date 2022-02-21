@@ -30,7 +30,7 @@ class _AssignmentHistoryScreenState extends State<AssignmentHistoryScreen> {
   var tanods;
   var userData;
   var assignedReports;
-
+  var locations;
   int tempReportId = -1;
   int tempDuplicateCount = 0;
   int tempAssignedTanodNum = -1;
@@ -122,77 +122,92 @@ class _AssignmentHistoryScreenState extends State<AssignmentHistoryScreen> {
           ),
         ),
         body: StreamBuilder(
-            stream: dbRef.child('Reports').onValue,
-            builder: (context, reportSnapshot) {
-              if (reportSnapshot.hasData &&
-                  !reportSnapshot.hasError &&
-                  (reportSnapshot.data! as Event).snapshot.value != null) {
-                reports = (reportSnapshot.data! as Event).snapshot.value;
+            stream: dbRef.child('Locations').onValue,
+            builder: (context, locationsSnapshot) {
+              if (locationsSnapshot.hasData &&
+                  !locationsSnapshot.hasError &&
+                  (locationsSnapshot.data! as Event).snapshot.value != null) {
+                locations = (locationsSnapshot.data! as Event).snapshot.value;
               } else {
                 return MySpinKitLoadingScreen();
               }
-              return StreamBuilder<Object>(
-                  stream: dbRef.child('Tanods').onValue,
-                  builder: (context, tanodsSnapshot) {
-                    if (tanodsSnapshot.hasData &&
-                        !tanodsSnapshot.hasError &&
-                        (tanodsSnapshot.data! as Event).snapshot.value !=
+              return StreamBuilder(
+                  stream: dbRef.child('Reports').onValue,
+                  builder: (context, reportSnapshot) {
+                    if (reportSnapshot.hasData &&
+                        !reportSnapshot.hasError &&
+                        (reportSnapshot.data! as Event).snapshot.value !=
                             null) {
-                      tanods = (tanodsSnapshot.data! as Event).snapshot.value;
+                      reports = (reportSnapshot.data! as Event).snapshot.value;
                     } else {
                       return MySpinKitLoadingScreen();
                     }
-                    userData =
-                        filterCurrentUserInformation(tanods, widget.userUID)[0];
-                    assignedReports = filterReportHistory();
-                    return assignedReports.isNotEmpty
-                        ? ListView(
-                            children: [
-                              for (var item
-                                  in assignedReports[0].reversed.toList())
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (ctx) => DetailReportScreen(
+                    return StreamBuilder(
+                        stream: dbRef.child('Tanods').onValue,
+                        builder: (context, tanodsSnapshot) {
+                          if (tanodsSnapshot.hasData &&
+                              !tanodsSnapshot.hasError &&
+                              (tanodsSnapshot.data! as Event).snapshot.value !=
+                                  null) {
+                            tanods =
+                                (tanodsSnapshot.data! as Event).snapshot.value;
+                          } else {
+                            return MySpinKitLoadingScreen();
+                          }
+                          userData = filterCurrentUserInformation(
+                              tanods, widget.userUID)[0];
+                          assignedReports = filterReportHistory();
+                          return assignedReports.isNotEmpty
+                              ? ListView(
+                                  children: [
+                                    for (var item
+                                        in assignedReports[0].reversed.toList())
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (ctx) =>
+                                                  DetailReportScreen(
+                                                id: item['Id'].toString(),
+                                                isFromNotification: false,
+                                                auth: widget.auth,
+                                                onSignOut: widget.onSignOut,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: MyApprehenssionHistoryCard(
                                           id: item['Id'].toString(),
-                                          isFromNotification: false,
-                                          auth: widget.auth,
-                                          onSignOut: widget.onSignOut,
+                                          image: item['Image'],
+                                          location: getLocationName(
+                                              locations, item['LocationId']),
+                                          date: getDocumentationInfo(
+                                            item['Id'].toString(),
+                                            userData['TanodId'].toString(),
+                                            'DateAssign',
+                                          ),
+                                          caughtCount: getDocumentationInfo(
+                                              item['Id'].toString(),
+                                              userData['TanodId'].toString(),
+                                              'CaughtViolator'),
+                                          status: getDocumentationInfo(
+                                              item['Id'].toString(),
+                                              userData['TanodId'].toString(),
+                                              'Status'),
+                                          remarks: getDocumentationInfo(
+                                              item['Id'].toString(),
+                                              userData['TanodId'].toString(),
+                                              'Reason'),
                                         ),
                                       ),
-                                    );
-                                  },
-                                  child: MyApprehenssionHistoryCard(
-                                    id: item['Id'].toString(),
-                                    image: item['Image'],
-                                    location: item['Location'],
-                                    date: getDocumentationInfo(
-                                      item['Id'].toString(),
-                                      userData['TanodId'].toString(),
-                                      'DateAssign',
-                                    ),
-                                    caughtCount: getDocumentationInfo(
-                                        item['Id'].toString(),
-                                        userData['TanodId'].toString(),
-                                        'CaughtViolator'),
-                                    status: getDocumentationInfo(
-                                        item['Id'].toString(),
-                                        userData['TanodId'].toString(),
-                                        'Status'),
-                                    remarks: getDocumentationInfo(
-                                        item['Id'].toString(),
-                                        userData['TanodId'].toString(),
-                                        'Reason'),
-                                  ),
-                                ),
-                            ],
-                          )
-                        : PageResultMessage(
-                            height: 100,
-                            width: screenSize.width,
-                            message: 'No Activity',
-                          );
+                                  ],
+                                )
+                              : PageResultMessage(
+                                  height: 100,
+                                  width: screenSize.width,
+                                  message: 'No Activity',
+                                );
+                        });
                   });
             }),
       ),

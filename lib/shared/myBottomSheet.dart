@@ -146,7 +146,6 @@ class BuildBottomSheet extends StatelessWidget {
                               setState(() {
                                 if (dateStart != null) {
                                   globals.start = dateStart;
-                                  print(globals.start);
                                 } else {
                                   globals.filters['Date']['Start'] = false;
                                   globals.start = null;
@@ -195,7 +194,6 @@ class BuildBottomSheet extends StatelessWidget {
                                   if (dateStart != null) {
                                     globals.filters['Date']['End'] = true;
                                     globals.end = dateStart;
-                                    print(globals.end);
                                   } else {
                                     globals.filters['Date']['End'] = false;
                                     globals.end = null;

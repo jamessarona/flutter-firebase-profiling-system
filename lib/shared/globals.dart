@@ -25,4 +25,4 @@ Map filters = {
 DateTime? start;
 DateTime? end;
 // String selectedArea = "Tarape\'s Store";
-String selectedArea = "N/A";
+String selectedLocation = "N/A";

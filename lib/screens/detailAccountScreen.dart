@@ -106,7 +106,6 @@ class _DetailAccountScreenState extends State<DetailAccountScreen> {
     if (widget.method == 'Password') {
       isCurrentPasswordCorrect = await validateCurrentPassword();
       setState(() {});
-      print(isCurrentPasswordCorrect);
     }
     if (_formKey.currentState!.validate()) {
       _buildCreateUpdateConfirmaModal(context);

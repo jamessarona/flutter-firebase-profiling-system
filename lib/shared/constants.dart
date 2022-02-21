@@ -117,10 +117,10 @@ String calculateTimeOfOccurence(String date) {
   return time;
 }
 
-int countReportsByLocation(List<dynamic> list) {
+int countReportsByLocation(List<dynamic> list, String locationId) {
   int count = 0;
   for (int i = 0; i < list.length; i++) {
-    if (selectedArea == list[i]['Location'] &&
+    if (list[i]['LocationId'] == locationId &&
         list[i]['Category'] == "Latest" &&
         list[i]['AssignedTanod'] == null) {
       count++;
@@ -209,13 +209,13 @@ List filterReport(String category, List reports) {
             DateTime.parse(reports[i]['Date']).compareTo(end!) <= 0) {
           len++;
         } else if (filters['Area']['Tarape\'s Store'] &&
-            reports[i]['Location'] == 'Tarape\'s Store') {
+            reports[i]['LocationId'] == 'Tarape\'s Store') {
           len++;
         } else if (filters['Area']['ShopStrutt.ph'] &&
-            reports[i]['Location'] == 'ShopStrutt.ph') {
+            reports[i]['LocationId'] == 'ShopStrutt.ph') {
           len++;
         } else if (filters['Area']['Melchor\'s Store'] &&
-            reports[i]['Location'] == 'Melchor\'s Store') {
+            reports[i]['LocationId'] == 'Melchor\'s Store') {
           len++;
         }
       } else {
@@ -246,13 +246,13 @@ List filterReport(String category, List reports) {
             DateTime.parse(reports[i]['Date']).compareTo(end!) <= 0) {
           filterReport[x++].add(reports[i]);
         } else if (filters['Area']['Tarape\'s Store'] &&
-            reports[i]['Location'] == 'Tarape\'s Store') {
+            reports[i]['LocationId'] == 'Tarape\'s Store') {
           filterReport[x++].add(reports[i]);
         } else if (filters['Area']['ShopStrutt.ph'] &&
-            reports[i]['Location'] == 'ShopStrutt.ph') {
+            reports[i]['LocationId'] == 'ShopStrutt.ph') {
           filterReport[x++].add(reports[i]);
         } else if (filters['Area']['Melchor\'s Store'] &&
-            reports[i]['Location'] == 'Melchor\'s Store') {
+            reports[i]['LocationId'] == 'Melchor\'s Store') {
           filterReport[x++].add(reports[i]);
         }
       } else {
@@ -264,10 +264,10 @@ List filterReport(String category, List reports) {
   return filterReport;
 }
 
-List filterPreferenceReport(List<dynamic> list) {
+List filterPreferenceReport(List<dynamic> list, String locationId) {
   int len = 0;
   for (int i = 0; i < list.length; i++) {
-    if (selectedArea == list[i]['Location'] &&
+    if (locationId == list[i]['LocationId'] &&
         list[i]['Category'] == "Latest" &&
         list[i]['AssignedTanod'] == null) {
       len++;
@@ -278,7 +278,7 @@ List filterPreferenceReport(List<dynamic> list) {
   int x = 0;
 
   for (int i = 0; i < list.length; i++) {
-    if (selectedArea == list[i]['Location'] &&
+    if (locationId == list[i]['LocationId'] &&
         list[i]['Category'] == "Latest" &&
         list[i]['AssignedTanod'] == null) {
       filterReport[x++].add(list[i]);
@@ -479,4 +479,14 @@ String numberFormat(int number) {
     return '0$number';
   }
   return number.toString();
+}
+
+String getLocationName(List list, String id) {
+  String locationName = '';
+  for (int i = 0; i < list.length; i++) {
+    if (list[i]['LocationId'] == id) {
+      locationName = list[i]['Name'];
+    }
+  }
+  return locationName;
 }

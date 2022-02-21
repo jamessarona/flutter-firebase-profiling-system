@@ -2,18 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tanod_apprehension/net/authenticationService.dart';
 import 'package:tanod_apprehension/screens/locationsScreen.dart';
+import 'package:tanod_apprehension/screens/mainScreen.dart';
 import 'package:tanod_apprehension/screens/registrationScreen.dart';
 import 'package:tanod_apprehension/screens/tanodsStatusScreen.dart';
 import 'package:tanod_apprehension/shared/constants.dart';
 import 'package:tanod_apprehension/shared/myCards.dart';
 
 class SettingsScreen extends StatefulWidget {
-  final VoidCallback? onSignIn;
+  final VoidCallback onSignOut;
   final BaseAuth auth;
   final String userUID;
   const SettingsScreen({
     required this.auth,
-    this.onSignIn,
+    required this.onSignOut,
     required this.userUID,
   });
 
@@ -38,7 +39,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
               size: 18,
             ),
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (ctx) => MainScreen(
+                    leading: 'Home',
+                    auth: widget.auth,
+                    onSignOut: widget.onSignOut,
+                  ),
+                ),
+              );
             },
           ),
           centerTitle: true,
@@ -81,7 +90,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (ctx) => RegistrationScreen(
-                              onSignIn: widget.onSignIn,
+                              onSignOut: widget.onSignOut,
                               auth: widget.auth,
                             ),
                           ),
@@ -100,7 +109,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           MaterialPageRoute(
                             builder: (ctx) => TanodsStatusScreen(
                               userUID: widget.userUID,
-                              onSignIn: widget.onSignIn,
+                              onSignOut: widget.onSignOut,
                               auth: widget.auth,
                             ),
                           ),

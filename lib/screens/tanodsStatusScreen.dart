@@ -9,11 +9,11 @@ import 'package:tanod_apprehension/shared/mySpinKits.dart';
 
 class TanodsStatusScreen extends StatefulWidget {
   final String userUID;
-  final VoidCallback? onSignIn;
+  final VoidCallback onSignOut;
   final BaseAuth auth;
   const TanodsStatusScreen({
     required this.userUID,
-    required this.onSignIn,
+    required this.onSignOut,
     required this.auth,
   });
 
@@ -25,7 +25,8 @@ class _TanodsStatusScreenState extends State<TanodsStatusScreen> {
   late Size screenSize;
   final dbRef = FirebaseDatabase.instance.reference();
   var tanods;
-  var filteredViolators;
+  var filteredTanods;
+  var locations;
   TextEditingController _searchTextEditingController = TextEditingController();
 
   bool isLoading = false;
@@ -179,102 +180,119 @@ class _TanodsStatusScreenState extends State<TanodsStatusScreen> {
           ),
         ),
         body: StreamBuilder(
-            stream: dbRef.child('Tanods').onValue,
-            builder: (context, tanodsSnapshot) {
-              if (tanodsSnapshot.hasData &&
-                  !tanodsSnapshot.hasError &&
-                  (tanodsSnapshot.data! as Event).snapshot.value != null) {
-                tanods = (tanodsSnapshot.data! as Event).snapshot.value;
+            stream: dbRef.child('Locations').onValue,
+            builder: (context, locationsSnapshot) {
+              if (locationsSnapshot.hasData &&
+                  !locationsSnapshot.hasError &&
+                  (locationsSnapshot.data! as Event).snapshot.value != null) {
+                locations = (locationsSnapshot.data! as Event).snapshot.value;
               } else {
                 return MySpinKitLoadingScreen();
               }
-              filteredViolators =
-                  filterTanods(tanods, _searchTextEditingController.text);
+              return StreamBuilder(
+                  stream: dbRef.child('Tanods').onValue,
+                  builder: (context, tanodsSnapshot) {
+                    if (tanodsSnapshot.hasData &&
+                        !tanodsSnapshot.hasError &&
+                        (tanodsSnapshot.data! as Event).snapshot.value !=
+                            null) {
+                      tanods = (tanodsSnapshot.data! as Event).snapshot.value;
+                    } else {
+                      return MySpinKitLoadingScreen();
+                    }
+                    filteredTanods =
+                        filterTanods(tanods, _searchTextEditingController.text);
 
-              return Container(
-                height: screenSize.height,
-                width: screenSize.width,
-                child: Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(
-                        top: 15,
-                        bottom: 15,
-                        left: screenSize.width * .06,
-                        right: screenSize.width * .06,
-                      ),
-                      child: TextFormField(
-                        controller: _searchTextEditingController,
-                        keyboardType: TextInputType.text,
-                        textInputAction: TextInputAction.search,
-                        validator: (value) {},
-                        onChanged: (value) {
-                          setState(() {});
-                        },
-                        decoration: InputDecoration(
-                          isDense: true,
-                          labelText: 'Search',
-                          hintStyle: tertiaryText.copyWith(
-                            fontSize: 13,
-                            color: Colors.black,
-                          ),
-                          suffix: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _searchTextEditingController.clear();
-                              });
-                            },
-                            child: Text(
-                              'X',
-                              style: tertiaryText.copyWith(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
+                    return Container(
+                      height: screenSize.height,
+                      width: screenSize.width,
+                      child: Column(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(
+                              top: 15,
+                              bottom: 15,
+                              left: screenSize.width * .06,
+                              right: screenSize.width * .06,
+                            ),
+                            child: TextFormField(
+                              controller: _searchTextEditingController,
+                              keyboardType: TextInputType.text,
+                              textInputAction: TextInputAction.search,
+                              validator: (value) {},
+                              onChanged: (value) {
+                                setState(() {});
+                              },
+                              decoration: InputDecoration(
+                                isDense: true,
+                                labelText: 'Search',
+                                hintStyle: tertiaryText.copyWith(
+                                  fontSize: 13,
+                                  color: Colors.black,
+                                ),
+                                suffix: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _searchTextEditingController.clear();
+                                    });
+                                  },
+                                  child: Text(
+                                    'X',
+                                    style: tertiaryText.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  borderSide: BorderSide(
+                                    color: Color(0xff1c52dd),
+                                  ),
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                filled: true,
+                                fillColor: Colors.white70,
                               ),
                             ),
                           ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide(
-                              color: Color(0xff1c52dd),
+                          Expanded(
+                            child: ListView(
+                              children: [
+                                for (var item in filteredTanods)
+                                  MyTanodCard(
+                                    name:
+                                        "${item['Firstname']} ${item['Lastname']}",
+                                    isUser: checkIsUser(item['TanodUID']),
+                                    gender: item['Gender'],
+                                    location: getLocationName(
+                                        locations, item['LocationId']),
+                                    status: item['Status'],
+                                    onTap: () {
+                                      _buildCreateUpdateConfirmaModal(
+                                        context,
+                                        item['TanodUID'],
+                                        item['TanodId'],
+                                        "${item['Firstname']} ${item['Lastname']}",
+                                        item['Status'] != 'Disabled'
+                                            ? false
+                                            : true,
+                                        item['Email'],
+                                      );
+                                    },
+                                    isDisabled: item['Status'] != 'Disabled'
+                                        ? false
+                                        : true,
+                                  ),
+                              ],
                             ),
                           ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          filled: true,
-                          fillColor: Colors.white70,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: ListView(
-                        children: [
-                          for (var item in filteredViolators)
-                            MyTanodCard(
-                              name: "${item['Firstname']} ${item['Lastname']}",
-                              isUser: checkIsUser(item['TanodUID']),
-                              gender: item['Gender'],
-                              location: item['Area'],
-                              status: item['Status'],
-                              onTap: () {
-                                _buildCreateUpdateConfirmaModal(
-                                  context,
-                                  item['TanodUID'],
-                                  item['TanodId'],
-                                  "${item['Firstname']} ${item['Lastname']}",
-                                  item['Status'] != 'Disabled' ? false : true,
-                                  item['Email'],
-                                );
-                              },
-                              isDisabled:
-                                  item['Status'] != 'Disabled' ? false : true,
-                            ),
                         ],
                       ),
-                    ),
-                  ],
-                ),
-              );
+                    );
+                  });
             }),
       ),
     );
