@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:tanod_apprehension/net/authenticationService.dart';
 import 'package:tanod_apprehension/root_page.dart';
+import 'package:tanod_apprehension/screens/reportsScreen.dart';
 import 'package:tanod_apprehension/services/localNotificationServices.dart';
 
 //Receive message when app is on background
@@ -28,6 +29,9 @@ class TanodMain extends StatefulWidget {
 
 class _TanodMainState extends State<TanodMain> {
   String reportId = '';
+  String notifFrom = '';
+
+  get defaultIndex => null;
   @override
   void initState() {
     super.initState();
@@ -40,6 +44,7 @@ class _TanodMainState extends State<TanodMain> {
       if (message != null) {
         setState(() {
           reportId = message.data['report_id'];
+          print('method 1: $reportId');
         });
         //   print('message: ${reportId.runtimeType}');
       }
@@ -50,6 +55,7 @@ class _TanodMainState extends State<TanodMain> {
       if (message.notification != null) {
         setState(() {
           reportId = message.data['report_id'];
+          print('method 2: $reportId');
         });
       }
       LocalNotificationServices.display(message);
@@ -59,6 +65,7 @@ class _TanodMainState extends State<TanodMain> {
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
       setState(() {
         reportId = message.data['report_id'];
+        print('method 3: $reportId');
       });
     });
   }
