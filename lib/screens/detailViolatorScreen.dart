@@ -26,6 +26,7 @@ class _DetailViolatorScreenState extends State<DetailViolatorScreen> {
   var reports;
   var violatorData;
   var filteredReportByViolator;
+  var locations;
 
   late Size screenSize;
   int calculateTotalTagged() {
@@ -106,158 +107,197 @@ class _DetailViolatorScreenState extends State<DetailViolatorScreen> {
                     }
                     filteredReportByViolator =
                         filterReportByViolator(reports, widget.id);
-                    return Container(
-                      height: screenSize.height,
-                      width: screenSize.width,
-                      child: Column(
-                        children: [
-                          Container(
+                    return StreamBuilder(
+                        stream: dbRef.child('Locations').onValue,
+                        builder: (context, locationsSnapshot) {
+                          if (locationsSnapshot.hasData &&
+                              !locationsSnapshot.hasError &&
+                              (locationsSnapshot.data! as Event)
+                                      .snapshot
+                                      .value !=
+                                  null) {
+                            locations = (locationsSnapshot.data! as Event)
+                                .snapshot
+                                .value;
+                          } else {
+                            return MySpinKitLoadingScreen();
+                          }
+                          return Container(
+                            height: screenSize.height,
                             width: screenSize.width,
-                            padding: EdgeInsets.symmetric(vertical: 10),
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      margin: EdgeInsets.only(
-                                          right: screenSize.width / 20),
-                                      width: screenSize.width * .43,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            margin: EdgeInsets.only(bottom: 5),
-                                            child: Text(
-                                              "Name: ${violatorData['Name']}",
-                                              style: tertiaryText.copyWith(
-                                                fontSize: 15,
-                                              ),
-                                              maxLines: 2,
-                                            ),
-                                          ),
-                                          Container(
-                                            margin: EdgeInsets.only(bottom: 5),
-                                            child: Text(
-                                              "Birthday: ${setDateTime(violatorData['Birthday'], 'Date')}",
-                                              style: tertiaryText.copyWith(
-                                                fontSize: 15,
-                                              ),
-                                              maxLines: 1,
-                                            ),
-                                          ),
-                                          Container(
-                                            margin: EdgeInsets.only(bottom: 5),
-                                            child: Text(
-                                              "Contact: ${violatorData['Contact']}",
-                                              style: tertiaryText.copyWith(
-                                                fontSize: 15,
-                                              ),
-                                              maxLines: 1,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      width: screenSize.width * .43,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            margin: EdgeInsets.only(bottom: 5),
-                                            child: Text(
-                                              "Gender: ${violatorData['Gender']}",
-                                              style: tertiaryText.copyWith(
-                                                fontSize: 15,
-                                              ),
-                                              maxLines: 1,
-                                            ),
-                                          ),
-                                          Container(
-                                            margin: EdgeInsets.only(bottom: 5),
-                                            child: Text(
-                                              "Age: ${calculateAge(violatorData['Birthday'])}",
-                                              style: tertiaryText.copyWith(
-                                                fontSize: 15,
-                                              ),
-                                              maxLines: 1,
-                                            ),
-                                          ),
-                                          Container(
-                                            margin: EdgeInsets.only(bottom: 5),
-                                            child: Text(
-                                              "Tagged: ${calculateTotalTagged()}",
-                                              style: tertiaryText.copyWith(
-                                                fontSize: 15,
-                                              ),
-                                              maxLines: 1,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
                                 Container(
-                                  margin: EdgeInsets.only(
-                                      left: screenSize.width * .045),
-                                  child: Text(
-                                    "Address: ${violatorData['Address']}",
-                                    style: tertiaryText.copyWith(
-                                      fontSize: 15,
-                                    ),
-                                    maxLines: 2,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          filteredReportByViolator.isNotEmpty
-                              ? Expanded(
-                                  child: Container(
-                                    child: ListView(
-                                      children: [
-                                        for (var item
-                                            in filteredReportByViolator[0])
-                                          MyDocumentationListTile(
-                                            onTap: () {
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                  builder: (ctx) =>
-                                                      DetailReportScreen(
-                                                    id: item['Id'].toString(),
-                                                    isFromNotification: false,
-                                                    auth: widget.auth,
-                                                    onSignOut: widget.onSignOut,
+                                  width: screenSize.width,
+                                  padding: EdgeInsets.symmetric(vertical: 10),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            margin: EdgeInsets.only(
+                                                right: screenSize.width / 20),
+                                            width: screenSize.width * .43,
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  margin: EdgeInsets.only(
+                                                      bottom: 5),
+                                                  child: Text(
+                                                    "Name: ${violatorData['Name']}",
+                                                    style:
+                                                        tertiaryText.copyWith(
+                                                      fontSize: 15,
+                                                    ),
+                                                    maxLines: 2,
                                                   ),
                                                 ),
-                                              );
-                                            },
-                                            location: item['Location'],
-                                            date: getApprehensionInfo(
-                                                'DateApprehended',
-                                                item['Id'].toInt(),
-                                                widget.id),
-                                            fine: getApprehensionInfo('Fine',
-                                                item['Id'].toInt(), widget.id),
-                                            isTagged:
-                                                item['Category'] == 'Tagged',
+                                                Container(
+                                                  margin: EdgeInsets.only(
+                                                      bottom: 5),
+                                                  child: Text(
+                                                    "Birthday: ${setDateTime(violatorData['Birthday'], 'Date')}",
+                                                    style:
+                                                        tertiaryText.copyWith(
+                                                      fontSize: 15,
+                                                    ),
+                                                    maxLines: 1,
+                                                  ),
+                                                ),
+                                                Container(
+                                                  margin: EdgeInsets.only(
+                                                      bottom: 5),
+                                                  child: Text(
+                                                    "Contact: ${violatorData['Contact']}",
+                                                    style:
+                                                        tertiaryText.copyWith(
+                                                      fontSize: 15,
+                                                    ),
+                                                    maxLines: 1,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                      ],
-                                    ),
+                                          Container(
+                                            width: screenSize.width * .43,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  margin: EdgeInsets.only(
+                                                      bottom: 5),
+                                                  child: Text(
+                                                    "Gender: ${violatorData['Gender']}",
+                                                    style:
+                                                        tertiaryText.copyWith(
+                                                      fontSize: 15,
+                                                    ),
+                                                    maxLines: 1,
+                                                  ),
+                                                ),
+                                                Container(
+                                                  margin: EdgeInsets.only(
+                                                      bottom: 5),
+                                                  child: Text(
+                                                    "Age: ${calculateAge(violatorData['Birthday'])}",
+                                                    style:
+                                                        tertiaryText.copyWith(
+                                                      fontSize: 15,
+                                                    ),
+                                                    maxLines: 1,
+                                                  ),
+                                                ),
+                                                Container(
+                                                  margin: EdgeInsets.only(
+                                                      bottom: 5),
+                                                  child: Text(
+                                                    "Tagged: ${calculateTotalTagged()}",
+                                                    style:
+                                                        tertiaryText.copyWith(
+                                                      fontSize: 15,
+                                                    ),
+                                                    maxLines: 1,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            left: screenSize.width * .045),
+                                        child: Text(
+                                          "Address: ${violatorData['Address']}",
+                                          style: tertiaryText.copyWith(
+                                            fontSize: 15,
+                                          ),
+                                          maxLines: 2,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                )
-                              : Container(),
-                        ],
-                      ),
-                    );
+                                ),
+                                filteredReportByViolator.isNotEmpty
+                                    ? Expanded(
+                                        child: Container(
+                                          child: ListView(
+                                            children: [
+                                              for (var item
+                                                  in filteredReportByViolator[
+                                                      0])
+                                                MyDocumentationListTile(
+                                                  onTap: () {
+                                                    Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                        builder: (ctx) =>
+                                                            DetailReportScreen(
+                                                          id: item['Id']
+                                                              .toString(),
+                                                          isFromNotification:
+                                                              false,
+                                                          auth: widget.auth,
+                                                          onSignOut:
+                                                              widget.onSignOut,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                  location: getLocationName(
+                                                      locations,
+                                                      item['LocationId']),
+                                                  date: getApprehensionInfo(
+                                                      'DateApprehended',
+                                                      int.parse(item['Id']),
+                                                      widget.id),
+                                                  fine: getApprehensionInfo(
+                                                      'Fine',
+                                                      int.parse(item['Id']),
+                                                      widget.id),
+                                                  isTagged: item['Category'] ==
+                                                      'Tagged',
+                                                ),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    : Container(),
+                              ],
+                            ),
+                          );
+                        });
                   });
             }),
       ),

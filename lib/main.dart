@@ -3,14 +3,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:tanod_apprehension/net/authenticationService.dart';
 import 'package:tanod_apprehension/root_page.dart';
-import 'package:tanod_apprehension/screens/reportsScreen.dart';
 import 'package:tanod_apprehension/services/localNotificationServices.dart';
 
 //Receive message when app is on background
 Future<void> backgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  // print(message.data.toString());
-  // print(message.notification!.title);
 }
 
 void main() async {

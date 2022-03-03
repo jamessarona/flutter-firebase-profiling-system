@@ -109,6 +109,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
         await _storage.child('Tanods/${widget.userUID}').putFile(image!);
 
     var imageURL = await (snapshot).ref.getDownloadURL();
+
     saveToRealtimeDatabase(imageURL);
     return '';
   }

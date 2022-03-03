@@ -83,7 +83,7 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
                       children: [
                         TextSpan(
                             text: title == 'Assign'
-                                ? 'Do you want to apprehend the violator ${selectedReport[0]['ViolatorCount'] != 1 ? 's' : ''} in '
+                                ? 'Do you want to apprehend the violator${selectedReport[0]['ViolatorCount'] != 1 ? 's' : ''} in '
                                 : 'Do you want to '),
                         title == 'Assign'
                             ? TextSpan(
@@ -921,7 +921,7 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
                                                       ),
                                                       width: screenSize.width,
                                                       label: Text(
-                                                        'Remarks: ${selectedReport[0]['AssignedTanod'][selectedReport[0]['AssignedTanod'].length - 1]['Reason']}',
+                                                        'Remarks: ${selectedReport[0]['AssignedTanod'][selectedReport[0]['AssignedTanod'].length - 1]['Reason'] != null ? selectedReport[0]['AssignedTanod'][selectedReport[0]['AssignedTanod'].length - 1]['Reason'] : ''}',
                                                         style: tertiaryText
                                                             .copyWith(
                                                           fontSize: 14,
