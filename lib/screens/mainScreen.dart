@@ -420,10 +420,6 @@ class _MainScreenState extends State<MainScreen> {
                                           ),
                                           MyInformationCard(
                                             icon: 'folder.png',
-                                            //  Icon(
-                                            //   FontAwesomeIcons.folderOpen,
-                                            //   color: customColor[130],
-                                            // ),
                                             text: "Assignment History",
                                             onTap: () {
                                               Navigator.of(context).push(
@@ -440,10 +436,6 @@ class _MainScreenState extends State<MainScreen> {
                                           ),
                                           MyInformationCard(
                                             icon: 'suspect.png',
-                                            //  Icon(
-                                            //   FontAwesomeIcons.addressBook,
-                                            //   color: customColor[130],
-                                            // ),
                                             text: "Violators",
                                             onTap: () {
                                               Navigator.of(context).push(
@@ -459,10 +451,6 @@ class _MainScreenState extends State<MainScreen> {
                                           ),
                                           MyInformationCard(
                                             icon: 'user.png',
-                                            //  Icon(
-                                            //   FontAwesomeIcons.user,
-                                            //   color: customColor[130],
-                                            // ),
                                             text: "My Account",
                                             onTap: () {
                                               Navigator.of(context).push(
