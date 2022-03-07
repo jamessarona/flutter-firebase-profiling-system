@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tanod_apprehension/shared/globals.dart';
+import 'package:tanood/shared/globals.dart';
 
 TextStyle primaryText = GoogleFonts.lato(
   fontSize: 15,

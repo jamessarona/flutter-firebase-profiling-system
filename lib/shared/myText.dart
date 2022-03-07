@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tanod_apprehension/shared/constants.dart';
+import 'package:tanood/shared/constants.dart';
 
 class MyDateLabel extends StatelessWidget {
   final String title;

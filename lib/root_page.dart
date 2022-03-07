@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tanod_apprehension/net/authenticationService.dart';
-import 'package:tanod_apprehension/screens/detailReportScreen.dart';
-import 'package:tanod_apprehension/screens/loginScreen.dart';
-import 'package:tanod_apprehension/screens/mainScreen.dart';
+import 'package:tanood/net/authenticationService.dart';
+import 'package:tanood/screens/detailReportScreen.dart';
+import 'package:tanood/screens/loginScreen.dart';
+import 'package:tanood/screens/mainScreen.dart';
 
 class Root extends StatefulWidget {
   final BaseAuth auth;

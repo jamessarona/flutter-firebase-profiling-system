@@ -7,13 +7,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:tanod_apprehension/net/authenticationService.dart';
-import 'package:tanod_apprehension/screens/detailAccountScreen.dart';
-import 'package:tanod_apprehension/shared/constants.dart';
-import 'package:tanod_apprehension/shared/myButtons.dart';
-import 'package:tanod_apprehension/shared/myCards.dart';
-import 'package:tanod_apprehension/shared/myListTile.dart';
-import 'package:tanod_apprehension/shared/mySpinKits.dart';
+import 'package:tanood/net/authenticationService.dart';
+import 'package:tanood/screens/detailAccountScreen.dart';
+import 'package:tanood/shared/constants.dart';
+import 'package:tanood/shared/myButtons.dart';
+import 'package:tanood/shared/myCards.dart';
+import 'package:tanood/shared/myListTile.dart';
+import 'package:tanood/shared/mySpinKits.dart';
 
 class MyAccountScreen extends StatefulWidget {
   final String userUID;

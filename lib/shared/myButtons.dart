@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tanod_apprehension/shared/constants.dart';
-import 'package:tanod_apprehension/shared/mySpinKits.dart';
+import 'package:tanood/shared/constants.dart';
+import 'package:tanood/shared/mySpinKits.dart';
 
 class MyRaisedButton extends StatelessWidget {
   final double elavation;

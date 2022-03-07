@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_restart/flutter_app_restart.dart';
-import 'package:tanod_apprehension/net/authenticationService.dart';
-import 'package:tanod_apprehension/screens/mainScreen.dart';
-import 'package:tanod_apprehension/screens/reportsScreen.dart';
-import 'package:tanod_apprehension/screens/settingsScreen.dart';
-import 'package:tanod_apprehension/screens/statisticsScreen.dart';
-import 'package:tanod_apprehension/shared/constants.dart';
-import 'package:tanod_apprehension/shared/myBottomSheet.dart';
+import 'package:tanood/net/authenticationService.dart';
+import 'package:tanood/screens/mainScreen.dart';
+import 'package:tanood/screens/reportsScreen.dart';
+import 'package:tanood/screens/settingsScreen.dart';
+import 'package:tanood/screens/statisticsScreen.dart';
+import 'package:tanood/shared/constants.dart';
+import 'package:tanood/shared/myBottomSheet.dart';
 
 class BuildDrawer extends StatelessWidget {
   final String leading;

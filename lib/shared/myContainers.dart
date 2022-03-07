@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:tanod_apprehension/shared/constants.dart';
-import 'package:tanod_apprehension/shared/globals.dart';
+import 'package:tanood/shared/constants.dart';
+import 'package:tanood/shared/globals.dart';
 import 'package:intl/intl.dart';
 
 class MyUserDetail extends StatelessWidget {

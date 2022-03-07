@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:tanod_apprehension/shared/constants.dart';
+import 'package:tanood/shared/constants.dart';
 
 class MyTextFormField extends StatelessWidget {
   final TextInputType? inputType;

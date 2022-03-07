@@ -1,7 +1,7 @@
-name: tanod_apprehension
-description: A new Flutter project.
+name: tanood
+description: An android application that allows Tanods to apprehend detected facemask violators.
 
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: 'none' 
 version: 1.0.0+1
 
 environment:

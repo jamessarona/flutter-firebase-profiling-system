@@ -1,11 +1,11 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:tanod_apprehension/net/authenticationService.dart';
-import 'package:tanod_apprehension/screens/detailReportScreen.dart';
-import 'package:tanod_apprehension/shared/constants.dart';
-import 'package:tanod_apprehension/shared/myListTile.dart';
-import 'package:tanod_apprehension/shared/mySpinKits.dart';
+import 'package:tanood/net/authenticationService.dart';
+import 'package:tanood/screens/detailReportScreen.dart';
+import 'package:tanood/shared/constants.dart';
+import 'package:tanood/shared/myListTile.dart';
+import 'package:tanood/shared/mySpinKits.dart';
 
 class DetailViolatorScreen extends StatefulWidget {
   final String id;

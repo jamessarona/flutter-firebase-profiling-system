@@ -3,17 +3,17 @@ import 'package:intl/intl.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:tanod_apprehension/net/authenticationService.dart';
-import 'package:tanod_apprehension/screens/detailAssignedTanodsReportScreen.dart';
-import 'package:tanod_apprehension/screens/detailDocumentedViolatorsScreen.dart';
-import 'package:tanod_apprehension/screens/detailImageFullscreen.dart';
-import 'package:tanod_apprehension/screens/documentReportScreen.dart';
-import 'package:tanod_apprehension/screens/mainScreen.dart';
-import 'package:tanod_apprehension/shared/constants.dart';
-import 'package:tanod_apprehension/shared/myButtons.dart';
-import 'package:tanod_apprehension/shared/myContainers.dart';
-import 'package:tanod_apprehension/shared/mySpinKits.dart';
-import 'package:tanod_apprehension/shared/myText.dart';
+import 'package:tanood/net/authenticationService.dart';
+import 'package:tanood/screens/detailAssignedTanodsReportScreen.dart';
+import 'package:tanood/screens/detailDocumentedViolatorsScreen.dart';
+import 'package:tanood/screens/detailImageFullscreen.dart';
+import 'package:tanood/screens/documentReportScreen.dart';
+import 'package:tanood/screens/mainScreen.dart';
+import 'package:tanood/shared/constants.dart';
+import 'package:tanood/shared/myButtons.dart';
+import 'package:tanood/shared/myContainers.dart';
+import 'package:tanood/shared/mySpinKits.dart';
+import 'package:tanood/shared/myText.dart';
 
 class DetailReportScreen extends StatefulWidget {
   final String id;

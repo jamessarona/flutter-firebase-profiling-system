@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tanod_apprehension/shared/mySpinKits.dart';
+import 'package:tanood/shared/mySpinKits.dart';
 
 class MyLoadingScreenHomeScreen extends StatelessWidget {
   const MyLoadingScreenHomeScreen({Key? key}) : super(key: key);

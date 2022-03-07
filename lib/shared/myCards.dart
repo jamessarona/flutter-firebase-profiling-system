@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:tanod_apprehension/shared/constants.dart';
-import 'package:tanod_apprehension/shared/myContainers.dart';
+import 'package:tanood/shared/constants.dart';
+import 'package:tanood/shared/myContainers.dart';
 
 class MyReportCard extends StatelessWidget {
   final String id;

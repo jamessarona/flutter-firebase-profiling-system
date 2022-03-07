@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tanod_apprehension/screens/loginScreen.dart';
-import 'package:tanod_apprehension/shared/constants.dart';
-import 'package:tanod_apprehension/shared/myButtons.dart';
+import 'package:tanood/screens/loginScreen.dart';
+import 'package:tanood/shared/constants.dart';
+import 'package:tanood/shared/myButtons.dart';
 import 'globals.dart' as globals;
 import 'package:intl/intl.dart';
 

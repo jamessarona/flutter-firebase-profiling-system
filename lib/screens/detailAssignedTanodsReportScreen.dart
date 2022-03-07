@@ -1,8 +1,8 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:tanod_apprehension/shared/constants.dart';
-import 'package:tanod_apprehension/shared/mySpinKits.dart';
+import 'package:tanood/shared/constants.dart';
+import 'package:tanood/shared/mySpinKits.dart';
 
 class DetailAssignedTanodsReport extends StatefulWidget {
   final String id;
