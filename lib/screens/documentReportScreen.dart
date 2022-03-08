@@ -688,447 +688,462 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
                   if (widget.selectedViolatorId != null) {
                     _setViolatorInformation();
                   }
-                  return Scaffold(
-                    appBar: AppBar(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      leading: IconButton(
-                        icon: Icon(FontAwesomeIcons.chevronLeft),
-                        color: Colors.black,
-                        iconSize: 20,
-                        onPressed: () {
-                          if (isSaveable) {
-                            _buildCreateCancelDocumentationConfirmaModal(
-                                context);
-                          } else {
-                            violatorNames.clear();
-                            Navigator.pop(context);
-                          }
-                        },
+                  return WillPopScope(
+                    onWillPop: () async {
+                      if (isSaveable) {
+                        _buildCreateCancelDocumentationConfirmaModal(context);
+                      } else {
+                        violatorNames.clear();
+                        Navigator.pop(context);
+                      }
+                      return false;
+                    },
+                    child: Scaffold(
+                      appBar: AppBar(
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        leading: IconButton(
+                          icon: Icon(FontAwesomeIcons.chevronLeft),
+                          color: Colors.black,
+                          iconSize: 20,
+                          onPressed: () {
+                            if (isSaveable) {
+                              _buildCreateCancelDocumentationConfirmaModal(
+                                  context);
+                            } else {
+                              violatorNames.clear();
+                              Navigator.pop(context);
+                            }
+                          },
+                        ),
+                        centerTitle: true,
+                        title: Text(
+                          'Documentation',
+                          style: primaryText.copyWith(
+                              fontSize: 18, letterSpacing: 1),
+                        ),
                       ),
-                      centerTitle: true,
-                      title: Text(
-                        'Documentation',
-                        style: primaryText.copyWith(
-                            fontSize: 18, letterSpacing: 1),
-                      ),
-                    ),
-                    body: Form(
-                      key: _formKey,
-                      child: Container(
-                        height: screenSize.height,
-                        width: screenSize.width,
-                        child: ListView(
-                          children: [
-                            Container(
-                              margin: EdgeInsets.symmetric(
-                                vertical: 10,
-                                horizontal: screenSize.width * .1,
-                              ),
-                              height: 80,
-                              width: 80,
-                              child: Image.asset(
-                                "assets/images/${selectedGender == 'Female' ? 'woman' : 'man'}.png",
-                                width: 20,
-                                height: 20,
-                                fit: BoxFit.fitHeight,
-                              ),
-                            ),
-                            Text(
-                              widget.selectedViolatorId == null
-                                  ? 'Record the Violator'
-                                  : 'Violator Information',
-                              style: primaryText.copyWith(
-                                fontSize: 16,
-                                letterSpacing: 0,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            Text(
-                              widget.selectedViolatorId == null
-                                  ? 'Apprehend: ${_calculateNeededApprehension().toString()}'
-                                  : '',
-                              style: primaryText.copyWith(
-                                fontSize: 12,
-                                fontStyle: FontStyle.italic,
-                                letterSpacing: 0,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(
-                                top: 40,
-                                left: screenSize.width * .1,
-                                right: screenSize.width * .1,
-                              ),
-                              child: TypeAheadFormField(
-                                suggestionsCallback: (pattern) =>
-                                    violatorNames.where(
-                                  (item) => item.toLowerCase().contains(
-                                        pattern.toLowerCase(),
-                                      ),
+                      body: Form(
+                        key: _formKey,
+                        child: Container(
+                          height: screenSize.height,
+                          width: screenSize.width,
+                          child: ListView(
+                            children: [
+                              Container(
+                                margin: EdgeInsets.symmetric(
+                                  vertical: 10,
+                                  horizontal: screenSize.width * .1,
                                 ),
-                                itemBuilder: (_, String item) => ListTile(
-                                  title: Text(
-                                    item,
+                                height: 80,
+                                width: 80,
+                                child: Image.asset(
+                                  "assets/images/${selectedGender == 'Female' ? 'woman' : 'man'}.png",
+                                  width: 20,
+                                  height: 20,
+                                  fit: BoxFit.fitHeight,
+                                ),
+                              ),
+                              Text(
+                                widget.selectedViolatorId == null
+                                    ? 'Record the Violator'
+                                    : 'Violator Information',
+                                style: primaryText.copyWith(
+                                  fontSize: 16,
+                                  letterSpacing: 0,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              Text(
+                                widget.selectedViolatorId == null
+                                    ? 'Apprehend: ${_calculateNeededApprehension().toString()}'
+                                    : '',
+                                style: primaryText.copyWith(
+                                  fontSize: 12,
+                                  fontStyle: FontStyle.italic,
+                                  letterSpacing: 0,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(
+                                  top: 40,
+                                  left: screenSize.width * .1,
+                                  right: screenSize.width * .1,
+                                ),
+                                child: TypeAheadFormField(
+                                  suggestionsCallback: (pattern) =>
+                                      violatorNames.where(
+                                    (item) => item.toLowerCase().contains(
+                                          pattern.toLowerCase(),
+                                        ),
                                   ),
-                                ),
-                                onSuggestionSelected: (String val) {
-                                  this._nameTextEditingController.text = val;
-                                  setState(() {
-                                    _birthdayTextEditingController.clear();
-                                    selectedGender = 'Male';
-                                    _contactNumberTextEditingController.clear();
-                                    _addressTextEditingController.clear();
-                                    _violationCountTextEditingController
-                                        .clear();
-                                    _fineTextEditingController.clear();
-
-                                    _autoSetViolationDocumentation(
-                                        _calculateViolatorViolationHistory(
-                                            val));
-                                    _checkValidToSave();
-                                  });
-                                },
-                                getImmediateSuggestions: true,
-                                hideSuggestionsOnKeyboardHide: false,
-                                hideOnEmpty: false,
-                                noItemsFoundBuilder: (context) => Padding(
-                                  padding: const EdgeInsets.all(8),
-                                  child: Text('No Existing Violators Found'),
-                                ),
-                                textFieldConfiguration: TextFieldConfiguration(
-                                  textInputAction: TextInputAction.next,
-                                  onChanged: (value) {
+                                  itemBuilder: (_, String item) => ListTile(
+                                    title: Text(
+                                      item,
+                                    ),
+                                  ),
+                                  onSuggestionSelected: (String val) {
+                                    this._nameTextEditingController.text = val;
                                     setState(() {
                                       _birthdayTextEditingController.clear();
-                                      selectedGender = "Male";
+                                      selectedGender = 'Male';
                                       _contactNumberTextEditingController
                                           .clear();
                                       _addressTextEditingController.clear();
-                                      _violationCountTextEditingController
-                                          .clear();
                                       _violationCountTextEditingController
                                           .clear();
                                       _fineTextEditingController.clear();
 
                                       _autoSetViolationDocumentation(
                                           _calculateViolatorViolationHistory(
-                                              value));
+                                              val));
                                       _checkValidToSave();
                                     });
                                   },
-                                  decoration: InputDecoration(
-                                    isDense: true,
-                                    prefixIcon: GestureDetector(
-                                      onTap: () {},
-                                      child: Icon(
-                                        FontAwesomeIcons.userAlt,
-                                        size: 20,
-                                        color: customColor[130],
-                                      ),
-                                    ),
-                                    labelText: "Name",
-                                    filled: true,
-                                    fillColor: Colors.white70,
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(20),
-                                      borderSide: BorderSide(
-                                        color: Color(0xff1c52dd),
-                                      ),
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
+                                  getImmediateSuggestions: true,
+                                  hideSuggestionsOnKeyboardHide: false,
+                                  hideOnEmpty: false,
+                                  noItemsFoundBuilder: (context) => Padding(
+                                    padding: const EdgeInsets.all(8),
+                                    child: Text('No Existing Violators Found'),
                                   ),
-                                  controller: this._nameTextEditingController,
-                                ),
-                                validator: (value) {
-                                  if (value == "") {
-                                    return "Name is empty";
-                                  }
-                                  if (_violatorIsAlreadyApprehended()) {
-                                    return "Violator is already apprehended";
-                                  }
-                                },
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(
-                                top: 15,
-                                left: screenSize.width * .1,
-                                right: screenSize.width * .1,
-                              ),
-                              child: MyDocumentationTextFormField(
-                                inputType: TextInputType.datetime,
-                                isObscureText: false,
-                                textAction: TextInputAction.next,
-                                validation: (value) {
-                                  if (value == "") {
-                                    return "Birthday is empty";
-                                  }
-                                },
-                                onChanged: (value) {},
-                                onTap: () {
-                                  showDatePicker(
-                                          context: context,
-                                          initialDate: DateTime.now(),
-                                          firstDate:
-                                              DateTime(1900, 1, 1, 1, 0, 0),
-                                          lastDate: DateTime.now())
-                                      .then((selectedDate) {
-                                    setState(() {
-                                      if (selectedDate != null) {
-                                        _birthdayTextEditingController.text =
-                                            "${numberFormat(selectedDate.year)}-${numberFormat(selectedDate.month)}-${numberFormat(selectedDate.day)}";
+                                  textFieldConfiguration:
+                                      TextFieldConfiguration(
+                                    textInputAction: TextInputAction.next,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _birthdayTextEditingController.clear();
+                                        selectedGender = "Male";
+                                        _contactNumberTextEditingController
+                                            .clear();
+                                        _addressTextEditingController.clear();
+                                        _violationCountTextEditingController
+                                            .clear();
+                                        _violationCountTextEditingController
+                                            .clear();
+                                        _fineTextEditingController.clear();
 
+                                        _autoSetViolationDocumentation(
+                                            _calculateViolatorViolationHistory(
+                                                value));
                                         _checkValidToSave();
-                                      }
-                                    });
-                                  });
-                                },
-                                prefixIcon: GestureDetector(
-                                  onTap: () {},
-                                  child: Icon(
-                                    FontAwesomeIcons.solidCalendarAlt,
-                                    size: 20,
-                                    color: customColor[130],
-                                  ),
-                                ),
-                                labelText: "Birthday",
-                                hintText: "",
-                                isReadOnly: true,
-                                controller: _birthdayTextEditingController,
-                              ),
-                            ),
-                            Container(
-                              height: 50,
-                              margin: EdgeInsets.only(
-                                top: 15,
-                                left: screenSize.width * .1,
-                                right: screenSize.width * .1,
-                              ),
-                              child: FormField<String>(
-                                builder: (FormFieldState<String> state) {
-                                  return InputDecorator(
+                                      });
+                                    },
                                     decoration: InputDecoration(
-                                      labelText: 'Gender',
-                                      prefixIcon: GestureDetector(
-                                        onTap: () {},
-                                        child: Icon(
-                                          selectedGender == 'Male'
-                                              ? FontAwesomeIcons.mars
-                                              : selectedGender == 'Female'
-                                                  ? FontAwesomeIcons.venus
-                                                  : FontAwesomeIcons
-                                                      .transgenderAlt,
-                                          size: 20,
-                                          color: customColor[130],
-                                        ),
-                                      ),
-                                      //      labelStyle: textStyle,
-                                      errorStyle: TextStyle(
-                                        color: Colors.redAccent,
-                                        fontSize: 16.0,
-                                      ),
                                       isDense: true,
-                                      hintText: 'Please select reason',
+                                      prefixIcon: GestureDetector(
+                                        onTap: () {},
+                                        child: Icon(
+                                          FontAwesomeIcons.userAlt,
+                                          size: 20,
+                                          color: customColor[130],
+                                        ),
+                                      ),
+                                      labelText: "Name",
+                                      filled: true,
+                                      fillColor: Colors.white70,
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                        borderSide: BorderSide(
+                                          color: Color(0xff1c52dd),
+                                        ),
+                                      ),
                                       border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(
-                                          20,
-                                        ),
+                                        borderRadius: BorderRadius.circular(20),
                                       ),
                                     ),
-                                    isEmpty: selectedGender == '',
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton<String>(
-                                        isDense: true,
-                                        value: selectedGender,
-                                        onChanged: (newValue) {
-                                          setState(() {
-                                            selectedGender = newValue!;
-                                            state.didChange(newValue);
+                                    controller: this._nameTextEditingController,
+                                  ),
+                                  validator: (value) {
+                                    if (value == "") {
+                                      return "Name is empty";
+                                    }
+                                    if (_violatorIsAlreadyApprehended()) {
+                                      return "Violator is already apprehended";
+                                    }
+                                  },
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(
+                                  top: 15,
+                                  left: screenSize.width * .1,
+                                  right: screenSize.width * .1,
+                                ),
+                                child: MyDocumentationTextFormField(
+                                  inputType: TextInputType.datetime,
+                                  isObscureText: false,
+                                  textAction: TextInputAction.next,
+                                  validation: (value) {
+                                    if (value == "") {
+                                      return "Birthday is empty";
+                                    }
+                                  },
+                                  onChanged: (value) {},
+                                  onTap: () {
+                                    showDatePicker(
+                                            context: context,
+                                            initialDate: DateTime.now(),
+                                            firstDate:
+                                                DateTime(1900, 1, 1, 1, 0, 0),
+                                            lastDate: DateTime.now())
+                                        .then((selectedDate) {
+                                      setState(() {
+                                        if (selectedDate != null) {
+                                          _birthdayTextEditingController.text =
+                                              "${numberFormat(selectedDate.year)}-${numberFormat(selectedDate.month)}-${numberFormat(selectedDate.day)}";
 
-                                            _checkValidToSaveDropDown();
-                                          });
-                                        },
-                                        items: _DropGender.map((String value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(
-                                              value,
-                                              style: tertiaryText.copyWith(
-                                                fontSize: 16,
+                                          _checkValidToSave();
+                                        }
+                                      });
+                                    });
+                                  },
+                                  prefixIcon: GestureDetector(
+                                    onTap: () {},
+                                    child: Icon(
+                                      FontAwesomeIcons.solidCalendarAlt,
+                                      size: 20,
+                                      color: customColor[130],
+                                    ),
+                                  ),
+                                  labelText: "Birthday",
+                                  hintText: "",
+                                  isReadOnly: true,
+                                  controller: _birthdayTextEditingController,
+                                ),
+                              ),
+                              Container(
+                                height: 50,
+                                margin: EdgeInsets.only(
+                                  top: 15,
+                                  left: screenSize.width * .1,
+                                  right: screenSize.width * .1,
+                                ),
+                                child: FormField<String>(
+                                  builder: (FormFieldState<String> state) {
+                                    return InputDecorator(
+                                      decoration: InputDecoration(
+                                        labelText: 'Gender',
+                                        prefixIcon: GestureDetector(
+                                          onTap: () {},
+                                          child: Icon(
+                                            selectedGender == 'Male'
+                                                ? FontAwesomeIcons.mars
+                                                : selectedGender == 'Female'
+                                                    ? FontAwesomeIcons.venus
+                                                    : FontAwesomeIcons
+                                                        .transgenderAlt,
+                                            size: 20,
+                                            color: customColor[130],
+                                          ),
+                                        ),
+                                        //      labelStyle: textStyle,
+                                        errorStyle: TextStyle(
+                                          color: Colors.redAccent,
+                                          fontSize: 16.0,
+                                        ),
+                                        isDense: true,
+                                        hintText: 'Please select reason',
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                        ),
+                                      ),
+                                      isEmpty: selectedGender == '',
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton<String>(
+                                          isDense: true,
+                                          value: selectedGender,
+                                          onChanged: (newValue) {
+                                            setState(() {
+                                              selectedGender = newValue!;
+                                              state.didChange(newValue);
+
+                                              _checkValidToSaveDropDown();
+                                            });
+                                          },
+                                          items:
+                                              _DropGender.map((String value) {
+                                            return DropdownMenuItem<String>(
+                                              value: value,
+                                              child: Text(
+                                                value,
+                                                style: tertiaryText.copyWith(
+                                                  fontSize: 16,
+                                                ),
                                               ),
-                                            ),
-                                          );
-                                        }).toList(),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(
-                                top: 15,
-                                left: screenSize.width * .1,
-                                right: screenSize.width * .1,
-                              ),
-                              child: MyDocumentationTextFormField(
-                                inputType: TextInputType.phone,
-                                isObscureText: false,
-                                textAction: TextInputAction.next,
-                                validation: (value) {
-                                  if (value == "") {
-                                    return "Contact Number is empty";
-                                  }
-                                  if (value!.length != 11)
-                                    return 'Contact Number must be of 11 digit';
-                                },
-                                onChanged: (value) {
-                                  setState(() {
-                                    _checkValidToSave();
-                                  });
-                                },
-                                onTap: () {},
-                                prefixIcon: GestureDetector(
-                                  onTap: () {},
-                                  child: Icon(
-                                    FontAwesomeIcons.phone,
-                                    size: 20,
-                                    color: customColor[130],
-                                  ),
-                                ),
-                                labelText: "Contact Number",
-                                hintText: "",
-                                isReadOnly: false,
-                                controller: _contactNumberTextEditingController,
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(
-                                top: 15,
-                                left: screenSize.width * .1,
-                                right: screenSize.width * .1,
-                              ),
-                              child: MyDocumentationTextFormField(
-                                inputType: TextInputType.streetAddress,
-                                isObscureText: false,
-                                textAction: TextInputAction.next,
-                                validation: (value) {
-                                  if (value == "") {
-                                    return "Address is empty";
-                                  }
-                                },
-                                onChanged: (value) {
-                                  setState(() {
-                                    _checkValidToSave();
-                                  });
-                                },
-                                onTap: () {},
-                                prefixIcon: GestureDetector(
-                                  onTap: () {},
-                                  child: Icon(
-                                    FontAwesomeIcons.mapMarkerAlt,
-                                    size: 20,
-                                    color: customColor[130],
-                                  ),
-                                ),
-                                labelText: "Address",
-                                hintText: "",
-                                isReadOnly: false,
-                                controller: _addressTextEditingController,
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(
-                                top: 15,
-                                left: screenSize.width * .1,
-                                right: screenSize.width * .1,
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Container(
-                                    width: screenSize.width * .39,
-                                    child: MyDocumentationTextFormField(
-                                      inputType: TextInputType.streetAddress,
-                                      isObscureText: false,
-                                      textAction: TextInputAction.next,
-                                      validation: (value) {},
-                                      onChanged: (value) {},
-                                      onTap: () {},
-                                      prefixIcon: GestureDetector(
-                                        onTap: () {},
-                                        child: Icon(
-                                          FontAwesomeIcons.solidFlag,
-                                          size: 20,
-                                          color: customColor[130],
+                                            );
+                                          }).toList(),
                                         ),
                                       ),
-                                      labelText: "Count",
-                                      hintText: "",
-                                      isReadOnly: true,
-                                      controller:
-                                          _violationCountTextEditingController,
+                                    );
+                                  },
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(
+                                  top: 15,
+                                  left: screenSize.width * .1,
+                                  right: screenSize.width * .1,
+                                ),
+                                child: MyDocumentationTextFormField(
+                                  inputType: TextInputType.phone,
+                                  isObscureText: false,
+                                  textAction: TextInputAction.next,
+                                  validation: (value) {
+                                    if (value == "") {
+                                      return "Contact Number is empty";
+                                    }
+                                    if (value!.length != 11)
+                                      return 'Contact Number must be of 11 digit';
+                                  },
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _checkValidToSave();
+                                    });
+                                  },
+                                  onTap: () {},
+                                  prefixIcon: GestureDetector(
+                                    onTap: () {},
+                                    child: Icon(
+                                      FontAwesomeIcons.phone,
+                                      size: 20,
+                                      color: customColor[130],
                                     ),
                                   ),
-                                  Container(
-                                    width: screenSize.width * .39,
-                                    child: MyDocumentationTextFormField(
-                                      inputType: TextInputType.streetAddress,
-                                      isObscureText: false,
-                                      textAction: TextInputAction.next,
-                                      validation: (value) {},
-                                      onChanged: (value) {},
-                                      onTap: () {},
-                                      prefixIcon: GestureDetector(
+                                  labelText: "Contact Number",
+                                  hintText: "",
+                                  isReadOnly: false,
+                                  controller:
+                                      _contactNumberTextEditingController,
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(
+                                  top: 15,
+                                  left: screenSize.width * .1,
+                                  right: screenSize.width * .1,
+                                ),
+                                child: MyDocumentationTextFormField(
+                                  inputType: TextInputType.streetAddress,
+                                  isObscureText: false,
+                                  textAction: TextInputAction.next,
+                                  validation: (value) {
+                                    if (value == "") {
+                                      return "Address is empty";
+                                    }
+                                  },
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _checkValidToSave();
+                                    });
+                                  },
+                                  onTap: () {},
+                                  prefixIcon: GestureDetector(
+                                    onTap: () {},
+                                    child: Icon(
+                                      FontAwesomeIcons.mapMarkerAlt,
+                                      size: 20,
+                                      color: customColor[130],
+                                    ),
+                                  ),
+                                  labelText: "Address",
+                                  hintText: "",
+                                  isReadOnly: false,
+                                  controller: _addressTextEditingController,
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(
+                                  top: 15,
+                                  left: screenSize.width * .1,
+                                  right: screenSize.width * .1,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      width: screenSize.width * .39,
+                                      child: MyDocumentationTextFormField(
+                                        inputType: TextInputType.streetAddress,
+                                        isObscureText: false,
+                                        textAction: TextInputAction.next,
+                                        validation: (value) {},
+                                        onChanged: (value) {},
                                         onTap: () {},
-                                        child: Icon(
-                                          FontAwesomeIcons.coins,
-                                          size: 20,
-                                          color: customColor[130],
+                                        prefixIcon: GestureDetector(
+                                          onTap: () {},
+                                          child: Icon(
+                                            FontAwesomeIcons.solidFlag,
+                                            size: 20,
+                                            color: customColor[130],
+                                          ),
                                         ),
+                                        labelText: "Count",
+                                        hintText: "",
+                                        isReadOnly: true,
+                                        controller:
+                                            _violationCountTextEditingController,
                                       ),
-                                      labelText: "Fine",
-                                      hintText: "",
-                                      isReadOnly: true,
-                                      controller: _fineTextEditingController,
                                     ),
-                                  ),
-                                ],
+                                    Container(
+                                      width: screenSize.width * .39,
+                                      child: MyDocumentationTextFormField(
+                                        inputType: TextInputType.streetAddress,
+                                        isObscureText: false,
+                                        textAction: TextInputAction.next,
+                                        validation: (value) {},
+                                        onChanged: (value) {},
+                                        onTap: () {},
+                                        prefixIcon: GestureDetector(
+                                          onTap: () {},
+                                          child: Icon(
+                                            FontAwesomeIcons.coins,
+                                            size: 20,
+                                            color: customColor[130],
+                                          ),
+                                        ),
+                                        labelText: "Fine",
+                                        hintText: "",
+                                        isReadOnly: true,
+                                        controller: _fineTextEditingController,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(
-                                top: 40,
-                                left: screenSize.width * .21,
-                                right: screenSize.width * .21,
-                              ),
-                              height: 50,
-                              child: MyRaisedButton(
-                                color: Color(0xff1c52dd),
-                                elavation: 5,
-                                isLoading: false,
-                                onPressed: () {
-                                  _validateDocumentation();
-                                },
-                                radius: 30,
-                                text: Text(
-                                  widget.selectedViolatorId == null
-                                      ? 'Save'
-                                      : 'Update',
-                                  style: tertiaryText.copyWith(
-                                    fontSize: 19,
-                                    color: Colors.white,
+                              Container(
+                                margin: EdgeInsets.only(
+                                  top: 40,
+                                  left: screenSize.width * .21,
+                                  right: screenSize.width * .21,
+                                ),
+                                height: 50,
+                                child: MyRaisedButton(
+                                  color: Color(0xff1c52dd),
+                                  elavation: 5,
+                                  isLoading: false,
+                                  onPressed: () {
+                                    _validateDocumentation();
+                                  },
+                                  radius: 30,
+                                  text: Text(
+                                    widget.selectedViolatorId == null
+                                        ? 'Save'
+                                        : 'Update',
+                                    style: tertiaryText.copyWith(
+                                      fontSize: 19,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),

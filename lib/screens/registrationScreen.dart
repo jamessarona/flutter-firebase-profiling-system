@@ -360,450 +360,458 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   Widget build(BuildContext context) {
     screenSize = MediaQuery.of(context).size;
     return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          leading: IconButton(
-            icon: Icon(
-              FontAwesomeIcons.chevronLeft,
-              color: Colors.black,
-              size: 18,
+      child: WillPopScope(
+        onWillPop: () async {
+          isSaveable
+              ? _buildCreateCancelDocumentationConfirmaModal(context)
+              : Navigator.of(context).pop();
+          return false;
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            leading: IconButton(
+              icon: Icon(
+                FontAwesomeIcons.chevronLeft,
+                color: Colors.black,
+                size: 18,
+              ),
+              onPressed: () {
+                isSaveable
+                    ? _buildCreateCancelDocumentationConfirmaModal(context)
+                    : Navigator.of(context).pop();
+              },
             ),
-            onPressed: () {
-              isSaveable
-                  ? _buildCreateCancelDocumentationConfirmaModal(context)
-                  : Navigator.of(context).pop();
-            },
+            centerTitle: true,
+            title: Text(
+              'Registration',
+              style: primaryText.copyWith(fontSize: 18, letterSpacing: 1),
+            ),
           ),
-          centerTitle: true,
-          title: Text(
-            'Registration',
-            style: primaryText.copyWith(fontSize: 18, letterSpacing: 1),
-          ),
-        ),
-        body: StreamBuilder<Object>(
-            stream: dbRef.child('Tanods').onValue,
-            builder: (context, tanodSnapshot) {
-              if (tanodSnapshot.hasData &&
-                  !tanodSnapshot.hasError &&
-                  (tanodSnapshot.data! as Event).snapshot.value != null) {
-                tanods = (tanodSnapshot.data! as Event).snapshot.value;
-              } else {
-                return Scaffold(
-                  body: Center(
-                    child: MySpinKitLoadingScreen(),
+          body: StreamBuilder<Object>(
+              stream: dbRef.child('Tanods').onValue,
+              builder: (context, tanodSnapshot) {
+                if (tanodSnapshot.hasData &&
+                    !tanodSnapshot.hasError &&
+                    (tanodSnapshot.data! as Event).snapshot.value != null) {
+                  tanods = (tanodSnapshot.data! as Event).snapshot.value;
+                } else {
+                  return Scaffold(
+                    body: Center(
+                      child: MySpinKitLoadingScreen(),
+                    ),
+                  );
+                }
+                return Form(
+                  key: _formKey,
+                  child: Container(
+                    height: screenSize.height,
+                    width: screenSize.width,
+                    child: ListView(
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(
+                            top: 15,
+                            left: screenSize.width * .1,
+                            right: screenSize.width * .1,
+                          ),
+                          child: Text(
+                            'Information',
+                            style: tertiaryText.copyWith(fontSize: 15),
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(
+                            top: 10,
+                            left: screenSize.width * .1,
+                            right: screenSize.width * .1,
+                          ),
+                          child: MyDocumentationTextFormField(
+                            inputType: TextInputType.name,
+                            isObscureText: false,
+                            textAction: TextInputAction.next,
+                            validation: (value) {
+                              if (value == "") {
+                                return "Firstname is empty";
+                              }
+                            },
+                            onChanged: (value) {
+                              setState(() {
+                                _checkValidToSave();
+                              });
+                            },
+                            onTap: () {},
+                            prefixIcon: GestureDetector(
+                              onTap: () {},
+                              child: Icon(
+                                FontAwesomeIcons.userAlt,
+                                size: 20,
+                                color: customColor[130],
+                              ),
+                            ),
+                            labelText: "Firstname",
+                            hintText: "",
+                            isReadOnly: false,
+                            controller: _firstnameTextEditingController,
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(
+                            top: 15,
+                            left: screenSize.width * .1,
+                            right: screenSize.width * .1,
+                          ),
+                          child: MyDocumentationTextFormField(
+                            inputType: TextInputType.name,
+                            isObscureText: false,
+                            textAction: TextInputAction.next,
+                            validation: (value) {
+                              if (value == "") {
+                                return "Lastname is empty";
+                              }
+                            },
+                            onChanged: (value) {
+                              setState(() {
+                                _checkValidToSave();
+                              });
+                            },
+                            onTap: () {},
+                            prefixIcon: GestureDetector(
+                              onTap: () {},
+                              child: Icon(
+                                FontAwesomeIcons.userAlt,
+                                size: 20,
+                                color: customColor[130],
+                              ),
+                            ),
+                            labelText: "Lastname",
+                            hintText: "",
+                            isReadOnly: false,
+                            controller: _lastnameTextEditingController,
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(
+                            top: 15,
+                            left: screenSize.width * .1,
+                            right: screenSize.width * .1,
+                          ),
+                          child: MyDocumentationTextFormField(
+                            inputType: TextInputType.emailAddress,
+                            isObscureText: false,
+                            textAction: TextInputAction.next,
+                            validation: (value) {
+                              if (value == "") {
+                                return "Email is empty";
+                              }
+                              bool emailValid = RegExp(
+                                      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                  .hasMatch(value!);
+                              if (!emailValid) {
+                                return "Invalid Format";
+                              }
+                              if (isEmailExisting()) {
+                                return "Email already registed";
+                              }
+                            },
+                            onChanged: (value) {
+                              setState(() {
+                                _checkValidToSave();
+                              });
+                            },
+                            onTap: () {},
+                            prefixIcon: GestureDetector(
+                              onTap: () {},
+                              child: Icon(
+                                FontAwesomeIcons.solidEnvelope,
+                                size: 20,
+                                color: customColor[130],
+                              ),
+                            ),
+                            labelText: "Email",
+                            hintText: "",
+                            isReadOnly: false,
+                            controller: _emailTextEditingController,
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(
+                            top: 15,
+                            left: screenSize.width * .1,
+                            right: screenSize.width * .1,
+                          ),
+                          child: MyDocumentationTextFormField(
+                            inputType: TextInputType.datetime,
+                            isObscureText: false,
+                            textAction: TextInputAction.next,
+                            validation: (value) {
+                              if (value == "") {
+                                return "Birthday is empty";
+                              }
+                            },
+                            onChanged: (value) {},
+                            onTap: () {
+                              showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime(1900, 1, 1, 1, 0, 0),
+                                      lastDate: DateTime.now())
+                                  .then((selectedDate) {
+                                setState(() {
+                                  if (selectedDate != null) {
+                                    _birthdayTextEditingController.text =
+                                        "${numberFormat(selectedDate.year)}-${numberFormat(selectedDate.month)}-${numberFormat(selectedDate.day)}";
+
+                                    _checkValidToSave();
+                                  }
+                                });
+                              });
+                            },
+                            prefixIcon: GestureDetector(
+                              onTap: () {},
+                              child: Icon(
+                                FontAwesomeIcons.solidCalendarAlt,
+                                size: 20,
+                                color: customColor[130],
+                              ),
+                            ),
+                            labelText: "Birthday",
+                            hintText: "",
+                            isReadOnly: true,
+                            controller: _birthdayTextEditingController,
+                          ),
+                        ),
+                        Container(
+                          height: 50,
+                          margin: EdgeInsets.only(
+                            top: 15,
+                            left: screenSize.width * .1,
+                            right: screenSize.width * .1,
+                          ),
+                          child: FormField<String>(
+                            builder: (FormFieldState<String> state) {
+                              return InputDecorator(
+                                decoration: InputDecoration(
+                                  labelText: 'Gender',
+                                  prefixIcon: GestureDetector(
+                                    onTap: () {},
+                                    child: Icon(
+                                      selectedGender == 'Male'
+                                          ? FontAwesomeIcons.mars
+                                          : selectedGender == 'Female'
+                                              ? FontAwesomeIcons.venus
+                                              : FontAwesomeIcons.transgenderAlt,
+                                      size: 20,
+                                      color: customColor[130],
+                                    ),
+                                  ),
+                                  //      labelStyle: textStyle,
+                                  errorStyle: TextStyle(
+                                    color: Colors.redAccent,
+                                    fontSize: 16.0,
+                                  ),
+                                  isDense: true,
+                                  hintText: 'Please select a gender',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(
+                                      20,
+                                    ),
+                                  ),
+                                ),
+                                isEmpty: selectedGender == '',
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                    isDense: true,
+                                    value: selectedGender,
+                                    onChanged: (newValue) {
+                                      setState(() {
+                                        selectedGender = newValue!;
+                                        state.didChange(newValue);
+                                        _checkValidToSaveDropDown();
+                                      });
+                                    },
+                                    items: _DropGender.map((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(
+                                          value,
+                                          style: tertiaryText.copyWith(
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(
+                            top: 15,
+                            left: screenSize.width * .1,
+                            right: screenSize.width * .1,
+                          ),
+                          child: MyDocumentationTextFormField(
+                            inputType: TextInputType.phone,
+                            isObscureText: false,
+                            textAction: TextInputAction.next,
+                            validation: (value) {
+                              if (value == "") {
+                                return "Contact Number is empty";
+                              }
+                              if (value!.length != 11)
+                                return 'Contact Number must be of 11 digit';
+                            },
+                            onChanged: (value) {
+                              setState(() {
+                                _checkValidToSave();
+                              });
+                            },
+                            onTap: () {},
+                            prefixIcon: GestureDetector(
+                              onTap: () {},
+                              child: Icon(
+                                FontAwesomeIcons.phone,
+                                size: 20,
+                                color: customColor[130],
+                              ),
+                            ),
+                            labelText: "Contact Number",
+                            hintText: "",
+                            isReadOnly: false,
+                            controller: _contactNumberTextEditingController,
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(
+                            top: 15,
+                            left: screenSize.width * .1,
+                            right: screenSize.width * .1,
+                          ),
+                          child: MyDocumentationTextFormField(
+                            inputType: TextInputType.streetAddress,
+                            isObscureText: false,
+                            textAction: TextInputAction.next,
+                            validation: (value) {
+                              if (value == "") {
+                                return "Address is empty";
+                              }
+                            },
+                            onChanged: (value) {
+                              setState(() {
+                                _checkValidToSave();
+                              });
+                            },
+                            onTap: () {},
+                            prefixIcon: GestureDetector(
+                              onTap: () {},
+                              child: Icon(
+                                FontAwesomeIcons.mapMarkerAlt,
+                                size: 20,
+                                color: customColor[130],
+                              ),
+                            ),
+                            labelText: "Address",
+                            hintText: "",
+                            isReadOnly: false,
+                            controller: _addressTextEditingController,
+                          ),
+                        ),
+                        Container(
+                          height: 50,
+                          margin: EdgeInsets.only(
+                            top: 15,
+                            left: screenSize.width * .1,
+                            right: screenSize.width * .1,
+                          ),
+                          child: FormField<String>(
+                            builder: (FormFieldState<String> state) {
+                              return InputDecorator(
+                                decoration: InputDecoration(
+                                  labelText: 'Role',
+                                  prefixIcon: GestureDetector(
+                                    onTap: () {},
+                                    child: Icon(
+                                      FontAwesomeIcons.hatCowboy,
+                                      size: 20,
+                                      color: customColor[130],
+                                    ),
+                                  ),
+                                  //      labelStyle: textStyle,
+                                  errorStyle: TextStyle(
+                                    color: Colors.redAccent,
+                                    fontSize: 16.0,
+                                  ),
+                                  isDense: true,
+                                  hintText: 'Please select a role',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(
+                                      20,
+                                    ),
+                                  ),
+                                ),
+                                isEmpty: selectedRole == '',
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                    isDense: true,
+                                    value: selectedRole,
+                                    onChanged: (newValue) {
+                                      setState(() {
+                                        selectedRole = newValue!;
+                                        state.didChange(newValue);
+                                        _checkValidToSaveDropDown();
+                                      });
+                                    },
+                                    items: _DropRole.map((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(
+                                          value,
+                                          style: tertiaryText.copyWith(
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(
+                            top: 40,
+                            left: screenSize.width * .21,
+                            right: screenSize.width * .21,
+                          ),
+                          height: 50,
+                          child: MyRaisedButton(
+                            color: Color(0xff1c52dd),
+                            elavation: 5,
+                            isLoading: false,
+                            onPressed: () {
+                              _validateRegistration();
+                            },
+                            radius: 30,
+                            text: Text(
+                              'Save',
+                              style: tertiaryText.copyWith(
+                                fontSize: 19,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 );
-              }
-              return Form(
-                key: _formKey,
-                child: Container(
-                  height: screenSize.height,
-                  width: screenSize.width,
-                  child: ListView(
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(
-                          top: 15,
-                          left: screenSize.width * .1,
-                          right: screenSize.width * .1,
-                        ),
-                        child: Text(
-                          'Information',
-                          style: tertiaryText.copyWith(fontSize: 15),
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(
-                          top: 10,
-                          left: screenSize.width * .1,
-                          right: screenSize.width * .1,
-                        ),
-                        child: MyDocumentationTextFormField(
-                          inputType: TextInputType.name,
-                          isObscureText: false,
-                          textAction: TextInputAction.next,
-                          validation: (value) {
-                            if (value == "") {
-                              return "Firstname is empty";
-                            }
-                          },
-                          onChanged: (value) {
-                            setState(() {
-                              _checkValidToSave();
-                            });
-                          },
-                          onTap: () {},
-                          prefixIcon: GestureDetector(
-                            onTap: () {},
-                            child: Icon(
-                              FontAwesomeIcons.userAlt,
-                              size: 20,
-                              color: customColor[130],
-                            ),
-                          ),
-                          labelText: "Firstname",
-                          hintText: "",
-                          isReadOnly: false,
-                          controller: _firstnameTextEditingController,
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(
-                          top: 15,
-                          left: screenSize.width * .1,
-                          right: screenSize.width * .1,
-                        ),
-                        child: MyDocumentationTextFormField(
-                          inputType: TextInputType.name,
-                          isObscureText: false,
-                          textAction: TextInputAction.next,
-                          validation: (value) {
-                            if (value == "") {
-                              return "Lastname is empty";
-                            }
-                          },
-                          onChanged: (value) {
-                            setState(() {
-                              _checkValidToSave();
-                            });
-                          },
-                          onTap: () {},
-                          prefixIcon: GestureDetector(
-                            onTap: () {},
-                            child: Icon(
-                              FontAwesomeIcons.userAlt,
-                              size: 20,
-                              color: customColor[130],
-                            ),
-                          ),
-                          labelText: "Lastname",
-                          hintText: "",
-                          isReadOnly: false,
-                          controller: _lastnameTextEditingController,
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(
-                          top: 15,
-                          left: screenSize.width * .1,
-                          right: screenSize.width * .1,
-                        ),
-                        child: MyDocumentationTextFormField(
-                          inputType: TextInputType.emailAddress,
-                          isObscureText: false,
-                          textAction: TextInputAction.next,
-                          validation: (value) {
-                            if (value == "") {
-                              return "Email is empty";
-                            }
-                            bool emailValid = RegExp(
-                                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                .hasMatch(value!);
-                            if (!emailValid) {
-                              return "Invalid Format";
-                            }
-                            if (isEmailExisting()) {
-                              return "Email already registed";
-                            }
-                          },
-                          onChanged: (value) {
-                            setState(() {
-                              _checkValidToSave();
-                            });
-                          },
-                          onTap: () {},
-                          prefixIcon: GestureDetector(
-                            onTap: () {},
-                            child: Icon(
-                              FontAwesomeIcons.solidEnvelope,
-                              size: 20,
-                              color: customColor[130],
-                            ),
-                          ),
-                          labelText: "Email",
-                          hintText: "",
-                          isReadOnly: false,
-                          controller: _emailTextEditingController,
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(
-                          top: 15,
-                          left: screenSize.width * .1,
-                          right: screenSize.width * .1,
-                        ),
-                        child: MyDocumentationTextFormField(
-                          inputType: TextInputType.datetime,
-                          isObscureText: false,
-                          textAction: TextInputAction.next,
-                          validation: (value) {
-                            if (value == "") {
-                              return "Birthday is empty";
-                            }
-                          },
-                          onChanged: (value) {},
-                          onTap: () {
-                            showDatePicker(
-                                    context: context,
-                                    initialDate: DateTime.now(),
-                                    firstDate: DateTime(1900, 1, 1, 1, 0, 0),
-                                    lastDate: DateTime.now())
-                                .then((selectedDate) {
-                              setState(() {
-                                if (selectedDate != null) {
-                                  _birthdayTextEditingController.text =
-                                      "${numberFormat(selectedDate.year)}-${numberFormat(selectedDate.month)}-${numberFormat(selectedDate.day)}";
-
-                                  _checkValidToSave();
-                                }
-                              });
-                            });
-                          },
-                          prefixIcon: GestureDetector(
-                            onTap: () {},
-                            child: Icon(
-                              FontAwesomeIcons.solidCalendarAlt,
-                              size: 20,
-                              color: customColor[130],
-                            ),
-                          ),
-                          labelText: "Birthday",
-                          hintText: "",
-                          isReadOnly: true,
-                          controller: _birthdayTextEditingController,
-                        ),
-                      ),
-                      Container(
-                        height: 50,
-                        margin: EdgeInsets.only(
-                          top: 15,
-                          left: screenSize.width * .1,
-                          right: screenSize.width * .1,
-                        ),
-                        child: FormField<String>(
-                          builder: (FormFieldState<String> state) {
-                            return InputDecorator(
-                              decoration: InputDecoration(
-                                labelText: 'Gender',
-                                prefixIcon: GestureDetector(
-                                  onTap: () {},
-                                  child: Icon(
-                                    selectedGender == 'Male'
-                                        ? FontAwesomeIcons.mars
-                                        : selectedGender == 'Female'
-                                            ? FontAwesomeIcons.venus
-                                            : FontAwesomeIcons.transgenderAlt,
-                                    size: 20,
-                                    color: customColor[130],
-                                  ),
-                                ),
-                                //      labelStyle: textStyle,
-                                errorStyle: TextStyle(
-                                  color: Colors.redAccent,
-                                  fontSize: 16.0,
-                                ),
-                                isDense: true,
-                                hintText: 'Please select a gender',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(
-                                    20,
-                                  ),
-                                ),
-                              ),
-                              isEmpty: selectedGender == '',
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton<String>(
-                                  isDense: true,
-                                  value: selectedGender,
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      selectedGender = newValue!;
-                                      state.didChange(newValue);
-                                      _checkValidToSaveDropDown();
-                                    });
-                                  },
-                                  items: _DropGender.map((String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(
-                                        value,
-                                        style: tertiaryText.copyWith(
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(
-                          top: 15,
-                          left: screenSize.width * .1,
-                          right: screenSize.width * .1,
-                        ),
-                        child: MyDocumentationTextFormField(
-                          inputType: TextInputType.phone,
-                          isObscureText: false,
-                          textAction: TextInputAction.next,
-                          validation: (value) {
-                            if (value == "") {
-                              return "Contact Number is empty";
-                            }
-                            if (value!.length != 11)
-                              return 'Contact Number must be of 11 digit';
-                          },
-                          onChanged: (value) {
-                            setState(() {
-                              _checkValidToSave();
-                            });
-                          },
-                          onTap: () {},
-                          prefixIcon: GestureDetector(
-                            onTap: () {},
-                            child: Icon(
-                              FontAwesomeIcons.phone,
-                              size: 20,
-                              color: customColor[130],
-                            ),
-                          ),
-                          labelText: "Contact Number",
-                          hintText: "",
-                          isReadOnly: false,
-                          controller: _contactNumberTextEditingController,
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(
-                          top: 15,
-                          left: screenSize.width * .1,
-                          right: screenSize.width * .1,
-                        ),
-                        child: MyDocumentationTextFormField(
-                          inputType: TextInputType.streetAddress,
-                          isObscureText: false,
-                          textAction: TextInputAction.next,
-                          validation: (value) {
-                            if (value == "") {
-                              return "Address is empty";
-                            }
-                          },
-                          onChanged: (value) {
-                            setState(() {
-                              _checkValidToSave();
-                            });
-                          },
-                          onTap: () {},
-                          prefixIcon: GestureDetector(
-                            onTap: () {},
-                            child: Icon(
-                              FontAwesomeIcons.mapMarkerAlt,
-                              size: 20,
-                              color: customColor[130],
-                            ),
-                          ),
-                          labelText: "Address",
-                          hintText: "",
-                          isReadOnly: false,
-                          controller: _addressTextEditingController,
-                        ),
-                      ),
-                      Container(
-                        height: 50,
-                        margin: EdgeInsets.only(
-                          top: 15,
-                          left: screenSize.width * .1,
-                          right: screenSize.width * .1,
-                        ),
-                        child: FormField<String>(
-                          builder: (FormFieldState<String> state) {
-                            return InputDecorator(
-                              decoration: InputDecoration(
-                                labelText: 'Role',
-                                prefixIcon: GestureDetector(
-                                  onTap: () {},
-                                  child: Icon(
-                                    FontAwesomeIcons.hatCowboy,
-                                    size: 20,
-                                    color: customColor[130],
-                                  ),
-                                ),
-                                //      labelStyle: textStyle,
-                                errorStyle: TextStyle(
-                                  color: Colors.redAccent,
-                                  fontSize: 16.0,
-                                ),
-                                isDense: true,
-                                hintText: 'Please select a role',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(
-                                    20,
-                                  ),
-                                ),
-                              ),
-                              isEmpty: selectedRole == '',
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton<String>(
-                                  isDense: true,
-                                  value: selectedRole,
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      selectedRole = newValue!;
-                                      state.didChange(newValue);
-                                      _checkValidToSaveDropDown();
-                                    });
-                                  },
-                                  items: _DropRole.map((String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(
-                                        value,
-                                        style: tertiaryText.copyWith(
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(
-                          top: 40,
-                          left: screenSize.width * .21,
-                          right: screenSize.width * .21,
-                        ),
-                        height: 50,
-                        child: MyRaisedButton(
-                          color: Color(0xff1c52dd),
-                          elavation: 5,
-                          isLoading: false,
-                          onPressed: () {
-                            _validateRegistration();
-                          },
-                          radius: 30,
-                          text: Text(
-                            'Save',
-                            style: tertiaryText.copyWith(
-                              fontSize: 19,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }),
+              }),
+        ),
       ),
     );
   }

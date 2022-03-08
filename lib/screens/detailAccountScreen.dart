@@ -406,473 +406,489 @@ class _DetailAccountScreenState extends State<DetailAccountScreen> {
   Widget build(BuildContext context) {
     screenSize = MediaQuery.of(context).size;
     return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          leading: IconButton(
-            icon: Icon(
-              FontAwesomeIcons.chevronLeft,
-              color: Colors.black,
-              size: 18,
+      child: WillPopScope(
+        onWillPop: () async {
+          isLoading
+              ? print('Please wait')
+              : isSaveable
+                  ? _buildCreateCancelUpdateConfirmaModal(context)
+                  : Navigator.of(context).pop();
+          return false;
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            leading: IconButton(
+              icon: Icon(
+                FontAwesomeIcons.chevronLeft,
+                color: Colors.black,
+                size: 18,
+              ),
+              onPressed: () {
+                isLoading
+                    ? print('Please wait')
+                    : isSaveable
+                        ? _buildCreateCancelUpdateConfirmaModal(context)
+                        : Navigator.of(context).pop();
+              },
             ),
-            onPressed: () {
-              isLoading
-                  ? print('Please wait')
-                  : isSaveable
-                      ? _buildCreateCancelUpdateConfirmaModal(context)
-                      : Navigator.of(context).pop();
-            },
+            centerTitle: true,
+            title: Text(
+              "Edit ${widget.method == 'Firstname' ? 'First name' : widget.method == 'Lastname' ? 'Last name' : widget.method}",
+              style: primaryText.copyWith(fontSize: 18, letterSpacing: 1),
+            ),
+            actions: [],
           ),
-          centerTitle: true,
-          title: Text(
-            "Edit ${widget.method == 'Firstname' ? 'First name' : widget.method == 'Lastname' ? 'Last name' : widget.method}",
-            style: primaryText.copyWith(fontSize: 18, letterSpacing: 1),
-          ),
-          actions: [],
-        ),
-        body: StreamBuilder(
-          stream: dbRef.child('Tanods').onValue,
-          builder: (context, tanodSnapshot) {
-            if (tanodSnapshot.hasData &&
-                !tanodSnapshot.hasError &&
-                (tanodSnapshot.data! as Event).snapshot.value != null) {
-              tanods = (tanodSnapshot.data! as Event).snapshot.value;
-            } else {
-              return MySpinKitLoadingScreen();
-            }
-            userData = filterCurrentUserInformation(tanods, widget.userUID)[0];
-            return Form(
-              key: _formKey,
-              child: Container(
-                height: screenSize.height,
-                width: screenSize.width,
-                child: ListView(
-                  children: [
-                    widget.method == 'Firstname' ||
-                            widget.method == 'Lastname' ||
-                            widget.method == 'Email' ||
-                            widget.method == 'Contact' ||
-                            widget.method == 'Address'
-                        ? Container(
-                            margin: EdgeInsets.only(
-                              top: 10,
-                              left: screenSize.width * .1,
-                              right: screenSize.width * .1,
-                            ),
-                            child: MyDocumentationTextFormField(
-                              inputType: TextInputType.name,
-                              isObscureText: false,
-                              textAction: TextInputAction.done,
-                              validation: (value) {
-                                if (value != null) {
-                                  return getValidation(value) != ''
-                                      ? getValidation(value)
-                                      : null;
-                                } else {
-                                  return '${widget.method} is empty';
-                                }
-                              },
-                              onChanged: (value) {
-                                setState(() {
-                                  if (value != '') {
-                                    isSaveable = _checkValidToSave(value!);
+          body: StreamBuilder(
+            stream: dbRef.child('Tanods').onValue,
+            builder: (context, tanodSnapshot) {
+              if (tanodSnapshot.hasData &&
+                  !tanodSnapshot.hasError &&
+                  (tanodSnapshot.data! as Event).snapshot.value != null) {
+                tanods = (tanodSnapshot.data! as Event).snapshot.value;
+              } else {
+                return MySpinKitLoadingScreen();
+              }
+              userData =
+                  filterCurrentUserInformation(tanods, widget.userUID)[0];
+              return Form(
+                key: _formKey,
+                child: Container(
+                  height: screenSize.height,
+                  width: screenSize.width,
+                  child: ListView(
+                    children: [
+                      widget.method == 'Firstname' ||
+                              widget.method == 'Lastname' ||
+                              widget.method == 'Email' ||
+                              widget.method == 'Contact' ||
+                              widget.method == 'Address'
+                          ? Container(
+                              margin: EdgeInsets.only(
+                                top: 10,
+                                left: screenSize.width * .1,
+                                right: screenSize.width * .1,
+                              ),
+                              child: MyDocumentationTextFormField(
+                                inputType: TextInputType.name,
+                                isObscureText: false,
+                                textAction: TextInputAction.done,
+                                validation: (value) {
+                                  if (value != null) {
+                                    return getValidation(value) != ''
+                                        ? getValidation(value)
+                                        : null;
                                   } else {
-                                    isSaveable = false;
+                                    return '${widget.method} is empty';
                                   }
-                                });
-                              },
-                              onTap: () {},
-                              prefixIcon: null,
-                              labelText: widget.method,
-                              hintText: "",
-                              isReadOnly: _checkIfReadOnly(),
-                              controller: _fieldTextEditingController,
-                            ),
-                          )
-                        : widget.method == 'Password'
-                            ? Column(
-                                children: [
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                      top: 10,
-                                      left: screenSize.width * .1,
-                                      right: screenSize.width * .1,
-                                    ),
-                                    child: MyPasswordTextFormField(
-                                      inputType: TextInputType.name,
-                                      isObscureText: isObscureOldPassword,
-                                      textAction: TextInputAction.next,
-                                      validation: (value) {
-                                        if (value == '') {
-                                          return 'Password is Empty';
-                                        }
+                                },
+                                onChanged: (value) {
+                                  setState(() {
+                                    if (value != '') {
+                                      isSaveable = _checkValidToSave(value!);
+                                    } else {
+                                      isSaveable = false;
+                                    }
+                                  });
+                                },
+                                onTap: () {},
+                                prefixIcon: null,
+                                labelText: widget.method,
+                                hintText: "",
+                                isReadOnly: _checkIfReadOnly(),
+                                controller: _fieldTextEditingController,
+                              ),
+                            )
+                          : widget.method == 'Password'
+                              ? Column(
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                        top: 10,
+                                        left: screenSize.width * .1,
+                                        right: screenSize.width * .1,
+                                      ),
+                                      child: MyPasswordTextFormField(
+                                        inputType: TextInputType.name,
+                                        isObscureText: isObscureOldPassword,
+                                        textAction: TextInputAction.next,
+                                        validation: (value) {
+                                          if (value == '') {
+                                            return 'Password is Empty';
+                                          }
 
-                                        if (!isCurrentPasswordCorrect) {
-                                          return 'Password is incorrect';
-                                        }
-                                        // validatePassword(value!);
-                                        // print('Answer: $isInCorrectPassword');
-                                        // if (isInCorrectPassword) {
-                                        //   return 'Incorrect Password';
-                                        // }
-                                      },
-                                      onChanged: (value) {
-                                        setState(() {
-                                          if (_oldPasswordTextEditingController.text != '' &&
-                                              _newPasswordTextEditingController
-                                                      .text !=
-                                                  '' &&
-                                              _confirmPasswordTextEditingController
-                                                      .text !=
-                                                  '') {
-                                            isSaveable = true;
-                                          } else {
-                                            isSaveable = false;
+                                          if (!isCurrentPasswordCorrect) {
+                                            return 'Password is incorrect';
                                           }
-                                        });
-                                      },
-                                      onTap: () {},
-                                      prefixIcon: null,
-                                      labelText: 'Current ${widget.method}',
-                                      hintText: "",
-                                      isReadOnly: _checkIfReadOnly(),
-                                      controller:
-                                          _oldPasswordTextEditingController,
-                                      onTapSuffixIcon: () {
-                                        setState(() {
-                                          isObscureOldPassword =
-                                              !isObscureOldPassword;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                      top: 10,
-                                      left: screenSize.width * .1,
-                                      right: screenSize.width * .1,
-                                    ),
-                                    child: MyPasswordTextFormField(
-                                      inputType: TextInputType.name,
-                                      isObscureText: isObscureNewPassword,
-                                      textAction: TextInputAction.next,
-                                      validation: (value) {
-                                        if (value == '') {
-                                          return 'Password is Empty';
-                                        } else if (value!.length < 6) {
-                                          return 'Password is to short';
-                                        } else if (value ==
-                                            _oldPasswordTextEditingController
-                                                .text) {
-                                          return 'Password is the same from current password';
-                                        }
-                                      },
-                                      onChanged: (value) {
-                                        setState(() {
-                                          if (_oldPasswordTextEditingController.text != '' &&
-                                              _newPasswordTextEditingController
-                                                      .text !=
-                                                  '' &&
-                                              _confirmPasswordTextEditingController
-                                                      .text !=
-                                                  '') {
-                                            isSaveable = true;
-                                          } else {
-                                            isSaveable = false;
-                                          }
-                                        });
-                                      },
-                                      onTap: () {},
-                                      prefixIcon: null,
-                                      labelText: 'New ${widget.method}',
-                                      hintText: "",
-                                      isReadOnly: _checkIfReadOnly(),
-                                      controller:
-                                          _newPasswordTextEditingController,
-                                      onTapSuffixIcon: () {
-                                        setState(() {
-                                          isObscureNewPassword =
-                                              !isObscureNewPassword;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                      top: 10,
-                                      left: screenSize.width * .1,
-                                      right: screenSize.width * .1,
-                                    ),
-                                    child: MyPasswordTextFormField(
-                                      inputType: TextInputType.name,
-                                      isObscureText: isObscureConfirmPassword,
-                                      textAction: TextInputAction.done,
-                                      validation: (value) {
-                                        if (value == '') {
-                                          return 'Password is Empty';
-                                        } else if (_newPasswordTextEditingController
-                                                .text !=
-                                            _confirmPasswordTextEditingController
-                                                .text) {
-                                          return 'New Password is not matched';
-                                        }
-                                      },
-                                      onChanged: (value) {
-                                        setState(() {
-                                          if (_oldPasswordTextEditingController.text != '' &&
-                                              _newPasswordTextEditingController
-                                                      .text !=
-                                                  '' &&
-                                              _confirmPasswordTextEditingController
-                                                      .text !=
-                                                  '') {
-                                            isSaveable = true;
-                                          } else {
-                                            isSaveable = false;
-                                          }
-                                        });
-                                      },
-                                      onTap: () {},
-                                      prefixIcon: null,
-                                      labelText: 'Confirm ${widget.method}',
-                                      hintText: "",
-                                      isReadOnly: _checkIfReadOnly(),
-                                      controller:
-                                          _confirmPasswordTextEditingController,
-                                      onTapSuffixIcon: () {
-                                        setState(() {
-                                          isObscureConfirmPassword =
-                                              !isObscureConfirmPassword;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : widget.method == 'Birthday'
-                                ? Container(
-                                    margin: EdgeInsets.only(
-                                      top: 15,
-                                      left: screenSize.width * .1,
-                                      right: screenSize.width * .1,
-                                    ),
-                                    child: MyDocumentationTextFormField(
-                                      inputType: TextInputType.datetime,
-                                      isObscureText: false,
-                                      textAction: TextInputAction.next,
-                                      validation: (value) {
-                                        if (value == "") {
-                                          return "Birthday is empty";
-                                        }
-                                      },
-                                      onChanged: (value) {},
-                                      onTap: () {
-                                        showDatePicker(
-                                                context: context,
-                                                initialDate: DateTime.now(),
-                                                firstDate: DateTime(
-                                                    1900, 1, 1, 1, 0, 0),
-                                                lastDate: DateTime.now())
-                                            .then((selectedDate) {
+                                          // validatePassword(value!);
+                                          // print('Answer: $isInCorrectPassword');
+                                          // if (isInCorrectPassword) {
+                                          //   return 'Incorrect Password';
+                                          // }
+                                        },
+                                        onChanged: (value) {
                                           setState(() {
-                                            if (selectedDate != null) {
-                                              _fieldTextEditingController.text =
-                                                  "${numberFormat(selectedDate.year)}-${numberFormat(selectedDate.month)}-${numberFormat(selectedDate.day)}";
-
-                                              isSaveable = _checkValidToSave(
-                                                  _fieldTextEditingController
-                                                      .text);
+                                            if (_oldPasswordTextEditingController.text != '' &&
+                                                _newPasswordTextEditingController
+                                                        .text !=
+                                                    '' &&
+                                                _confirmPasswordTextEditingController
+                                                        .text !=
+                                                    '') {
+                                              isSaveable = true;
+                                            } else {
+                                              isSaveable = false;
                                             }
                                           });
-                                        });
-                                      },
-                                      prefixIcon: GestureDetector(
+                                        },
                                         onTap: () {},
-                                        child: Icon(
-                                          FontAwesomeIcons.solidCalendarAlt,
-                                          size: 20,
-                                          color: customColor[130],
-                                        ),
+                                        prefixIcon: null,
+                                        labelText: 'Current ${widget.method}',
+                                        hintText: "",
+                                        isReadOnly: _checkIfReadOnly(),
+                                        controller:
+                                            _oldPasswordTextEditingController,
+                                        onTapSuffixIcon: () {
+                                          setState(() {
+                                            isObscureOldPassword =
+                                                !isObscureOldPassword;
+                                          });
+                                        },
                                       ),
-                                      labelText: "Birthday",
-                                      hintText: "",
-                                      isReadOnly: true,
-                                      controller: _fieldTextEditingController,
                                     ),
-                                  )
-                                : widget.method == 'Gender'
-                                    ? Container(
-                                        height: 50,
-                                        margin: EdgeInsets.only(
-                                          top: 15,
-                                          left: screenSize.width * .1,
-                                          right: screenSize.width * .1,
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                        top: 10,
+                                        left: screenSize.width * .1,
+                                        right: screenSize.width * .1,
+                                      ),
+                                      child: MyPasswordTextFormField(
+                                        inputType: TextInputType.name,
+                                        isObscureText: isObscureNewPassword,
+                                        textAction: TextInputAction.next,
+                                        validation: (value) {
+                                          if (value == '') {
+                                            return 'Password is Empty';
+                                          } else if (value!.length < 6) {
+                                            return 'Password is to short';
+                                          } else if (value ==
+                                              _oldPasswordTextEditingController
+                                                  .text) {
+                                            return 'Password is the same from current password';
+                                          }
+                                        },
+                                        onChanged: (value) {
+                                          setState(() {
+                                            if (_oldPasswordTextEditingController.text != '' &&
+                                                _newPasswordTextEditingController
+                                                        .text !=
+                                                    '' &&
+                                                _confirmPasswordTextEditingController
+                                                        .text !=
+                                                    '') {
+                                              isSaveable = true;
+                                            } else {
+                                              isSaveable = false;
+                                            }
+                                          });
+                                        },
+                                        onTap: () {},
+                                        prefixIcon: null,
+                                        labelText: 'New ${widget.method}',
+                                        hintText: "",
+                                        isReadOnly: _checkIfReadOnly(),
+                                        controller:
+                                            _newPasswordTextEditingController,
+                                        onTapSuffixIcon: () {
+                                          setState(() {
+                                            isObscureNewPassword =
+                                                !isObscureNewPassword;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                        top: 10,
+                                        left: screenSize.width * .1,
+                                        right: screenSize.width * .1,
+                                      ),
+                                      child: MyPasswordTextFormField(
+                                        inputType: TextInputType.name,
+                                        isObscureText: isObscureConfirmPassword,
+                                        textAction: TextInputAction.done,
+                                        validation: (value) {
+                                          if (value == '') {
+                                            return 'Password is Empty';
+                                          } else if (_newPasswordTextEditingController
+                                                  .text !=
+                                              _confirmPasswordTextEditingController
+                                                  .text) {
+                                            return 'New Password is not matched';
+                                          }
+                                        },
+                                        onChanged: (value) {
+                                          setState(() {
+                                            if (_oldPasswordTextEditingController.text != '' &&
+                                                _newPasswordTextEditingController
+                                                        .text !=
+                                                    '' &&
+                                                _confirmPasswordTextEditingController
+                                                        .text !=
+                                                    '') {
+                                              isSaveable = true;
+                                            } else {
+                                              isSaveable = false;
+                                            }
+                                          });
+                                        },
+                                        onTap: () {},
+                                        prefixIcon: null,
+                                        labelText: 'Confirm ${widget.method}',
+                                        hintText: "",
+                                        isReadOnly: _checkIfReadOnly(),
+                                        controller:
+                                            _confirmPasswordTextEditingController,
+                                        onTapSuffixIcon: () {
+                                          setState(() {
+                                            isObscureConfirmPassword =
+                                                !isObscureConfirmPassword;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : widget.method == 'Birthday'
+                                  ? Container(
+                                      margin: EdgeInsets.only(
+                                        top: 15,
+                                        left: screenSize.width * .1,
+                                        right: screenSize.width * .1,
+                                      ),
+                                      child: MyDocumentationTextFormField(
+                                        inputType: TextInputType.datetime,
+                                        isObscureText: false,
+                                        textAction: TextInputAction.next,
+                                        validation: (value) {
+                                          if (value == "") {
+                                            return "Birthday is empty";
+                                          }
+                                        },
+                                        onChanged: (value) {},
+                                        onTap: () {
+                                          showDatePicker(
+                                                  context: context,
+                                                  initialDate: DateTime.now(),
+                                                  firstDate: DateTime(
+                                                      1900, 1, 1, 1, 0, 0),
+                                                  lastDate: DateTime.now())
+                                              .then((selectedDate) {
+                                            setState(() {
+                                              if (selectedDate != null) {
+                                                _fieldTextEditingController
+                                                        .text =
+                                                    "${numberFormat(selectedDate.year)}-${numberFormat(selectedDate.month)}-${numberFormat(selectedDate.day)}";
+
+                                                isSaveable = _checkValidToSave(
+                                                    _fieldTextEditingController
+                                                        .text);
+                                              }
+                                            });
+                                          });
+                                        },
+                                        prefixIcon: GestureDetector(
+                                          onTap: () {},
+                                          child: Icon(
+                                            FontAwesomeIcons.solidCalendarAlt,
+                                            size: 20,
+                                            color: customColor[130],
+                                          ),
                                         ),
-                                        child: FormField<String>(
-                                          builder:
-                                              (FormFieldState<String> state) {
-                                            return InputDecorator(
-                                              decoration: InputDecoration(
-                                                labelText: 'Gender',
-                                                prefixIcon: GestureDetector(
-                                                  onTap: () {},
-                                                  child: Icon(
-                                                    selectedGender == 'Male'
-                                                        ? FontAwesomeIcons.mars
-                                                        : selectedGender ==
-                                                                'Female'
-                                                            ? FontAwesomeIcons
-                                                                .venus
-                                                            : FontAwesomeIcons
-                                                                .transgenderAlt,
-                                                    size: 20,
-                                                    color: customColor[130],
+                                        labelText: "Birthday",
+                                        hintText: "",
+                                        isReadOnly: true,
+                                        controller: _fieldTextEditingController,
+                                      ),
+                                    )
+                                  : widget.method == 'Gender'
+                                      ? Container(
+                                          height: 50,
+                                          margin: EdgeInsets.only(
+                                            top: 15,
+                                            left: screenSize.width * .1,
+                                            right: screenSize.width * .1,
+                                          ),
+                                          child: FormField<String>(
+                                            builder:
+                                                (FormFieldState<String> state) {
+                                              return InputDecorator(
+                                                decoration: InputDecoration(
+                                                  labelText: 'Gender',
+                                                  prefixIcon: GestureDetector(
+                                                    onTap: () {},
+                                                    child: Icon(
+                                                      selectedGender == 'Male'
+                                                          ? FontAwesomeIcons
+                                                              .mars
+                                                          : selectedGender ==
+                                                                  'Female'
+                                                              ? FontAwesomeIcons
+                                                                  .venus
+                                                              : FontAwesomeIcons
+                                                                  .transgenderAlt,
+                                                      size: 20,
+                                                      color: customColor[130],
+                                                    ),
                                                   ),
-                                                ),
-                                                //      labelStyle: textStyle,
-                                                errorStyle: TextStyle(
-                                                  color: Colors.redAccent,
-                                                  fontSize: 16.0,
-                                                ),
-                                                isDense: true,
-                                                hintText:
-                                                    'Please select a gender',
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                    20,
+                                                  //      labelStyle: textStyle,
+                                                  errorStyle: TextStyle(
+                                                    color: Colors.redAccent,
+                                                    fontSize: 16.0,
                                                   ),
-                                                ),
-                                              ),
-                                              isEmpty: selectedGender == '',
-                                              child:
-                                                  DropdownButtonHideUnderline(
-                                                child: DropdownButton<String>(
                                                   isDense: true,
-                                                  value: selectedGender,
-                                                  onChanged: (newValue) {
-                                                    setState(() {
-                                                      selectedGender =
-                                                          newValue!;
-                                                      state.didChange(newValue);
-                                                      isSaveable =
-                                                          _checkValidToSave(
-                                                              newValue);
-                                                    });
-                                                  },
-                                                  items: _DropGender.map(
-                                                      (String value) {
-                                                    return DropdownMenuItem<
-                                                        String>(
-                                                      value: value,
-                                                      child: Text(
-                                                        value,
-                                                        style: tertiaryText
-                                                            .copyWith(
-                                                          fontSize: 16,
-                                                        ),
-                                                      ),
-                                                    );
-                                                  }).toList(),
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      )
-                                    : Container(
-                                        height: 50,
-                                        margin: EdgeInsets.only(
-                                          top: 15,
-                                          left: screenSize.width * .1,
-                                          right: screenSize.width * .1,
-                                        ),
-                                        child: FormField<String>(
-                                          builder:
-                                              (FormFieldState<String> state) {
-                                            return InputDecorator(
-                                              decoration: InputDecoration(
-                                                labelText: 'Role',
-                                                prefixIcon: GestureDetector(
-                                                  onTap: () {},
-                                                  child: Icon(
-                                                    FontAwesomeIcons.hatCowboy,
-                                                    size: 20,
-                                                    color: customColor[130],
+                                                  hintText:
+                                                      'Please select a gender',
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                      20,
+                                                    ),
                                                   ),
                                                 ),
-                                                //      labelStyle: textStyle,
-                                                errorStyle: TextStyle(
-                                                  color: Colors.redAccent,
-                                                  fontSize: 16.0,
-                                                ),
-                                                isDense: true,
-                                                hintText:
-                                                    'Please select a role',
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                    20,
-                                                  ),
-                                                ),
-                                              ),
-                                              isEmpty: selectedRole == '',
-                                              child:
-                                                  DropdownButtonHideUnderline(
-                                                child: DropdownButton<String>(
-                                                  isDense: true,
-                                                  value: selectedRole,
-                                                  onChanged: (newValue) {
-                                                    setState(() {
-                                                      if (widget.defaultValue ==
-                                                          '0') {
-                                                        selectedRole =
+                                                isEmpty: selectedGender == '',
+                                                child:
+                                                    DropdownButtonHideUnderline(
+                                                  child: DropdownButton<String>(
+                                                    isDense: true,
+                                                    value: selectedGender,
+                                                    onChanged: (newValue) {
+                                                      setState(() {
+                                                        selectedGender =
                                                             newValue!;
                                                         state.didChange(
                                                             newValue);
-                                                        // isSaveable =
-                                                        //     _checkValidToSave(
-                                                        //         selectedRole);
-                                                      }
-                                                    });
-                                                  },
-                                                  items: _DropRole.map(
-                                                      (String value) {
-                                                    return DropdownMenuItem<
-                                                        String>(
-                                                      value: value,
-                                                      child: Text(
-                                                        value,
-                                                        style: tertiaryText
-                                                            .copyWith(
-                                                          fontSize: 16,
+                                                        isSaveable =
+                                                            _checkValidToSave(
+                                                                newValue);
+                                                      });
+                                                    },
+                                                    items: _DropGender.map(
+                                                        (String value) {
+                                                      return DropdownMenuItem<
+                                                          String>(
+                                                        value: value,
+                                                        child: Text(
+                                                          value,
+                                                          style: tertiaryText
+                                                              .copyWith(
+                                                            fontSize: 16,
+                                                          ),
                                                         ),
-                                                      ),
-                                                    );
-                                                  }).toList(),
+                                                      );
+                                                    }).toList(),
+                                                  ),
                                                 ),
-                                              ),
-                                            );
-                                          },
+                                              );
+                                            },
+                                          ),
+                                        )
+                                      : Container(
+                                          height: 50,
+                                          margin: EdgeInsets.only(
+                                            top: 15,
+                                            left: screenSize.width * .1,
+                                            right: screenSize.width * .1,
+                                          ),
+                                          child: FormField<String>(
+                                            builder:
+                                                (FormFieldState<String> state) {
+                                              return InputDecorator(
+                                                decoration: InputDecoration(
+                                                  labelText: 'Role',
+                                                  prefixIcon: GestureDetector(
+                                                    onTap: () {},
+                                                    child: Icon(
+                                                      FontAwesomeIcons
+                                                          .hatCowboy,
+                                                      size: 20,
+                                                      color: customColor[130],
+                                                    ),
+                                                  ),
+                                                  //      labelStyle: textStyle,
+                                                  errorStyle: TextStyle(
+                                                    color: Colors.redAccent,
+                                                    fontSize: 16.0,
+                                                  ),
+                                                  isDense: true,
+                                                  hintText:
+                                                      'Please select a role',
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                      20,
+                                                    ),
+                                                  ),
+                                                ),
+                                                isEmpty: selectedRole == '',
+                                                child:
+                                                    DropdownButtonHideUnderline(
+                                                  child: DropdownButton<String>(
+                                                    isDense: true,
+                                                    value: selectedRole,
+                                                    onChanged: (newValue) {
+                                                      setState(() {
+                                                        if (widget
+                                                                .defaultValue ==
+                                                            '0') {
+                                                          selectedRole =
+                                                              newValue!;
+                                                          state.didChange(
+                                                              newValue);
+                                                          // isSaveable =
+                                                          //     _checkValidToSave(
+                                                          //         selectedRole);
+                                                        }
+                                                      });
+                                                    },
+                                                    items: _DropRole.map(
+                                                        (String value) {
+                                                      return DropdownMenuItem<
+                                                          String>(
+                                                        value: value,
+                                                        child: Text(
+                                                          value,
+                                                          style: tertiaryText
+                                                              .copyWith(
+                                                            fontSize: 16,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }).toList(),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
                                         ),
-                                      ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+          floatingActionButton: isSaveable
+              ? FloatingActionButton(
+                  onPressed: () {
+                    isLoading ? print('Please wait') : _validateUpdate();
+                  },
+                  backgroundColor: customColor[130],
+                  child: Icon(FontAwesomeIcons.save),
+                )
+              : Container(),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        floatingActionButton: isSaveable
-            ? FloatingActionButton(
-                onPressed: () {
-                  isLoading ? print('Please wait') : _validateUpdate();
-                },
-                backgroundColor: customColor[130],
-                child: Icon(FontAwesomeIcons.save),
-              )
-            : Container(),
       ),
     );
   }
