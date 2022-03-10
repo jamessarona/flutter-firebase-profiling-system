@@ -277,14 +277,15 @@ class _DetailViolatorScreenState extends State<DetailViolatorScreen> {
                                                   },
                                                   location: getLocationName(
                                                       locations,
-                                                      item['LocationId']),
+                                                      item['LocationId']
+                                                          .toString()),
                                                   date: getApprehensionInfo(
                                                       'DateApprehended',
-                                                      int.parse(item['Id']),
+                                                      item['Id'],
                                                       widget.id),
                                                   fine: getApprehensionInfo(
                                                       'Fine',
-                                                      int.parse(item['Id']),
+                                                      item['Id'],
                                                       widget.id),
                                                   isTagged: item['Category'] ==
                                                       'Tagged',
