@@ -248,6 +248,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     screenSize = MediaQuery.of(context).size;
+
     return SafeArea(
       child: userUID.isNotEmpty
           ? StreamBuilder(

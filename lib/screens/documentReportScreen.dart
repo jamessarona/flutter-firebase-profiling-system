@@ -340,7 +340,7 @@ class _ReportDocumentationState extends State<ReportDocumentation> {
 
   Future<String> _saveDocumentSubmission() async {
     DateTime now = DateTime.now();
-    String formattedDate = DateFormat('yyyy-MM-dd hh:mm:ss').format(now);
+    String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
 
     _saveViolatorInformation();
     if (selectedReport[0]['AssignedTanod']

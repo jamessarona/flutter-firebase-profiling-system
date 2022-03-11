@@ -171,7 +171,7 @@ class _DetailViolatorScreenState extends State<DetailViolatorScreen> {
                                                         tertiaryText.copyWith(
                                                       fontSize: 15,
                                                     ),
-                                                    maxLines: 1,
+                                                    maxLines: 2,
                                                   ),
                                                 ),
                                                 Container(
@@ -183,7 +183,7 @@ class _DetailViolatorScreenState extends State<DetailViolatorScreen> {
                                                         tertiaryText.copyWith(
                                                       fontSize: 15,
                                                     ),
-                                                    maxLines: 1,
+                                                    maxLines: 2,
                                                   ),
                                                 ),
                                               ],
