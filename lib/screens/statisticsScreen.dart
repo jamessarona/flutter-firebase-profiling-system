@@ -88,8 +88,13 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       for (int i = 0; i < droppedReports[0].length; i++) {
         num tempCount = 0;
         if (droppedReports[0][i]['AssignedTanod']
-                [droppedReports[0][i]['AssignedTanod'].length - 1]['Reason'] ==
-            'Duplicate') {
+                        [droppedReports[0][i]['AssignedTanod'].length - 1]
+                    ['Reason'] ==
+                'Duplicate' ||
+            droppedReports[0][i]['AssignedTanod']
+                        [droppedReports[0][i]['AssignedTanod'].length - 1]
+                    ['Reason'] ==
+                'Not a person') {
           for (int x = 0;
               x < droppedReports[0][i]['AssignedTanod'].length;
               x++) {
@@ -264,9 +269,13 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           if (date.hour == position + defaultTime) {
             num tempCount = 0;
             if (droppedReports[0][i]['AssignedTanod']
-                        [droppedReports[0][i]['AssignedTanod'].length - 1]
-                    ['Reason'] ==
-                'Duplicate') {
+                            [droppedReports[0][i]['AssignedTanod'].length - 1]
+                        ['Reason'] ==
+                    'Duplicate' ||
+                droppedReports[0][i]['AssignedTanod']
+                            [droppedReports[0][i]['AssignedTanod'].length - 1]
+                        ['Reason'] ==
+                    'Not a person') {
               for (int x = 0;
                   x < droppedReports[0][i]['AssignedTanod'].length;
                   x++) {
@@ -310,9 +319,13 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           if (date.weekday - 1 == position) {
             num tempCount = 0;
             if (droppedReports[0][i]['AssignedTanod']
-                        [droppedReports[0][i]['AssignedTanod'].length - 1]
-                    ['Reason'] ==
-                'Duplicate') {
+                            [droppedReports[0][i]['AssignedTanod'].length - 1]
+                        ['Reason'] ==
+                    'Duplicate' ||
+                droppedReports[0][i]['AssignedTanod']
+                            [droppedReports[0][i]['AssignedTanod'].length - 1]
+                        ['Reason'] ==
+                    'Not a person') {
               for (int x = 0;
                   x < droppedReports[0][i]['AssignedTanod'].length;
                   x++) {
@@ -360,9 +373,13 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           if (date.month == position + defaultTime) {
             num tempCount = 0;
             if (droppedReports[0][i]['AssignedTanod']
-                        [droppedReports[0][i]['AssignedTanod'].length - 1]
-                    ['Reason'] ==
-                'Duplicate') {
+                            [droppedReports[0][i]['AssignedTanod'].length - 1]
+                        ['Reason'] ==
+                    'Duplicate' ||
+                droppedReports[0][i]['AssignedTanod']
+                            [droppedReports[0][i]['AssignedTanod'].length - 1]
+                        ['Reason'] ==
+                    'Not a person') {
               for (int x = 0;
                   x < droppedReports[0][i]['AssignedTanod'].length;
                   x++) {

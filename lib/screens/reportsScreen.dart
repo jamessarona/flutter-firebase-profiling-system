@@ -74,7 +74,7 @@ String _getCurrentAssignReport() {
           reports[i]['AssignedTanod'][reports[i]['AssignedTanod'].length - 1]
                   ['Status'] ==
               'Responding') {
-        id = reports[i]['Id'];
+        id = reports[i]['Id'].toString();
       }
     }
   }
