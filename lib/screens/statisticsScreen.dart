@@ -94,7 +94,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             droppedReports[0][i]['AssignedTanod']
                         [droppedReports[0][i]['AssignedTanod'].length - 1]
                     ['Reason'] ==
-                'Not a person') {
+                'Not a person' ||
+            droppedReports[0][i]['AssignedTanod']
+                        [droppedReports[0][i]['AssignedTanod'].length - 1]
+                    ['Reason'] ==
+                'Invalid Detection') {
           for (int x = 0;
               x < droppedReports[0][i]['AssignedTanod'].length;
               x++) {
@@ -275,7 +279,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 droppedReports[0][i]['AssignedTanod']
                             [droppedReports[0][i]['AssignedTanod'].length - 1]
                         ['Reason'] ==
-                    'Not a person') {
+                    'Not a person' ||
+                droppedReports[0][i]['AssignedTanod']
+                            [droppedReports[0][i]['AssignedTanod'].length - 1]
+                        ['Reason'] ==
+                    'Invalid Detection') {
               for (int x = 0;
                   x < droppedReports[0][i]['AssignedTanod'].length;
                   x++) {
@@ -325,7 +333,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 droppedReports[0][i]['AssignedTanod']
                             [droppedReports[0][i]['AssignedTanod'].length - 1]
                         ['Reason'] ==
-                    'Not a person') {
+                    'Not a person' ||
+                droppedReports[0][i]['AssignedTanod']
+                            [droppedReports[0][i]['AssignedTanod'].length - 1]
+                        ['Reason'] ==
+                    'Invalid Detection') {
               for (int x = 0;
                   x < droppedReports[0][i]['AssignedTanod'].length;
                   x++) {
@@ -379,7 +391,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 droppedReports[0][i]['AssignedTanod']
                             [droppedReports[0][i]['AssignedTanod'].length - 1]
                         ['Reason'] ==
-                    'Not a person') {
+                    'Not a person' ||
+                droppedReports[0][i]['AssignedTanod']
+                            [droppedReports[0][i]['AssignedTanod'].length - 1]
+                        ['Reason'] ==
+                    'Invalid Detection') {
               for (int x = 0;
                   x < droppedReports[0][i]['AssignedTanod'].length;
                   x++) {

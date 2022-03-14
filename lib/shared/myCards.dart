@@ -42,6 +42,7 @@ class MyReportCard extends StatelessWidget {
                 height: 145,
                 width: 170,
                 decoration: BoxDecoration(
+                  color: Colors.grey[300],
                   image: DecorationImage(
                     fit: BoxFit.fill,
                     image: NetworkImage(
@@ -423,6 +424,7 @@ class MyNotificationReportCard extends StatelessWidget {
                   width: 160,
                   margin: EdgeInsets.only(bottom: 8),
                   decoration: BoxDecoration(
+                    color: Colors.grey[300],
                     image: DecorationImage(
                       fit: BoxFit.fill,
                       image: NetworkImage(
@@ -519,6 +521,7 @@ class MyApprehenssionHistoryCard extends StatelessWidget {
               width: 140,
               margin: EdgeInsets.symmetric(vertical: 3),
               decoration: BoxDecoration(
+                color: Colors.grey[300],
                 image: DecorationImage(
                   fit: BoxFit.fill,
                   image: NetworkImage(

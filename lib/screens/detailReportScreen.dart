@@ -53,7 +53,7 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
 
   static const _DropReason = [
     "Violator Escaped",
-    "Not a person",
+    "Invalid Detection",
     "Purpose is valid",
     "Duplicate",
     "Others",
@@ -622,6 +622,7 @@ class _DetailReportScreenState extends State<DetailReportScreen> {
                                                 tag: 'report_${widget.id}',
                                                 child: Container(
                                                   decoration: BoxDecoration(
+                                                    color: Colors.grey[300],
                                                     image: DecorationImage(
                                                       image: NetworkImage(
                                                           selectedReport[0]
