@@ -702,12 +702,14 @@ class MyLocationCard extends StatelessWidget {
   final String locId;
   final String name;
   final int assignCount;
+  final bool isDisabled;
   final VoidCallback onTap;
 
   const MyLocationCard({
     required this.locId,
     required this.name,
     required this.assignCount,
+    required this.isDisabled,
     required this.onTap,
   });
 
@@ -743,8 +745,10 @@ class MyLocationCard extends StatelessWidget {
             ? GestureDetector(
                 onTap: onTap,
                 child: Icon(
-                  FontAwesomeIcons.trashAlt,
-                  color: Colors.red,
+                  isDisabled
+                      ? FontAwesomeIcons.timesCircle
+                      : FontAwesomeIcons.checkCircle,
+                  color: isDisabled ? Colors.red : Colors.green,
                   size: 15,
                 ),
               )

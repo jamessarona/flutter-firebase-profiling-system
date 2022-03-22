@@ -45,7 +45,9 @@ class _MainScreenState extends State<MainScreen> {
 
   void addLocationToList() {
     for (int i = 0; i < locations.length; i++) {
-      locationsAdded.insert(0, locations[i]['Name'].toString());
+      if (locations[i]['Status'] == 'Active') {
+        locationsAdded.insert(0, locations[i]['Name'].toString());
+      }
     }
     locationsAdded.sort();
   }

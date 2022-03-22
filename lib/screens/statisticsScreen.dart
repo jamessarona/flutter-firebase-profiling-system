@@ -77,6 +77,36 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     'Sunday',
   ];
 
+  // Count the total Incorrect detection (Invalid detection or not a person)
+  // int _calculateIncorrectDetection() {
+  //   num count = 0;
+  //   if (droppedReports.isNotEmpty) {
+  //     for (int i = 0; i < droppedReports[0].length; i++) {
+  //       if (droppedReports[0][i]['AssignedTanod']
+  //                       [droppedReports[0][i]['AssignedTanod'].length - 1]
+  //                   ['Reason'] ==
+  //               'Not a person' ||
+  //           droppedReports[0][i]['AssignedTanod']
+  //                       [droppedReports[0][i]['AssignedTanod'].length - 1]
+  //                   ['Reason'] ==
+  //               'Invalid Detection') {
+  //         count += droppedReports[0][i]['ViolatorCount'];
+  //         for (int x = 0;
+  //             x < droppedReports[0][i]['AssignedTanod'].length;
+  //             x++) {
+  //           if (droppedReports[0][i]['AssignedTanod'][x]['Documentation'] !=
+  //               null) {
+  //             count -= droppedReports[0][i]['AssignedTanod'][x]['Documentation']
+  //                 .length;
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+
+  //   return count.toInt();
+  // }
+
   int _calculateTotalViolatorsCount() {
     num violatorCount = 0;
     if (latestReports.isNotEmpty) {
@@ -663,6 +693,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                         } else {
                           return MyLoadingScreenHomeScreen();
                         }
+                        // print(
+                        //     'Invalod Detection Count: ${_calculateIncorrectDetection()}');
                         return Scaffold(
                           key: _scaffoldKeyStatistics,
                           drawer: BuildDrawer(

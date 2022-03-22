@@ -29,6 +29,7 @@ class _LocationScreenState extends State<LocationScreen> {
   var filteredLocations;
   bool isLoading = false;
   late Timer _timer;
+
   int _countTanodAssigned(String location) {
     int count = 0;
     for (int i = 0; i < tanods.length; i++) {
@@ -121,7 +122,7 @@ class _LocationScreenState extends State<LocationScreen> {
   }
 
   _buildCreateDeleteConfirmation(
-      BuildContext context, String loc, String locId) {
+      BuildContext context, String loc, String locId, bool isDisabled) {
     return showDialog(
         context: context,
         builder: (context) {
@@ -135,7 +136,8 @@ class _LocationScreenState extends State<LocationScreen> {
               ),
               content: Text.rich(
                 TextSpan(
-                  text: 'Are sure you want to delete ',
+                  text:
+                      'Are sure you want to ${isDisabled ? 'activate' : 'disable'} ',
                   style: secandaryText.copyWith(fontSize: 13, letterSpacing: 0),
                   children: [
                     TextSpan(
@@ -179,7 +181,7 @@ class _LocationScreenState extends State<LocationScreen> {
                     isLoading: isLoading,
                     radius: 10,
                     text: Text(
-                      'Delete',
+                      'Update',
                       style: tertiaryText.copyWith(
                           fontSize: 14, color: Colors.white),
                     ),
@@ -187,11 +189,12 @@ class _LocationScreenState extends State<LocationScreen> {
                       setState(() {
                         isLoading = true;
                         _reAssignTanodWithSelectedLocation(locId).then((value) {
-                          _deleteSelectedLocation(locId).then((value) {
+                          _updateSelectedLocation(locId, isDisabled)
+                              .then((value) {
                             Navigator.pop(context);
 
-                            _buildModalSuccessMessage(
-                                context, "Location has been deleted");
+                            _buildModalSuccessMessage(context,
+                                "Location has been ${isDisabled ? 'activated' : 'disabled'}");
                             isLoading = false;
                           });
                         });
@@ -217,19 +220,10 @@ class _LocationScreenState extends State<LocationScreen> {
     return '';
   }
 
-  Future<String> _deleteSelectedLocation(String locId) async {
-    await dbRef.child('Locations').update({
-      locId: {
-        'Name': filteredLocations[filteredLocations.length - 1]['Name'],
-        'IpAddress': filteredLocations[filteredLocations.length - 1]
-            ['IpAddress'],
-        'LocationId': locId,
-      },
+  Future<String> _updateSelectedLocation(String locId, bool isDisabled) async {
+    await dbRef.child('Locations').child(locId).update({
+      'Status': isDisabled ? 'Active' : 'Disabled',
     });
-    await dbRef
-        .child('Locations')
-        .child((filteredLocations.length - 1).toString())
-        .remove();
     return '';
   }
 
@@ -264,6 +258,7 @@ class _LocationScreenState extends State<LocationScreen> {
         'IpAddress': 'None',
         'Name': titleCase(_locationTextEditingController.text.toString()),
         'LocationId': locations.length.toString(),
+        'Status': 'Active',
       },
     });
     isLoading = false;
@@ -426,9 +421,13 @@ class _LocationScreenState extends State<LocationScreen> {
                                       name: item['Name'],
                                       assignCount: _countTanodAssigned(
                                           item['LocationId']),
+                                      isDisabled: item['Status'] == 'Disabled',
                                       onTap: () {
-                                        _buildCreateDeleteConfirmation(context,
-                                            item['Name'], item['LocationId']);
+                                        _buildCreateDeleteConfirmation(
+                                            context,
+                                            item['Name'],
+                                            item['LocationId'],
+                                            item['Status'] == 'Disabled');
                                       }),
                               ],
                             ),
